@@ -1,0 +1,40 @@
+<template name="game">
+  <div class="container">
+    <div class="game-content panel panel-primary">
+      <div class="panel-heading">
+        <h3 class="panel-title">1/5</h3>
+      </div>
+
+      <div class="panel-body">
+        <div class="progress progress-striped active">
+          <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
+            <span class="sr-only">60% Complete</span>
+          </div>
+        </div>
+
+
+        <audio controls autoplay>
+          <source src="../Lydklipp/VM-Kvart_DK-BR_2-2.mp3" type="audio/mpeg">
+            <!-- Backup -->
+            <embed height="50" width="100" src="../Lydklipp/VM-Kvart_DK-BR_2-2.mp3">
+        </audio>
+
+        <div class="row">
+          <div class="col-md-6">
+            <a href="#" class="btn btn-block btn-lg btn-primary">A</a>
+          </div>
+          <div class="col-md-6">
+            <a href="#" class="btn btn-block btn-lg btn-primary">B</a>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <a href="#" class="btn btn-block btn-lg btn-primary">C</a>
+          </div>
+          <div class="col-md-6">
+            <a href="#" class="btn btn-block btn-lg btn-primary">D</a>
+          </div>
+        </div>
+      </div>
+    </div>
+</template>

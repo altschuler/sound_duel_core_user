@@ -1,19 +1,17 @@
 <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Sound-Duel</title>
+
+  <!-- Favicon -->
+  <!-- <link href="assets/images/favicon.ico" rel="shortcut icon" type="image/png"> -->
 </head>
 
 <body>
+  {{#if current_game}}
+  {{> game}}
+  {{else}}
   {{> home}}
+  {{/if}}
 </body>
-
-<template name="home">
-  <div class="container text-center">
-    <h1>{{ app }}</h1>
-    <div class="hero-unit">
-      <p class="lead">{{ greeting }}</p>
-      <div class="menu-button">
-        <a href="game.html" id="startgame" class="btn btn-block btn-lg btn-primary">Start new game</a>
-      </div>
-    </div>
-  </div>
-</template>
