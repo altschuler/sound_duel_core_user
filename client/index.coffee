@@ -1,10 +1,14 @@
-# Meter.isClient
-#
+# Cient
 
-Template.hello.greeting = ->
-  "Welcome to Sound-Duel."
+Template.home.app = ->
+  "Sound-Duel"
 
-Template.hello.events
-  'click input': ->
-    # template data, if any, is available in 'this'
-    console.log "You pressed the button" if typeof console isnt "undefined"
+Template.home.greeting = ->
+  "To play now, click the button below!"
+
+Template.home.greeting = ->
+  "Start new game!"
+
+Template.home.events
+  'click input#startgame': ->
+    

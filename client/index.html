@@ -3,13 +3,17 @@
 </head>
 
 <body>
+  {{> home}}
+</body>
+
+<template name="home">
   <div class="container text-center">
-    <h1>Sound-Duel</h1>
+    <h1>{{ app }}</h1>
     <div class="hero-unit">
-      <p class="lead">To play now, click the button below!</p>
+      <p class="lead">{{ greeting }}</p>
       <div class="menu-button">
-        <a href="game.html" class="btn btn-block btn-lg btn-primary">Start new game</a>
+        <a href="game.html" id="startgame" class="btn btn-block btn-lg btn-primary">Start new game</a>
       </div>
     </div>
   </div>
-</body>
+</template>
