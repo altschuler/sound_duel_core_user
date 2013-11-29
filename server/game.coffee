@@ -3,11 +3,10 @@
 # Settings
 
 NUMBER_OF_QUESTION = 4
+START_POINTS = 1000
 
 # Methods
 Meteor.methods
-  'start_new_game': ->
-    #game_id = @Games.insert
   'keepalive': (player_id) ->
     #check player_id, String
     @Players.update(
@@ -15,7 +14,11 @@ Meteor.methods
       { $set: {
         last_keepalive: (new Date()).getTime(),
         idle: false } })
+  'start_new_game': ->
+    #game_id = @Games.insert
 
+
+# Update players to idle with keepalive
 Meteor.setInterval ->
   now = (new Date()).getTime()
   idle_threshold = now - 70*1000 # 70 sec

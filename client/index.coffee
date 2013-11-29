@@ -35,19 +35,6 @@ Template.lobby.disabled = ->
 Template.lobby.events
   'keyup input#myname': (evt) ->
     name = $('input#myname').val().replace /^\s+|\s+$/g, ""
-    Players.update(Session.get('player_id'), {$set: {name: name}})    
+    Players.update(Session.get('player_id'), {$set: {name: name}})
 #  'click input#startgame': ->
 #    Meteor.call 'start_new_game'
-
-
-# Initalize
-
-Meteor.startup ->
-  # Set player id to session
-  Session.set 'player_id', @Players.insert({ name: '', idle: false })
-
-  # Keep alive else idle
-  Meteor.setInterval ->
-    if Meteor.status().connected
-      Meteor.call('keepalive', Session.get('player_id'));
-  , 20*1000
