@@ -4,6 +4,7 @@ fs = Npm.require("fs")
 # Initialize
 
 AUDIO_DIR = '../client/app/audio/'
+SAMPLE_DATA = 'sample_data.json'
 
 Meteor.startup ->
   console.log "Refreshing db.."
@@ -20,8 +21,10 @@ Meteor.startup ->
     ~file.indexOf('.mp3')
   )
 
+  sample_questions = JSON.parse(Assets.getText SAMPLE_DATA)
+
   # Populate database
-  for sample in @SAMPLE_QUESTIONS
+  for sample in sample_questions
     #console.log sample.soundfile_prefix + ":"
 
     question_id = @Questions.insert(sample)
