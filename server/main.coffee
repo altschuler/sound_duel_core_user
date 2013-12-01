@@ -1,5 +1,4 @@
 fs = Npm.require("fs")
-# (if (typeof (Npm) is "undefined") then __meteor_bootstrap__.require("fs") else Npm.require("fs"))
 
 # Initialize
 
