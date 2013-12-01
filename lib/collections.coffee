@@ -52,23 +52,21 @@ Meteor.Collection.prototype.findOne = function(selector, options) {
 #       console.log @barkSound
 # )
 
-@Sounds    = new Meteor.Collection('sounds',
+@Sounds    = new Meteor.Collection 'sounds',
   defaults:
     random_segment: ->
       if not @segments?.length then return null
       @segments[Math.floor(Math.random() * @segments.length)]
-)
 
 @Players   = new Meteor.Collection 'players'
 
 @Games     = new Meteor.Collection 'games'
 
-@Questions = new Meteor.Collection('questions',
+@Questions = new Meteor.Collection 'questions'#,
   # defaults:
   #   random_elements: (number) ->
   #     count = @find().count()
   #     elements = []
-
   #     for x in [1..number]
   #       # find unique element
   #       while true
@@ -77,6 +75,4 @@ Meteor.Collection.prototype.findOne = function(selector, options) {
   #         if elements.indexOf(element) < 0
   #           elements.push element
   #           break
-
   #     elements
-)

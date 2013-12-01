@@ -5,7 +5,7 @@ fs = Npm.require("fs")
 AUDIO_DIR = '../client/app/audio/'
 SAMPLE_DATA = 'sample_data.json'
 
-Meteor.startup ->
+refresh_db = ->
   console.log "Refreshing db.."
 
   # Clear database
@@ -16,9 +16,8 @@ Meteor.startup ->
   @Sounds.remove({})
 
   # Get audiofiles from /public
-  audio_files = fs.readdirSync(AUDIO_DIR).filter( (file) ->
+  audio_files = fs.readdirSync(AUDIO_DIR).filter (file) ->
     ~file.indexOf('.mp3')
-  )
 
   sample_questions = JSON.parse(Assets.getText SAMPLE_DATA)
 
@@ -41,3 +40,6 @@ Meteor.startup ->
 
   console.log "#Questions: " + @Questions.find().count()
   console.log "#Sounds: " + audio_files.length
+
+Meteor.startup ->
+  refresh_db()
