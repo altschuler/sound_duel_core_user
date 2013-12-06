@@ -21,17 +21,9 @@ Meteor.methods
   start_new_game: ->
 
 
-# Update players to idle with keepalive
-Meteor.setInterval ->
-  now = (new Date()).getTime()
-  idle_threshold = now - 70*1000 # 70 sec
-  remove_threshold = now - 60*60*1000 # 1hr
+    player_id = Session.get 'player_id'
 
-  @Players.update(
-    { last_keepalive: { $lt: idle_threshold } },
-    { $set: { idle: true } })
+    Players.update({ _id: player_id },
+      { $set: { game_id: game_id } }
+    )
 
-  # TODO: need to deal with people coming back!
-  @Players.remove $lt: { last_keepalive: remove_threshold }
-
-, 30*1000
