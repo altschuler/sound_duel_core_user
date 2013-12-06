@@ -1,26 +1,45 @@
 <template name="lobby">
   <div class="container text-center">
     <h1>{{ app_name }}</h1>
-    
+
     <div class="hero-unit">
       <p class="lead">To play now, enter your name and click the button below!</p>
-      
-      <div class="input-append">
-        <input class="span2" id="myname" type="text" placeholder="your name">
-        <button id="startgame" class="btn btn-primary" type="button" {{disabled}}>Play!</button>
+
+      <div class="input col-md-3">
+        <div class="form-group">
+          <input id="myname" class="form-control" type="text" placeholder="Name">
+        </div>
+        <div class="form-group">
+          <button id="startgame" class="btn btn-primary" type="button" {{disabled}}>Play!</button>
+        </div>
       </div>
+
+      <!-- TODO: Doesn't append properly -->
+      <!-- <div class="form-group"> -->
+      <!--   <div class="input-append"> -->
+      <!--     <input id="myname" class="form-control" type="text" placeholder="Name"> -->
+      <!--     <span class="input-group-btn"> -->
+      <!--       <button id="startgame" class="btn btn-default btn-primary" type="button" {{disabled}}>Play!</button> -->
+      <!--     </span> -->
+      <!--   </div> -->
+      <!-- </div> -->
+
     </div>
-    
+
     {{> players}}
   </div>
 </template>
 
 <template name="players">
   <div class="players">
-    <h2>{{ player_count }} players in lobby:</h2>
-    
+    <h3>{{ player_count }} players in lobby:</h3>
+
     {{#each players}}
+    {{#if idle}}
+    <p class="span2" style="color:grey">{{name}}</p>
+    {{else}}
     <p class="span2">{{name}}</p>
+    {{/if}}
     {{/each}}
   </div>
 </template>
