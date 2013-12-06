@@ -1,1 +1,4 @@
-* Kicked when idle
+* DONE Kicked when idle too long
+  CLOSED: [2013-12-06 Fri 12:00]
+* TODO Not get the same questions each game
+* TODO Seconds per question depend on length of soundclip
