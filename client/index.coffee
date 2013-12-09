@@ -34,7 +34,10 @@ Template.lobby.disabled = ->
 
 Template.lobby.events
   'keyup input#myname': (evt) ->
+    # Get name and remove ws
     name = $('input#myname').val().replace /^\s+|\s+$/g, ""
-    Players.update(Session.get('player_id'), {$set: {name: name}})
+
+    @Players.update Session.get('player_id'), {$set: {name: name}}
+
 #  'click input#startgame': ->
 #    Meteor.call 'start_new_game'
