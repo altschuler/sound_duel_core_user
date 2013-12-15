@@ -4,6 +4,7 @@
 NUMBER_OF_QUESTIONS = 5
 TIME_PER_QUESTION   = 30
 START_POINTS        = 1000
+interval            = null
 
 # Methods
 Meteor.methods
@@ -39,20 +40,20 @@ Meteor.methods
     points_per_question = START_POINTS / NUMBER_OF_QUESTIONS
     points_per_second   = points_per_question / TIME_PER_QUESTION
 
-#    for question_number in [1..NUMBER_OF_QUESTIONS]
-#      clock = TIME_PER_QUESTION
+    clock = TIME_PER_QUESTION
+
+    unless interval then interval = Meteor.setInterval(-> console.log 'COMON', 1000)
+#      clock =- 1
+#      Games.update game_id,
+#        $set:
+#          current_points: clock * points_per_second
+#          clock: clock
 #
-#      # When question is answered, stop timer
-#      #Games.findOne(game_id).answered
+#      if clock is 0
+#        # Stop the clock
+#        Meteor.clearInterval interval
 #
-#      interval = Meteor.setInterval ->
-#        clock--
-#        Games.update({ _id: game_id },
-#          { $set: {
-#              current_question: question_number
-#              current_points: clock * points_per_second
-#              clock: clock
-#            }
-#          }
-#        )
-#      , 1000
+#        #game = Games.findOne(game_id)
+#        #question = Questions.findOne(game.question_ids[game.current_question])
+#
+#    , 1000)
