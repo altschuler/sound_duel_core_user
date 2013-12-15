@@ -3,8 +3,7 @@
 
 # Helpers
 
-Handlebars.registerHelper 'app_name', ->
-  "Sound-Duel"
+Handlebars.registerHelper 'app_name', -> "Målsuppe"
 
 current_player = -> @Players.findOne Session.get('player_id')
 Handlebars.registerHelper 'current_player', current_player
@@ -31,6 +30,13 @@ Template.players.players = ->
 
 Template.lobby.disabled = ->
   if current_player and current_player.name != '' then '' else 'disabled="disabled"'
+Template.players.waiting = ->
+  if player_count() == 0
+    "Ingen spillere der venter"
+  else if player_count() == 1
+    "1 spiller der venter:"
+  else
+    player_count() + " spillere der venter:"
 
 Template.lobby.events
   'keyup input#myname': (evt) ->
