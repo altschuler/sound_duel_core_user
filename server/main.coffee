@@ -1,8 +1,8 @@
 fs = Npm.require("fs")
 
 # Settings
-IDLE_TRESHOLD       = 70*1000 # X s * 1000 ms/s
-REMOVE_TRESHOLD     = 70*1000 # X s * 1000 ms/s
+IDLE_TRESHOLD       = 60*1000 # X s * 1000 ms/s
+REMOVE_TRESHOLD     = 5*60*1000 # X s * 1000 ms/s
 
 AUDIO_DIR = '../client/app/audio/'
 SAMPLE_DATA = 'sample_data.json'
@@ -35,7 +35,7 @@ refresh_db = ->
 
     sound_id = @Sounds.insert({segments: segments})
 
-    @Questions.update(question_id, {$set: {sounds: sound_id}})
+    @Questions.update(question_id, {$set: {sound_id: sound_id}})
 
     #console.log @Questions.findOne question_id
     #console.log @Sounds.findOne sound_id
@@ -51,7 +51,7 @@ Meteor.startup ->
 
 
 # Update players to idle with keepalive
-# and remove long tidling players
+# and remove long idling players
 Meteor.setInterval ->
   now = (new Date()).getTime()
   idle_threshold = now - IDLE_TRESHOLD
@@ -65,4 +65,4 @@ Meteor.setInterval ->
   # Remove idling players
   Players.remove $lt: { last_keepalive: remove_threshold }
 
-, 30*1000
+, IDLE_TRESHOLD
