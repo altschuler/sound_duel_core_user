@@ -85,14 +85,8 @@ Template.alternatives.alternatives = ->
 once = true
 Template.game.rendered = ->
   # only run once
-  console.log "REREND"
   if once then once = false else return
 
-  #answered = false
-  #for a in current_game().answers
-  #  answered = true if a.question_id is current_question()._id
-
-  #unless $('#audio')[0].paused
   $('#audio').bind 'timeupdate', ->
     value = 100 - (($('#audio')[0].currentTime * 100) / $('#audio')[0].duration)
     $('.bar').attr 'style', "width: " + value + "%"
@@ -119,14 +113,6 @@ Template.game.events
       Games.update current_game()._id,
         $set:
           finished: true
-      #points = 0
-      #correct = 0
-      #for a in current_game().answers
-      #  if a.answer is Questions.findOne(a.question_id).correct_answer
-      #    correct++
-      #    points += a.points
-      #
-      #console.log "FERDIG: ", points + 'p', correct + '/' + current_game().question_ids.length
     else
       setTimeout( ->
         $('#audio').attr 'src', random_segment()
