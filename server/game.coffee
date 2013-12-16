@@ -4,7 +4,6 @@
 NUMBER_OF_QUESTIONS = 5
 TIME_PER_QUESTION   = 30.0
 START_POINTS        = 1000
-interval            = null
 
 # Methods
 Meteor.methods
@@ -42,21 +41,21 @@ Meteor.methods
 
     clock = TIME_PER_QUESTION
 
-    interval = Meteor.setInterval( ->
-      clock--
-      Games.update game_id,
-        $set:
-          current_points: clock * points_per_second
-          clock: clock
-
-      game = Games.findOne(game_id)
-      question = Questions.findOne(game.question_ids[game.current_question])
-
-      if clock is 0 or question.answer
-        # Stop the clock
-        Meteor.clearInterval interval
-
-    , 1000)
+    #interval = Meteor.setInterval( ->
+    #  clock--
+    #  Games.update game_id,
+    #    $set:
+    #      current_points: clock * points_per_second
+    #      clock: clock
+    #
+    #  game = Games.findOne(game_id)
+    #  question = Questions.findOne(game.question_ids[game.current_question])
+    #
+    #  if clock is 0 or question.answer
+    #    # Stop the clock
+    #    Meteor.clearInterval interval
+    #
+    #, 1000)
 
     # Fixes overflow bug!
     # http://stackoverflow.com/questions/20598110/meteor-timers-raise-rangeerror-maximum-call-stack-size-exceeded#comment30821401_20598832

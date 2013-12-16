@@ -7,35 +7,43 @@
       </div>
 
       <div class="panel-body">
-        <div class="progress progress-striped active">
-          <div class="progress-bar" role="progressbar" aria-valuenow="{{progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{progress}}%;">
-            <span class="sr-only">{{current_points}}</span>
-          </div>
-        </div>
+        {{#constant}}
+        {{> progress}}
 
+        {{> audio}}
 
-        <audio controls="controls" autoplay="autoplay">
-          <source src="{{sound_segment}}" type="audio/mpeg" />
-            <!-- Backup -->
-            <embed height="50" width="100" src="{{sound_segment}}">
-        </audio>
+        <!-- <script> -->
+        <!--   $('#audio').on('timeupdate', function() { -->
+        <!--     $('#bar').attr("aria-valuenow", this.currentTime / this.duration); -->
+        <!--   }); -->
+        <!-- </script> -->
 
         <div class="row">
-          <div class="col-md-6">
-            <a href="#" class="btn btn-block btn-lg btn-primary">A</a>
-          </div>
-          <div class="col-md-6">
-            <a href="#" class="btn btn-block btn-lg btn-primary">B</a>
-          </div>
+          <a href="#" class="btn btn-block btn-lg btn-primary">A</a>
         </div>
         <div class="row">
-          <div class="col-md-6">
-            <a href="#" class="btn btn-block btn-lg btn-primary">C</a>
-          </div>
-          <div class="col-md-6">
-            <a href="#" class="btn btn-block btn-lg btn-primary">D</a>
-          </div>
+          <a href="#" class="btn btn-block btn-lg btn-primary">B</a>
         </div>
+        <div class="row">
+          <a href="#" class="btn btn-block btn-lg btn-primary">C</a>
+        </div>
+        <div class="row">
+          <a href="#" class="btn btn-block btn-lg btn-primary">D</a>
+        </div>
+        {{/constant}}
       </div>
     </div>
+  </div>
+</template>
+
+<template name="audio">
+  <audio id="audio" src="{{sound_segment}}"></audio>
+</template>
+
+<template name="progress">
+  <div class="progress progress-striped active">
+    <div id="bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;">
+      {{text}}
+    </div>
+  </div>
 </template>
