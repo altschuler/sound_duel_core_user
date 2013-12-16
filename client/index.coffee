@@ -40,11 +40,17 @@ Template.players.waiting = ->
   else
     player_count() + " spillere der venter:"
 
+Template.lobby.rendered = ->
+  $('#myname').focus()
+
 Template.lobby.events
   'keyup input#myname': (evt) ->
-    # Get name and remove ws
-    name = $('input#myname').val().replace /^\s+|\s+$/g, ""
-    @Players.update Session.get('player_id'), {$set: {name: name}}
+    if evt.keyCode is 13
+      Meteor.call 'start_new_game', current_player()._id
+    else
+      # Get name and remove ws
+      name = $('input#myname').val().replace /^\s+|\s+$/g, ""
+      @Players.update Session.get('player_id'), {$set: {name: name}}
 
   'click button#startgame': ->
     Meteor.call 'start_new_game', current_player()._id
