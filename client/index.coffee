@@ -46,7 +46,7 @@ Template.players.waiting = ->
     player_count() + " spillere der venter:"
 
 Template.lobby.rendered = ->
-  $('#myname').focus()
+  #$('#myname').focus()
 
 Template.lobby.events
   'keyup input#myname': (evt) ->
