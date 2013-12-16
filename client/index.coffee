@@ -131,3 +131,7 @@ Template.result.result = ->
       points += a.points
 
   { "points": points, "correct": correct + '/' + total }
+
+Template.result.events
+  'click a#restart': ->
+    Session.set('player_id', '')
