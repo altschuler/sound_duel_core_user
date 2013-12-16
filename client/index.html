@@ -17,8 +17,12 @@
   </div>
 
   {{#if current_game}}
-  {{> game}}
+    {{#if game_finished}}
+      {{> result}}
+    {{else}}
+      {{> game}}
+    {{/if}}
   {{else}}
-  {{> lobby}}
+    {{> lobby}}
   {{/if}}
 </body>

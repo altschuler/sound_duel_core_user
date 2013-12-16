@@ -14,6 +14,9 @@ current_game = ->
     @Games.findOne player.game_id
 Handlebars.registerHelper 'current_game', current_game
 
+Handlebars.registerHelper 'game_finished', ->
+  current_game().finished
+
 players = ->
   @Players.find({
     _id:     { $ne: Session.get('player_id') },
@@ -28,6 +31,8 @@ Handlebars.registerHelper 'player_count', player_count
 
 
 # Templates
+
+# Lobby
 
 Template.lobby.disabled = ->
   if current_player() and current_player().name == '' then 'disabled="disabled"'
@@ -59,17 +64,20 @@ Template.lobby.events
     , 1000)
 
 
-Template.game.current_question = ->
-  current_game().current_question + '/' + current_game().question_ids.length
+# Game
 
 current_question = ->
-  @Questions.findOne current_game().question_ids[current_game().current_question]
-Template.game.question = current_question
+  unless current_game().current_question >= current_game().question_ids.length
+    @Questions.findOne current_game().question_ids[current_game().current_question]
 
-Template.audio.sound_segment = ->
+Template.game.current_question = ->
+  (current_game().current_question+1) + '/' + current_game().question_ids.length
+
+random_segment = ->
   sound = @Sounds.findOne current_question().sound_id
   ran = Math.floor(Math.random() * sound.segments.length)
   "audio/" + sound.segments[ran]
+Template.audio.sound_segment = random_segment
 
 Template.alternatives.alternatives = ->
   current_question().alternatives
@@ -77,12 +85,8 @@ Template.alternatives.alternatives = ->
 once = true
 Template.game.rendered = ->
   # only run once
+  console.log "REREND"
   if once then once = false else return
-
-  #if $('.bar').css('visibility','hidden').is(':hidden')
-  #  $('#play').show()
-  #else
-  #  $('#play').hide()
 
   #answered = false
   #for a in current_game().answers
@@ -93,11 +97,6 @@ Template.game.rendered = ->
     value = 100 - (($('#audio')[0].currentTime * 100) / $('#audio')[0].duration)
     $('.bar').attr 'style', "width: " + value + "%"
     $('.bar').text Math.floor (current_game().points_per_question * value) / 100
-
-  $('#play').bind 'click', (event) ->
-    $('#audio')[0].play()
-    $('.progress').show()
-    $(event.target).hide()
 
 Template.game.events
   'click a.alternative': (event) ->
@@ -113,7 +112,36 @@ Template.game.events
           answer: answer
           points: points
         }
+      $inc:
+        current_question: 1
+
+    unless current_question()
+      Games.update current_game()._id,
+        $set:
+          finished: true
+      #points = 0
+      #correct = 0
+      #for a in current_game().answers
+      #  if a.answer is Questions.findOne(a.question_id).correct_answer
+      #    correct++
+      #    points += a.points
+      #
+      #console.log "FERDIG: ", points + 'p', correct + '/' + current_game().question_ids.length
+    else
+      setTimeout( ->
+        $('#audio').attr 'src', random_segment()
+        $('#audio')[0].load()
+        $('#audio')[0].play()
+      , 1000)
 
 
-    console.log current_question().correct_answer == answer, points
-    console.log current_game().answers
+Template.result.result = ->
+  points = 0
+  correct = 0
+  total = current_game().question_ids.length
+  for a in current_game().answers
+    if a.answer is Questions.findOne(a.question_id).correct_answer
+      correct++
+      points += a.points
+
+  { "points": points, "correct": correct + '/' + total }

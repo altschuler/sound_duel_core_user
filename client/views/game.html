@@ -3,7 +3,6 @@
     <h3>{{current_question}}</h3>
 
     {{> progress}}
-    {{> play}}
     {{> audio}}
 
     {{> alternatives}}
@@ -18,12 +17,6 @@
     </div>
   </div>
   {{/constant}}
-</template>
-
-<template name="play">
-  <div class="row">
-    <input type="button" class="btn btn-block btn-success" value="Play" id="play" />
-  </div>
 </template>
 
 <template name="audio">

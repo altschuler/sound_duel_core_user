@@ -29,7 +29,7 @@ Meteor.methods
     game_id = Games.insert
       points_per_question: START_POINTS
       question_ids: questions.map (q) -> q._id
-      current_question: 1
+      current_question: 0
       answers: []
 
     Players.update player_id,
