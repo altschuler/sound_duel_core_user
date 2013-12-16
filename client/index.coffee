@@ -5,7 +5,14 @@
 
 Handlebars.registerHelper 'app_name', -> "Målsuppe"
 
-current_player = -> @Players.findOne Session.get('player_id')
+current_player = ->
+  unless Session.get 'player_id'
+    # Set player id to session
+    player_id = @Players.insert { name: '', idle: false }
+    Session.set 'player_id', player_id
+
+  @Players.findOne Session.get 'player_id'
+
 Handlebars.registerHelper 'current_player', current_player
 
 current_game = ->
@@ -35,7 +42,7 @@ Handlebars.registerHelper 'player_count', player_count
 # Lobby
 
 Template.lobby.disabled = ->
-  if current_player() and current_player().name == '' then 'disabled="disabled"'
+  if current_player() and current_player().name is '' then 'disabled="disabled"'
 
 Template.players.waiting = ->
   if player_count() == 0
@@ -135,3 +142,4 @@ Template.result.result = ->
 Template.result.events
   'click a#restart': ->
     Session.set('player_id', '')
+    location.reload()
