@@ -1,49 +1,38 @@
 <template name="game">
   <div class="container">
-    <div class="game-content panel panel-primary">
-      <div class="panel-heading">
-        <h3 class="panel-title">{{current_question}}</h3>
-        <!-- <p class="text-right">{{current_points}}</p> -->
-      </div>
+    <h3>{{current_question}}</h3>
 
-      <div class="panel-body">
-        {{#constant}}
-        {{> progress}}
+    {{> audio}}
 
-        {{> audio}}
-
-        <!-- <script> -->
-        <!--   $('#audio').on('timeupdate', function() { -->
-        <!--     $('#bar').attr("aria-valuenow", this.currentTime / this.duration); -->
-        <!--   }); -->
-        <!-- </script> -->
-
-        <div class="row">
-          <a href="#" class="btn btn-block btn-lg btn-primary">A</a>
-        </div>
-        <div class="row">
-          <a href="#" class="btn btn-block btn-lg btn-primary">B</a>
-        </div>
-        <div class="row">
-          <a href="#" class="btn btn-block btn-lg btn-primary">C</a>
-        </div>
-        <div class="row">
-          <a href="#" class="btn btn-block btn-lg btn-primary">D</a>
-        </div>
-        {{/constant}}
-      </div>
+    <div class="row">
+      <a href="#" class="btn btn-block btn-lg btn-primary">A</a>
     </div>
+    <div class="row">
+      <a href="#" class="btn btn-block btn-lg btn-primary">B</a>
+    </div>
+    <div class="row">
+      <a href="#" class="btn btn-block btn-lg btn-primary">C</a>
+    </div>
+    <div class="row">
+      <a href="#" class="btn btn-block btn-lg btn-primary">D</a>
+    </div>
+
   </div>
 </template>
 
 <template name="audio">
-  <audio id="audio" src="{{sound_segment}}"></audio>
-</template>
+  {{#constant}}
 
-<template name="progress">
   <div class="progress progress-striped active">
-    <div id="bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;">
-      {{text}}
+    <div class="bar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;">
     </div>
   </div>
+
+  <div class="row">
+    <input type="button" class="btn btn-block btn-success" value="Play" id="play" />
+  </div>
+
+  <audio id="audio" src="{{sound_segment}}"></audio>
+
+  {{/constant}}
 </template>

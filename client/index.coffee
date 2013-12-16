@@ -65,37 +65,19 @@ Template.audio.sound_segment = ->
   ran = Math.floor(Math.random() * sound.segments.length)
   "audio/" + sound.segments[ran]
 
-Template.progress.width = ->
-  #audio = $("#audio")[0]
-  ##console.log audio.duration # duration, in seconds
-  #
-  #start_points = current_game().current_points
-  #points_per_second = start_points / audio.duration
-  #
-  #clock = parseInt audio.duration, 10
-  #
-  #progress = Meteor.setInterval(->
-  #  $bar = $(".bar")
-  #
-  #  if $bar.width() <= 0
-  #    Meteor.clearInterval progress
-  #    $(".progress").removeClass "active"
-  #  else
-  #    $bar.width (clock * 100) / audio.duration
-  #
-  #  $bar.text clock * points_per_second
-  #, 10)
-
-  #current_game().clock
-
-Template.progress.text = ->
-  Math.floor current_game().current_points
-
 Template.audio.rendered = ->
-  $audio = $('#audio')[0]
-  $audio.play()
-  interval = setInterval( ->
-    value = $audio.currentTime / $audio.duration
-    $('#bar').attr 'aria-valuenow', value
-    $('#bar').attr 'style', "width: " + value + "%"
-  , 1)
+  $audio = $('#audio')
+  audio = $audio[0]
+
+  $audio.bind 'timeupdate', ->
+    value = 100 - ((audio.currentTime * 100) / audio.duration)
+    $('.bar').attr 'aria-valuenow', value
+    $('.bar').attr 'style', "width: " + value + "%"
+    $('.bar').text Math.floor (current_game().current_points * value) / 100
+
+  #if audio.currentTime is 0 then audio.play()
+
+  $('#play').bind 'click', (event) ->
+    $('#audio')[0].play()
+    $('.progress').show()
+    $(event.target).hide()
