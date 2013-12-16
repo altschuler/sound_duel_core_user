@@ -3,21 +3,9 @@
     <h3>{{current_question}}</h3>
 
     {{> progress}}
-    {{> play}}
     {{> audio}}
 
-    <div class="row">
-      <a href="#" class="btn btn-block btn-lg btn-primary">A</a>
-    </div>
-    <div class="row">
-      <a href="#" class="btn btn-block btn-lg btn-primary">B</a>
-    </div>
-    <div class="row">
-      <a href="#" class="btn btn-block btn-lg btn-primary">C</a>
-    </div>
-    <div class="row">
-      <a href="#" class="btn btn-block btn-lg btn-primary">D</a>
-    </div>
+    {{> alternatives}}
 
   </div>
 </template>
@@ -31,14 +19,16 @@
   {{/constant}}
 </template>
 
-<template name="play">
-  <div class="row">
-    <input type="button" class="btn btn-block btn-success" value="Play" id="play" />
-  </div>
-</template>
-
 <template name="audio">
   {{#constant}}
   <audio id="audio" src="{{sound_segment}}"></audio>
   {{/constant}}
+</template>
+
+<template name="alternatives">
+  {{#each alternatives}}
+  <div class="row">
+    <a class="alternative btn btn-block btn-lg btn-primary">{{name}}) {{text}}</a>
+  </div>
+  {{/each}}
 </template>
