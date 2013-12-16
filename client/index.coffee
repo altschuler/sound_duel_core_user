@@ -59,9 +59,6 @@ Template.lobby.events
 Template.game.current_question = ->
   current_game().current_question + '/' + current_game().question_ids.length
 
-Template.game.current_points = ->
-  Math.floor current_game().current_points
-
 current_question = ->
   @Questions.findOne current_game().question_ids[current_game().current_question]
 Template.game.question = current_question
@@ -71,15 +68,19 @@ Template.audio.sound_segment = ->
   ran = Math.floor(Math.random() * sound.segments.length)
   "audio/" + sound.segments[ran]
 
-Template.audio.rendered = ->
+Template.game.rendered = ->
   $audio = $('#audio')
   audio = $audio[0]
 
+  if $('.bar').css('visibility','hidden').is(':hidden')
+    $('#play').show()
+  else
+    $('#play').hide()
+
   $audio.bind 'timeupdate', ->
     value = 100 - ((audio.currentTime * 100) / audio.duration)
-    $('.bar').attr 'aria-valuenow', value
     $('.bar').attr 'style', "width: " + value + "%"
-    $('.bar').text Math.floor (current_game().current_points * value) / 100
+    $('.bar').text Math.floor (current_game().points_per_question * value) / 100
 
   #if audio.currentTime is 0 then audio.play()
 

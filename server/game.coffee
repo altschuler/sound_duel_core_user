@@ -27,7 +27,7 @@ Meteor.methods
     questions = Questions.find({}, {limit: 5}).fetch()
 
     game_id = Games.insert
-      current_points: START_POINTS
+      points_per_question: START_POINTS
       current_question: 1
       question_ids: questions.map (q) -> q._id
       time_per_question: TIME_PER_QUESTION
@@ -36,10 +36,10 @@ Meteor.methods
       { $set: { game_id: game_id } }
     )
 
-    points_per_question = START_POINTS / NUMBER_OF_QUESTIONS
-    points_per_second   = points_per_question / TIME_PER_QUESTION
+    #points_per_question = START_POINTS / NUMBER_OF_QUESTIONS
+    #points_per_second   = points_per_question / TIME_PER_QUESTION
 
-    clock = TIME_PER_QUESTION
+    #clock = TIME_PER_QUESTION
 
     #interval = Meteor.setInterval( ->
     #  clock--
@@ -60,4 +60,4 @@ Meteor.methods
     # Fixes overflow bug!
     # http://stackoverflow.com/questions/20598110/meteor-timers-raise-rangeerror-maximum-call-stack-size-exceeded#comment30821401_20598832
     # Thanks, David Weldon
-    "stackfuckoverflow"
+    "dont panic"
