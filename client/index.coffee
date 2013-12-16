@@ -3,7 +3,7 @@
 
 # Helpers
 
-Handlebars.registerHelper 'app_name', -> "Målsuppe"
+Handlebars.registerHelper 'app_name', -> "MÃ¥lsuppe"
 
 current_player = -> @Players.findOne Session.get('player_id')
 Handlebars.registerHelper 'current_player', current_player
