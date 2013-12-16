@@ -46,7 +46,7 @@ Template.lobby.rendered = ->
 Template.lobby.events
   'keyup input#myname': (evt) ->
     if evt.keyCode is 13
-      Meteor.call 'start_new_game', current_player()._id
+      $('#startgame').click()
     else
       # Get name and remove ws
       name = $('input#myname').val().replace /^\s+|\s+$/g, ""
@@ -54,6 +54,9 @@ Template.lobby.events
 
   'click button#startgame': ->
     Meteor.call 'start_new_game', current_player()._id
+    setTimeout( ->
+      $('#audio').get(0).play()
+    , 1000)
 
 
 Template.game.current_question = ->
@@ -68,23 +71,49 @@ Template.audio.sound_segment = ->
   ran = Math.floor(Math.random() * sound.segments.length)
   "audio/" + sound.segments[ran]
 
+Template.alternatives.alternatives = ->
+  current_question().alternatives
+
+once = true
 Template.game.rendered = ->
-  $audio = $('#audio')
-  audio = $audio[0]
+  # only run once
+  if once then once = false else return
 
-  if $('.bar').css('visibility','hidden').is(':hidden')
-    $('#play').show()
-  else
-    $('#play').hide()
+  #if $('.bar').css('visibility','hidden').is(':hidden')
+  #  $('#play').show()
+  #else
+  #  $('#play').hide()
 
-  $audio.bind 'timeupdate', ->
-    value = 100 - ((audio.currentTime * 100) / audio.duration)
+  #answered = false
+  #for a in current_game().answers
+  #  answered = true if a.question_id is current_question()._id
+
+  #unless $('#audio')[0].paused
+  $('#audio').bind 'timeupdate', ->
+    value = 100 - (($('#audio')[0].currentTime * 100) / $('#audio')[0].duration)
     $('.bar').attr 'style', "width: " + value + "%"
     $('.bar').text Math.floor (current_game().points_per_question * value) / 100
-
-  #if audio.currentTime is 0 then audio.play()
 
   $('#play').bind 'click', (event) ->
     $('#audio')[0].play()
     $('.progress').show()
     $(event.target).hide()
+
+Template.game.events
+  'click a.alternative': (event) ->
+    $('#audio')[0].pause()
+
+    points = parseInt($('.bar').text(), 10)
+    answer = event.target.text[0]
+
+    Games.update current_game()._id,
+      $addToSet:
+        answers: {
+          question_id: current_question()._id
+          answer: answer
+          points: points
+        }
+
+
+    console.log current_question().correct_answer == answer, points
+    console.log current_game().answers
