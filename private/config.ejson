@@ -1,0 +1,11 @@
+{
+    "AUDIO_DIR":   "../client/app/audio/"
+  , "SAMPLE_DATA": "sample_data.json"
+
+  , "IDLE_TRESHOLD":   60000
+  , "REMOVE_TRESHOLD": 300000
+
+  , "NUMBER_OF_QUESTIONS": 5
+  , "TIME_PER_QUESTION":   30.0
+  , "START_POINTS":        1000
+}

@@ -1,9 +1,5 @@
-# Server side - game logic
-
-# Settings
-NUMBER_OF_QUESTIONS = 5
-TIME_PER_QUESTION   = 30.0
-START_POINTS        = 1000
+# server-side
+# game logic
 
 # Methods
 Meteor.methods
@@ -27,7 +23,7 @@ Meteor.methods
     questions = Questions.find({}, {limit: 5}).fetch()
 
     game_id = Games.insert
-      points_per_question: START_POINTS
+      points_per_question: CONFIG.START_POINTS
       question_ids: questions.map (q) -> q._id
       current_question: 0
       answers: []
