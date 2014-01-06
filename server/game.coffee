@@ -9,8 +9,8 @@ Meteor.methods
 
     Players.update({ _id: player_id },
       { $set: {
-          last_keepalive: (new Date()).getTime()
-          idle: false
+        last_keepalive: (new Date()).getTime()
+        idle: false
         }
       }
     )

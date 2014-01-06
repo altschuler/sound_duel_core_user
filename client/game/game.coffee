@@ -4,10 +4,14 @@
 
 current_question = ->
   unless current_game().current_question >= current_game().question_ids.length
-    @Questions.findOne current_game().question_ids[current_game().current_question]
+    question = current_game().question_ids[current_game().current_question]
+    @Questions.findOne question
 
 Template.game.current_question = ->
-  (current_game().current_question+1) + '/' + current_game().question_ids.length
+  current_question = (current_game().current_question + 1)
+  total_questions = current_game().question_ids.length
+
+  current_question + '/' + total_questions
 
 random_segment = ->
   sound = @Sounds.findOne current_question().sound_id
