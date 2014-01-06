@@ -1,3 +1,6 @@
+# client-side
+# main
+
 # Initialize
 
 Meteor.startup ->

@@ -3,18 +3,21 @@
 
 fs = Npm.require("fs")
 
+
 # Settings
 @CONFIG = EJSON.parse(Assets.getText "config.ejson")
 
+
+# Methods
 refresh_db = ->
   console.log "Refreshing db.."
 
   # Clear database
   # TODO: Only for development
-  @Players.remove({})
-  @Games.remove({})
-  @Questions.remove({})
-  @Sounds.remove({})
+  Players.remove({})
+  Games.remove({})
+  Questions.remove({})
+  Sounds.remove({})
 
   # Get audiofiles from /public
   audio_files = fs.readdirSync(CONFIG.AUDIO_DIR).filter (file) ->
@@ -26,20 +29,20 @@ refresh_db = ->
   for sample in sample_questions
     #console.log sample.soundfile_prefix + ":"
 
-    question_id = @Questions.insert(sample)
+    question_id = Questions.insert(sample)
 
     segments = audio_files.filter (file) ->
       ~file.indexOf(sample.soundfile_prefix)
 
-    sound_id = @Sounds.insert({segments: segments})
+    sound_id = Sounds.insert({segments: segments})
 
-    @Questions.update(question_id, {$set: {sound_id: sound_id}})
+    Questions.update(question_id, {$set: {sound_id: sound_id}})
 
-    #console.log @Questions.findOne question_id
-    #console.log @Sounds.findOne sound_id
+    #console.log Questions.findOne question_id
+    #console.log Sounds.findOne sound_id
 
 
-  console.log "#Questions: " + @Questions.find().count()
+  console.log "#Questions: " + Questions.find().count()
   console.log "#Sounds: " + audio_files.length
 
 
