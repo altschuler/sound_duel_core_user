@@ -1,31 +1,30 @@
-# server-side
-# main
+# server/main.coffee
 
 fs = Npm.require("fs")
 
 
-# Settings
+# config
 @CONFIG = EJSON.parse(Assets.getText "config.ejson")
 
 
-# Methods
+# methods
 refresh_db = ->
   console.log "Refreshing db.."
 
-  # Clear database
-  # TODO: Only for development
+  # clear database
+  # TODO: only for development
   Players.remove({})
   Games.remove({})
   Questions.remove({})
   Sounds.remove({})
 
-  # Get audiofiles from /public
+  # get audiofiles from /public
   audio_files = fs.readdirSync(CONFIG.AUDIO_DIR).filter (file) ->
     ~file.indexOf('.mp3')
 
   sample_questions = JSON.parse(Assets.getText CONFIG.SAMPLE_DATA)
 
-  # Populate database
+  # populate database
   for sample in sample_questions
     #console.log sample.soundfile_prefix + ":"
 
@@ -46,24 +45,24 @@ refresh_db = ->
   console.log "#Sounds: " + audio_files.length
 
 
-# Initialize
+# initialize
 Meteor.startup ->
   refresh_db()
 
 
-# Update players to idle with keepalive
+# update players to idle with keepalive
 # and remove long idling players
 Meteor.setInterval ->
   now = (new Date()).getTime()
   idle_threshold = now - CONFIG.IDLE_TRESHOLD
   remove_threshold = now - CONFIG.REMOVE_TRESHOLD
 
-  # Set players to idle
+  # set players to idle
   Players.update(
     { last_keepalive: { $lt: idle_threshold } },
     { $set: { idle: true } })
 
-  # Remove idling players
+  # remove idling players
   Players.remove $lt: { last_keepalive: remove_threshold }
 
 , CONFIG.IDLE_TRESHOLD

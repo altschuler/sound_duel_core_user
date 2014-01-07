@@ -1,4 +1,6 @@
-# Helpers
+# client/index.coffee
+
+# helpers
 
 @current_player = ->
   unless Session.get 'player_id'

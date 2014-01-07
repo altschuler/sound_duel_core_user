@@ -1,6 +1,4 @@
-# Game
-
-# Templates
+# client/game/game.coffee
 
 current_question = ->
   unless current_game().current_question >= current_game().question_ids.length
@@ -24,8 +22,7 @@ Template.alternatives.alternatives = ->
 
 once = true
 Template.game.rendered = ->
-  # only run once
-  if once then once = false else return
+  if once then once = false else return # only run once
 
   $('#audio').bind 'timeupdate', ->
     value = 100 - (($('#audio')[0].currentTime * 100) / $('#audio')[0].duration)

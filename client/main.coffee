@@ -1,10 +1,9 @@
-# client-side
-# main
+# client/main.coffee
 
-# Initialize
+# initialize
 
 Meteor.startup ->
-  # Keep alive else idle
+  # keep alive else idle
   Meteor.setInterval ->
     if Meteor.status().connected
       Meteor.call 'keepalive', Session.get('player_id')

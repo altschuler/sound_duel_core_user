@@ -1,6 +1,4 @@
-# Lobby
-
-# Templates
+# client/lobby/lobby.coffee
 
 Template.lobby.disabled = ->
   if current_player() and current_player().name is '' then 'disabled="disabled"'
@@ -14,14 +12,14 @@ Template.players.waiting = ->
     player_count() + " spillere der venter:"
 
 Template.lobby.rendered = ->
-  #$('#myname').focus()
+  #$('#myname').focus() # TODO: Fix
 
 Template.lobby.events
   'keyup input#myname': (evt) ->
     if evt.keyCode is 13
       $('#startgame').click()
     else
-      # Get name and remove ws
+      # get name and remove ws
       name = $('input#myname').val().replace /^\s+|\s+$/g, ""
       @Players.update Session.get('player_id'), {$set: {name: name}}
 

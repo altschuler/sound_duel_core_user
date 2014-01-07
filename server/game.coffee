@@ -1,7 +1,7 @@
-# server-side
-# game logic
+# server/game.coffee
 
-# Methods
+# methods
+
 Meteor.methods
   keepalive: (player_id) ->
     # check player_id
@@ -19,7 +19,7 @@ Meteor.methods
     # check player_id
     return unless player_id
 
-    # TODO: Avoid getting the same questions
+    # TODO: avoid getting the same questions
     questions = Questions.find({}, {limit: 5}).fetch()
 
     game_id = Games.insert

@@ -1,8 +1,7 @@
-# Model
-#
+# lib/collections.coffee
 
-# Extend Meteor#Collection to support methods
-# Embedded JavaScript:
+# extend Meteor#Collection to support methods
+# embedded JavaScript:
 `
 Meteor.Kollection = Meteor.Collection;
 Meteor.Kollection.extend = function(constructor) {
@@ -42,7 +41,7 @@ Meteor.Collection.prototype.findOne = function(selector, options) {
 };
 `
 
-# Collections
+# collections
 
 # Example:
 # @Dogs = new Meteor.Collection("dogs",
@@ -71,7 +70,8 @@ Meteor.Collection.prototype.findOne = function(selector, options) {
   #       # find unique element
   #       while true
   #         rand = Math.floor(Math.random * count)
-  #         element = @find({limit: -1}).skip(rand).next() # TODO: Doens't work
+  #         # TODO: following statement only works in mongo, not meteor
+  #         element = @find({limit: -1}).skip(rand).next()
   #         if elements.indexOf(element) < 0
   #           elements.push element
   #           break
