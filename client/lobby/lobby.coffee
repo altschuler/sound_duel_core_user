@@ -4,12 +4,14 @@ Template.lobby.disabled = ->
   if current_player() and current_player().name is '' then 'disabled="disabled"'
 
 Template.players.waiting = ->
-  if player_count() == 0
+  count = online_players().length
+
+  if count == 0
     "Ingen spillere der venter"
-  else if player_count() == 1
+  else if count == 1
     "1 spiller der venter:"
   else
-    player_count() + " spillere der venter:"
+    count + " spillere der venter:"
 
 Template.lobby.rendered = ->
   #$('#myname').focus() # TODO: Fix
@@ -21,7 +23,9 @@ Template.lobby.events
     else
       # get name and remove ws
       name = $('input#myname').val().replace /^\s+|\s+$/g, ""
-      @Players.update Session.get('player_id'), {$set: {name: name}}
+      @Players.update Session.get('player_id'), { $set: { name: name } }
+
+    console.log current_player()
 
   'click button#startgame': ->
     Meteor.call 'start_new_game', current_player()._id
