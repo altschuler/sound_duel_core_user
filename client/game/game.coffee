@@ -1,21 +1,13 @@
 # client/game/game.coffee
 
-current_question = ->
-  unless current_game().current_question >= current_game().question_ids.length
-    question = current_game().question_ids[current_game().current_question]
-    @Questions.findOne question
-
 Template.game.current_question = ->
   current_question = (current_game().current_question + 1)
   total_questions = current_game().question_ids.length
 
   current_question + '/' + total_questions
 
-random_segment = ->
-  sound = @Sounds.findOne current_question().sound_id
-  ran = Math.floor(Math.random() * sound.segments.length)
-  "audio/" + sound.segments[ran]
-Template.audio.sound_segment = random_segment
+Template.audio.sound_segment = ->
+  random_segment()
 
 Template.alternatives.alternatives = ->
   current_question().alternatives
