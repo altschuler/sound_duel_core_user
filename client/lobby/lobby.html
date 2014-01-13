@@ -8,7 +8,7 @@
       <div class="input-append">
         <input id="myname" class="form-control input-medium" type="text" placeholder="Navn">
         <span class="input-group-btn">
-          <button id="startgame" class="btn btn-default btn-primary" type="button" {{disabled}}>Play!</button>
+          <button id="new_game" class="btn btn-default btn-primary" type="button" {{disabled}}>Spil!</button>
         </span>
       </div>
     </div>
@@ -21,12 +21,8 @@
   <div class="players">
     <h3>{{ waiting }}</h3>
 
-    {{#each players}}
-    {{#if idle}}
-    <p class="span2" style="color:grey">{{name}}</p>
-    {{else}}
-    <p class="span2">{{name}}</p>
-    {{/if}}
+    {{#each online_players}}
+    <p class="span2" {{idle this}}>{{name}}</p>
     {{/each}}
   </div>
 </template>

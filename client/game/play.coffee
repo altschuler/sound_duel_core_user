@@ -1,6 +1,6 @@
-# client/game/game.coffee
+# client/game/play.coffee
 
-Template.game.current_question = ->
+Template.play.current_question = ->
   current_question = (current_game().current_question + 1)
   total_questions = current_game().question_ids.length
 
@@ -13,7 +13,7 @@ Template.alternatives.alternatives = ->
   current_question().alternatives
 
 once = true
-Template.game.rendered = ->
+Template.play.rendered = ->
   if once then once = false else return # only run once
 
   $('#audio').bind 'timeupdate', ->
@@ -21,7 +21,7 @@ Template.game.rendered = ->
     $('.bar').attr 'style', "width: " + value + "%"
     $('.bar').text Math.floor (current_game().points_per_question * value) / 100
 
-Template.game.events
+Template.play.events
   'click a.alternative': (event) ->
     $('#audio')[0].pause()
 
@@ -42,9 +42,11 @@ Template.game.events
       Games.update current_game()._id,
         $set:
           finished: true
+
+      Meteor.Router.to "/games/#{current_game()._id}/result"
     else
-      setTimeout( ->
+      setTimeout ->
         $('#audio').attr 'src', random_segment()
         $('#audio')[0].load()
         $('#audio')[0].play()
-      , 1000)
+      , 1000

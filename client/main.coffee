@@ -3,6 +3,8 @@
 # initialize
 
 Meteor.startup ->
+  console.log 'Started at: ' + location.href
+
   # keep alive else idle
   Meteor.setInterval ->
     if Meteor.status().connected

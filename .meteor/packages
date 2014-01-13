@@ -11,3 +11,4 @@ coffeescript
 less
 bootstrap
 #i18next-meteor
+router

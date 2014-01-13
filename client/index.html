@@ -21,16 +21,9 @@
 
 <body>
   <div class="dr-logo">
-    <img src="images/dr-logo.svg" />
+    <a href="{{lobbyPath}}"><img src="/images/dr-logo.svg" /></a>
   </div>
 
-  {{#if current_game}}
-    {{#if game_finished}}
-      {{> result}}
-    {{else}}
-      {{> game}}
-    {{/if}}
-  {{else}}
-    {{> lobby}}
-  {{/if}}
+  {{renderPage}}
+
 </body>

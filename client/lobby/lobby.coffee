@@ -1,34 +1,49 @@
 # client/lobby/lobby.coffee
 
+# helpers
+
 Template.lobby.disabled = ->
   if current_player() and current_player().name is '' then 'disabled="disabled"'
 
-Template.players.waiting = ->
-  count = online_players().length
+Template.players.helpers
+  waiting: ->
+    count = player_count()
+    if count == 0
+      "Ingen spillere der venter"
+    else if count == 1
+      "1 spiller der venter:"
+    else
+      count + " spillere der venter:"
 
-  if count == 0
-    "Ingen spillere der venter"
-  else if count == 1
-    "1 spiller der venter:"
-  else
-    count + " spillere der venter:"
+Handlebars.registerHelper 'idle', (player) ->
+  if player.idle then "style=color:grey"
+
+
+# rendered
 
 Template.lobby.rendered = ->
   #$('#myname').focus() # TODO: Fix
 
+
+# events
+
 Template.lobby.events
-  'keyup input#myname': (evt) ->
-    if evt.keyCode is 13
-      $('#startgame').click()
+  'keyup input#myname': (event, template) ->
+    event.preventDefault()
+
+    if event.keyCode is 13
+      $('#new_game').click()
     else
       # get name and remove ws
-      name = $('input#myname').val().replace /^\s+|\s+$/g, ""
-      @Players.update Session.get('player_id'), { $set: { name: name } }
+      name = template.find('input#myname').value.replace /^\s+|\s+$/g, ""
+      Players.update Session.get('player_id'), { $set: { name: name } }
 
-    console.log current_player()
+  'click button#new_game': (event, template) ->
+    event.preventDefault()
 
-  'click button#startgame': ->
-    Meteor.call 'start_new_game', current_player()._id
-    setTimeout( ->
+    Meteor.call 'new_game', current_player()._id, (error, result) ->
+      Meteor.Router.to "/games/#{current_player().game_id}/play"
+
+    setTimeout ->
       $('#audio').get(0).play()
-    , 1000)
+    , 1000
