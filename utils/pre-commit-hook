@@ -1,8 +1,9 @@
 #!/bin/sh
-# .git/hooks/pre-commit
+# utils/pre-commit-hook
 
-# redirect output to stderr.
+# redirect output to stderr
 exec 1>&2
 
 # lint work tree
-coffeelint -q ../../
+cd ../../ # makes output prettier
+coffeelint -q .
