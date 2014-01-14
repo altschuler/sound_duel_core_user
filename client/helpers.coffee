@@ -8,9 +8,9 @@
     question_id = current_game().question_ids[current_game().current_question]
     Questions.findOne question_id
 
-@random_segment = ->
-  sound = Sounds.findOne current_question().sound_id
-  "/audio/" + sound.random_segment()
+#@random_segment = ->
+#  sound = Sounds.findOne current_question().sound_id
+#  "/audio/" + sound.random_segment()
 
 @current_player = ->
   # lazy init player

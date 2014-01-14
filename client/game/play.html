@@ -21,7 +21,9 @@
 
 <template name="audio">
   {{#constant}}
-  <audio id="audio" src="{{sound_segment}}"></audio>
+  {{#each segments}}
+  <audio id={{index}} src={{path}}></audio>
+  {{/each}}
   {{/constant}}
 </template>
 

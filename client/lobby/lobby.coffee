@@ -45,5 +45,5 @@ Template.lobby.events
       Meteor.Router.to "/games/#{current_player().game_id}/play"
 
     setTimeout ->
-      $('#audio').get(0).play()
+      $('audio#0').get(0).play()
     , 1000

@@ -7,7 +7,7 @@ Meteor.methods
     # check player_id
     return unless player_id
 
-    Players.update { _id: player_id },
+    Players.update player_id,
       $set:
         last_keepalive: (new Date()).getTime()
         idle: false
