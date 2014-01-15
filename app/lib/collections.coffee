@@ -1,4 +1,4 @@
-# lib/collections.coffee
+# app/lib/collections.coffee
 
 # extend Meteor#Collection to support methods
 # embedded JavaScript:

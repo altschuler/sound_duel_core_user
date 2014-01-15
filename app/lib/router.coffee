@@ -1,4 +1,4 @@
-# lib/router.coffee
+# app/lib/router.coffee
 
 # client
 

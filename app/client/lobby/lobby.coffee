@@ -1,4 +1,4 @@
-# client/lobby/lobby.coffee
+# app/client/lobby/lobby.coffee
 
 # helpers
 

@@ -1,6 +1,6 @@
-# server/main.coffee
+# app/server/main.coffee
 
-fs = Npm.require("fs")
+fs = Npm.require 'fs'
 
 
 # config

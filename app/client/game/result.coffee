@@ -1,4 +1,4 @@
-# client/game/result.coffee
+# app/client/game/result.coffee
 
 # helpers
 

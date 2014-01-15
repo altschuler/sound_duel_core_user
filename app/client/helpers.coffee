@@ -1,4 +1,4 @@
-# client/helpers.coffee
+# app/client/helpers.coffee
 
 @current_game = ->
   game = Games.findOne(Session.get 'game_id')

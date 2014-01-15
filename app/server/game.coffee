@@ -1,4 +1,4 @@
-# server/game.coffee
+# app/server/game.coffee
 
 # methods
 

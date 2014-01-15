@@ -1,4 +1,4 @@
-# client/main.coffee
+# app/client/main.coffee
 
 # initialize
 

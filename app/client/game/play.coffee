@@ -1,3 +1,5 @@
+# app/client/game/play.coffee
+
 # methods
 
 # bind progress bar to audio
