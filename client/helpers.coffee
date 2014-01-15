@@ -1,30 +1,31 @@
 # client/helpers.coffee
 
 @current_game = ->
-  Games.findOne(Session.get 'game_id')
+  game = Games.findOne(Session.get 'game_id')
+  unless game
+    Meteor.Router.to '/'
+    location.reload()
+  else
+    game
 
 @current_question = ->
-  unless current_game().current_question >= current_game().question_ids.length
-    question_id = current_game().question_ids[current_game().current_question]
-    Questions.findOne question_id
+  Questions.findOne current_game().question_ids[current_game().current_question]
 
-#@random_segment = ->
-#  sound = Sounds.findOne current_question().sound_id
-#  "/audio/" + sound.random_segment()
+@number_of_questions = ->
+  current_game().question_ids.length
 
 @current_player = ->
   # lazy init player
   id = Session.get 'player_id'
-  unless id or Players.findOne id
-    # set player id to session
+  unless id and Players.findOne id
+    # create player and set id to session
     id = Players.insert { name: '', idle: false }
     Session.set 'player_id', id
-  else
 
   Players.findOne id
 
 @online_players = ->
-  @Players.find
+  Players.find
     _id:     { $ne: Session.get('player_id') },
     name:    { $ne: '' },
     game_id: { $exists: false }

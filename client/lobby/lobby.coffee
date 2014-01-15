@@ -29,8 +29,6 @@ Template.lobby.rendered = ->
 
 Template.lobby.events
   'keyup input#myname': (event, template) ->
-    event.preventDefault()
-
     if event.keyCode is 13
       $('#new_game').click()
     else
@@ -39,11 +37,24 @@ Template.lobby.events
       Players.update Session.get('player_id'), { $set: { name: name } }
 
   'click button#new_game': (event, template) ->
-    event.preventDefault()
-
     Meteor.call 'new_game', current_player()._id, (error, result) ->
       Meteor.Router.to "/games/#{current_player().game_id}/play"
 
-    setTimeout ->
-      $('audio#0').get(0).play()
-    , 1000
+      # audioElementsCount = $("audio").length
+      # audioElementsLoaded = 0
+
+      # http://www.w3schools.com/tags/av_event_canplaythrough.asp
+      # for $audio in $('audio')
+      #   $audio[0].bind canplaythrough, ->
+      #     audioElementsLoaded++
+
+      #     if audioElementsLoaded >= audioElementsCount
+            # Start the game!
+            #$("audio:first")[0].play()
+
+      # while true
+      #   if audio_loaded() >= current_game().question_ids.length
+      #     setTimeout ->
+      #       $('audio#0')[0].play()
+      #     , 1000
+      #     return

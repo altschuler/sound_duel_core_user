@@ -1,16 +1,21 @@
 # client/game/result.coffee
 
+# helpers
+
 Template.result.result = ->
   points = 0
   correct = 0
-  game = Games.findOne(Session.get 'game_id')
-  total = game.question_ids.length
-  for a in game.answers
-    if a.answer is Questions.findOne(a.question_id).correct_answer
+
+  for a in current_game().answers
+    q = Questions.findOne(a.question_id)
+    if a.answer is q.correct_answer
       correct++
       points += a.points
 
-  { "points": points, "correct": correct + '/' + total }
+  { "points": points, "correct": correct + '/' + number_of_questions() }
+
+
+# events
 
 Template.result.events
   'click a#restart': ->
