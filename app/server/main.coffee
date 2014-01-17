@@ -4,10 +4,12 @@ fs = Npm.require 'fs'
 
 
 # config
+
 @CONFIG = EJSON.parse(Assets.getText "config.ejson")
 
 
 # methods
+
 refresh_db = ->
   console.log "Refreshing db.."
 
@@ -26,43 +28,38 @@ refresh_db = ->
 
   # populate database
   for sample in sample_questions
-    #console.log sample.soundfile_prefix + ":"
-
     question_id = Questions.insert(sample)
 
     segments = audio_files.filter (file) ->
       ~file.indexOf(sample.soundfile_prefix)
 
-    sound_id = Sounds.insert({segments: segments})
+    sound_id = Sounds.insert segments: segments
 
-    Questions.update(question_id, {$set: {sound_id: sound_id}})
+    Questions.update question_id,
+      $set: { sound_id: sound_id }
 
-    #console.log Questions.findOne question_id
-    #console.log Sounds.findOne sound_id
-
-
+  # print some info
   console.log "#Questions: " + Questions.find().count()
   console.log "#Sounds: " + audio_files.length
 
 
 # initialize
+
 Meteor.startup ->
   refresh_db()
 
+  # update players to idle with keepalive
+  # and remove long idling players
+  Meteor.setInterval ->
+    now = (new Date()).getTime()
+    idle_threshold = now - CONFIG.IDLE_TRESHOLD
+    remove_threshold = now - CONFIG.REMOVE_TRESHOLD
 
-# update players to idle with keepalive
-# and remove long idling players
-Meteor.setInterval ->
-  now = (new Date()).getTime()
-  idle_threshold = now - CONFIG.IDLE_TRESHOLD
-  remove_threshold = now - CONFIG.REMOVE_TRESHOLD
+    # set players to idle
+    Players.update last_keepalive: { $lt: idle_threshold },
+      $set: { idle: true }
 
-  # set players to idle
-  Players.update(
-    { last_keepalive: { $lt: idle_threshold } },
-    { $set: { idle: true } })
+    # remove idling players
+    Players.remove $lt: { last_keepalive: remove_threshold }
 
-  # remove idling players
-  Players.remove $lt: { last_keepalive: remove_threshold }
-
-, CONFIG.IDLE_TRESHOLD
+  , CONFIG.IDLE_TRESHOLD

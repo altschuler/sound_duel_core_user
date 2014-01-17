@@ -1,0 +1,10 @@
+{
+    "name": "Sound-Duel",
+    "description": "Sound Duel is a generic pop quiz game",
+    "author": "BIT BLUEPRINT <hello@bitblueprint.com>",
+    "repository": "github.com/bitblueprint/sound-duel",
+    "dependencies": {
+        "mocha": ">= 1.17.0",
+        "selenium-webdriver": ">= 2.39.0"
+    }
+}

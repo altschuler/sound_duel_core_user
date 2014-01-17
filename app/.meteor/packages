@@ -12,5 +12,4 @@ less
 bootstrap
 #i18next-meteor
 router
-phantomjs
 npm
