@@ -22,18 +22,18 @@ Handlebars.registerHelper 'idle', (player) ->
 # rendered
 
 Template.lobby.rendered = ->
-  #$('#myname').focus() # TODO: Fix
+  #$('#name').focus() # TODO: Fix
 
 
 # events
 
 Template.lobby.events
-  'keyup input#myname': (event, template) ->
+  'keyup input#name': (event, template) ->
     if event.keyCode is 13
       $('#new_game').click()
     else
       # get name and remove ws
-      name = template.find('input#myname').value.replace /^\s+|\s+$/g, ""
+      name = template.find('input#name').value.replace /^\s+|\s+$/g, ""
       Players.update Session.get('player_id'), { $set: { name: name } }
 
   'click button#new_game': (event, template) ->

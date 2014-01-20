@@ -10,8 +10,8 @@ bind_audio_progress = (i) ->
     percent = ($audio[0].currentTime * 100) / $audio[0].duration
     value = (current_game().points_per_question * (100 - percent)) / 100
 
-    $('.audio-bar').attr 'style', "width: #{100 - percent}%"
-    $('.audio-bar').text Math.floor value
+    $('#audio-bar').attr 'style', "width: #{100 - percent}%"
+    $('#audio-bar').text Math.floor value
 
 # bind progress bar to loading
 loading_progress = 0
@@ -101,7 +101,9 @@ Template.play.events
 
     # calculate points
     points = parseInt($('#audio-bar').text(), 10)
+    # if audio hasn't started, max points
     if isNaN points then points = CONFIG.POINTS_PER_QUESTION
+
     answer = event.target.text[0]
 
     # update game
