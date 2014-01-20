@@ -100,7 +100,8 @@ Template.play.events
     $('audio')[current_game().current_question].pause()
 
     # calculate points
-    points = parseInt($('.audio-bar').text(), 10)
+    points = parseInt($('#audio-bar').text(), 10)
+    if isNaN points then points = CONFIG.POINTS_PER_QUESTION
     answer = event.target.text[0]
 
     # update game
