@@ -20,7 +20,7 @@ Meteor.methods
     questions = Questions.find({}, {limit: 5}).fetch()
 
     game_id = Games.insert
-      points_per_question: CONFIG.START_POINTS
+      points_per_question: CONFIG.POINTS_PER_QUESTION
       question_ids: questions.map (q) -> q._id
       current_question: 0
       answers: []

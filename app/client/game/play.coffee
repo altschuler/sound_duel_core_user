@@ -1,24 +1,25 @@
 # app/client/game/play.coffee
 
+
 # methods
 
-# bind progress bar to audio
-bind_audio_progress = (i) ->
-  $audio = $('audio#' + i)
+# bind progress bar to asset
+bind_asset_progress = (i) ->
+  $asset = $('.asset#' + i)
 
-  $audio.bind 'timeupdate', ->
-    percent = ($audio[0].currentTime * 100) / $audio[0].duration
+  $asset.bind 'timeupdate', ->
+    percent = ($asset[0].currentTime * 100) / $asset[0].duration
     value = (current_game().points_per_question * (100 - percent)) / 100
 
-    $('#audio-bar').attr 'style', "width: #{100 - percent}%"
-    $('#audio-bar').text Math.floor value
+    $('#asset-bar').attr 'style', "width: #{100 - percent}%"
+    $('#asset-bar').text Math.floor value
 
 # bind progress bar to loading
 loading_progress = 0
-bind_audio_loading = (audio) ->
+bind_asset_loading = (asset) ->
   # calculate amount loaded
-  buffer_end = audio.buffered.end 0
-  buffer_prog = Math.round((buffer_end / audio.duration) * 100)
+  buffer_end = asset.buffered.end 0
+  buffer_prog = Math.round((buffer_end / asset.duration) * 100)
 
   # calculate new width
   current = Math.round buffer_prog / number_of_questions()
@@ -28,11 +29,12 @@ bind_audio_loading = (audio) ->
   parent_width = $('#loading-bar').offsetParent().width()
   $('#loading-bar').css 'width', "#{(loading_progress / 100) * parent_width}"
 
+
 # helpers
 
 Handlebars.registerHelper 'loading', -> loading_progress == 100
 
-Template.audio.helpers
+Template.asset.helpers
   segments: ->
     questions = current_game().question_ids.map (id) -> Questions.findOne id
     sounds = questions.map (question) -> Sounds.findOne question.sound_id
@@ -41,7 +43,7 @@ Template.audio.helpers
     for sound, i in sounds
       hash.push {
         index: i
-        path:  "/audio/#{sound.random_segment()}"
+        path:  "/assets/#{sound.random_segment()}"
       }
     hash
 
@@ -61,20 +63,20 @@ Template.game.helpers
 Template.load.rendered = ->
   # loading progress
   loading_progress = 0
-  count = $('audio').length - 1
+  count = $('.asset').length - 1
   (async_bind = ->
     unless count >= 0 then return
 
-    $audio = $("audio##{count}")
-    $audio.bind 'loadedmetadata', ->
-      bind_audio_loading this
+    $asset = $(".asset##{count}")
+    $asset.bind 'loadedmetadata', ->
+      bind_asset_loading this
 
     setTimeout async_bind, 0
     count--
   )()
 
   (async_load = ->
-    if loading_progress == 100
+    if loading_progress >= 100
       $('button#play').removeAttr 'disabled'
     else
       setTimeout async_load, 10
@@ -90,19 +92,19 @@ Template.play.events
       Template['game']()
     $('div.container').html html
 
-    bind_audio_progress current_game().current_question
+    bind_asset_progress current_game().current_question
 
     setTimeout( ->
-      $('audio:first')[0].play()
+      $('.asset:first')[0].play()
     , 500)
 
   'click a.alternative': (event) ->
-    # pause audio
-    $('audio')[current_game().current_question].pause()
+    # pause asset
+    $('.asset')[current_game().current_question].pause()
 
     # calculate points
-    points = parseInt($('#audio-bar').text(), 10)
-    # if audio hasn't started, max points
+    points = parseInt($('#asset-bar').text(), 10)
+    # if asset hasn't started, max points
     if isNaN points then points = CONFIG.POINTS_PER_QUESTION
 
     answer = event.target.text[0]
@@ -119,10 +121,10 @@ Template.play.events
 
     # if out of questions, end of game
     if current_question()
-      bind_audio_progress current_game().current_question
+      bind_asset_progress current_game().current_question
 
       setTimeout( ->
-        $('audio#' + current_game().current_question)[0].play()
+        $('.asset#' + current_game().current_question)[0].play()
       , 500)
     else
       Games.update current_game()._id, {$set: {finished: true}}

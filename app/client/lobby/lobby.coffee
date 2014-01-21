@@ -22,7 +22,7 @@ Handlebars.registerHelper 'idle', (player) ->
 # rendered
 
 Template.lobby.rendered = ->
-  #$('#name').focus() # TODO: Fix
+  #$('#name').click()
 
 
 # events
@@ -39,22 +39,3 @@ Template.lobby.events
   'click button#new_game': (event, template) ->
     Meteor.call 'new_game', current_player()._id, (error, result) ->
       Meteor.Router.to "/games/#{current_player().game_id}/play"
-
-      # audioElementsCount = $("audio").length
-      # audioElementsLoaded = 0
-
-      # http://www.w3schools.com/tags/av_event_canplaythrough.asp
-      # for $audio in $('audio')
-      #   $audio[0].bind canplaythrough, ->
-      #     audioElementsLoaded++
-
-      #     if audioElementsLoaded >= audioElementsCount
-            # Start the game!
-            #$("audio:first")[0].play()
-
-      # while true
-      #   if audio_loaded() >= current_game().question_ids.length
-      #     setTimeout ->
-      #       $('audio#0')[0].play()
-      #     , 1000
-      #     return
