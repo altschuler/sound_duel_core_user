@@ -3,7 +3,6 @@
 
 # methods
 
-# bind progress bar to asset
 bind_asset_progress = (i) ->
   $asset = $('.asset#' + i)
 
@@ -14,27 +13,28 @@ bind_asset_progress = (i) ->
     $('#asset-bar').attr 'style', "width: #{100 - percent}%"
     $('#asset-bar').text Math.floor value
 
-# bind progress bar to loading
-loading_progress = 0
-bind_asset_loading = (asset) ->
-  # calculate amount loaded
-  buffer_end = asset.buffered.end 0
-  buffer_prog = Math.round((buffer_end / asset.duration) * 100)
+update_loadingbar = ->
+  $assets = $('.asset')
+  progress = 0.0
 
-  # calculate new width
-  current = Math.round buffer_prog / number_of_questions()
-  loading_progress += current
+  for audio in $assets
+    if audio.duration
+      score = (audio.buffered.end(0) / audio.duration) * 90 #100
+    else
+      score = 0
 
-  # set new width
-  parent_width = $('#loading-bar').offsetParent().width()
-  $('#loading-bar').css 'width', "#{(loading_progress / 100) * parent_width}"
+    progress += Math.round (score + 10) / $assets.length
+
+  $('#loading-bar').text progress
+  parent_width = $('#loading-bar').parent().width()
+  $('#loading-bar').css 'width', "#{(progress / 100) * parent_width}"
 
 
 # helpers
 
 Handlebars.registerHelper 'loading', -> loading_progress == 100
 
-Template.asset.helpers
+Template.assets.helpers
   segments: ->
     questions = current_game().question_ids.map (id) -> Questions.findOne id
     sounds = questions.map (question) -> Sounds.findOne question.sound_id
@@ -43,7 +43,7 @@ Template.asset.helpers
     for sound, i in sounds
       hash.push {
         index: i
-        path:  "/assets/#{sound.random_segment()}"
+        path:  "/audio/#{sound.random_segment()}"
       }
     hash
 
@@ -61,25 +61,13 @@ Template.game.helpers
 # rendered
 
 Template.load.rendered = ->
-  # loading progress
-  loading_progress = 0
-  count = $('.asset').length - 1
-  (async_bind = ->
-    unless count >= 0 then return
-
-    $asset = $(".asset##{count}")
-    $asset.bind 'loadedmetadata', ->
-      bind_asset_loading this
-
-    setTimeout async_bind, 0
-    count--
-  )()
-
-  (async_load = ->
-    if loading_progress >= 100
+  (async_update = ->
+    if $('#loading-bar').text() is '100'
       $('button#play').removeAttr 'disabled'
+      console.log "STAP"
     else
-      setTimeout async_load, 10
+      update_loadingbar()
+      setTimeout async_update, 10
   )()
 
 
