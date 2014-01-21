@@ -3,11 +3,6 @@
 fs = Npm.require 'fs'
 
 
-# config
-
-@CONFIG = EJSON.parse(Assets.getText "config.ejson")
-
-
 # methods
 
 refresh_db = ->

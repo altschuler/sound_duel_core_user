@@ -70,7 +70,8 @@ Template.load.rendered = ->
       bind_audio_loading this
 
     setTimeout async_bind, 0
-    count--)()
+    count--
+  )()
 
   (async_load = ->
     if loading_progress == 100

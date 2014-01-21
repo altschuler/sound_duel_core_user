@@ -1,5 +1,6 @@
 # app/client/helpers.coffee
 
+
 @current_game = ->
   game = Games.findOne(Session.get 'game_id')
   unless game
@@ -33,6 +34,7 @@
 
 @player_count = ->
   online_players().length
+
 
 Handlebars.registerHelper 'current_player', current_player
 
