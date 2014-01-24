@@ -3,11 +3,9 @@
 
 # methods
 
-bind_asset_progress = (i) ->
-  $asset = $('.asset#' + i)
-
-  $asset.bind 'timeupdate', ->
-    percent = ($asset[0].currentTime * 100) / $asset[0].duration
+bind_asset_progress = (asset) ->
+  $(asset).bind 'timeupdate', ->
+    percent = (this.currentTime * 100) / this.duration
     value = (current_game().points_per_question * (100 - percent)) / 100
 
     $('#asset-bar').attr 'style', "width: #{100 - percent}%"
@@ -25,7 +23,7 @@ Template.assets.helpers
     hash = []
     for sound, i in sounds
       hash.push {
-        index: i
+        id: sound._id,
         path:  "/audio/#{sound.random_segment()}"
       }
     hash
@@ -52,7 +50,7 @@ Template.game.helpers
 # rendered
 
 Template.game.rendered = ->
-  bind_asset_progress current_game().current_question
+  bind_asset_progress current_asset()
 
 
 # events
@@ -61,11 +59,10 @@ Template.play.events
   'click .alternative': (event) ->
     # pause asset
     $('.asset')[current_game().current_question].pause()
-
     # calculate points
     points = parseInt($('#asset-bar').text(), 10)
     # if asset hasn't started, max points
-    if isNaN points then points = CONFIG.POINTS_PER_QUESTION
+    if isNaN points then points = current_game().points_per_question
 
     answer = $(event.target).text()[0]
 
@@ -81,12 +78,12 @@ Template.play.events
 
     # if out of questions, end of game
     if current_question()
-      bind_asset_progress current_game().current_question
-      force_play_audio '.asset#' + current_game().current_question, ->
+      bind_asset_progress current_asset()
+      force_play_audio current_asset(), ->
         Questions.update current_question()._id, {
           $set: { 'answerable': true }
         }
     else
       Games.update current_game()._id, {$set: {finished: true}}
-
+      Players.update current_player()._id, {$set: {game_id: undefined}}
       Meteor.Router.to "/games/#{current_game()._id}/result"

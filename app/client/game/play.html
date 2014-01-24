@@ -8,9 +8,11 @@
 
 <template name="assets">
   {{#constant}}
-    {{#each segments}}
-      <audio id={{index}} class="asset" src={{path}}></audio>
-    {{/each}}
+    <div class="assets">
+      {{#each segments}}
+        <audio id={{id}} class="asset" src={{path}} controls></audio>
+      {{/each}}
+    </div>
   {{/constant}}
 </template>
 

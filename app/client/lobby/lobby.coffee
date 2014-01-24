@@ -2,6 +2,10 @@
 
 # helpers
 
+Template.lobby.rendered = ->
+  #Session.set('player_id', '')
+  console.log "Lobby Rendered!"
+
 Template.lobby.disabled = ->
   if current_player() and current_player().name is '' then 'disabled="disabled"'
 

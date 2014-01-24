@@ -11,7 +11,7 @@
         callback(assetElement)
       else
         assetElement.play()
-  , 50 # TODO: Make 50, less of a magic number.
+  , 500 # TODO: Make 250, less of a magic number.
 
 @current_game = ->
   game = Games.findOne(Session.get 'game_id')
@@ -23,6 +23,10 @@
 
 @current_question = ->
   Questions.findOne current_game().question_ids[current_game().current_question]
+
+@current_asset = ->
+  id = current_question().sound_id
+  $('.asset#' + id).get(0)
 
 @number_of_questions = ->
   current_game().question_ids.length
