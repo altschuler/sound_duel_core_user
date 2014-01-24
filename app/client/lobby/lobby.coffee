@@ -19,12 +19,6 @@ Handlebars.registerHelper 'idle', (player) ->
   if player.idle then "style=color:grey"
 
 
-# rendered
-
-Template.lobby.rendered = ->
-  #$('#name').click()
-
-
 # events
 
 Template.lobby.events
@@ -37,13 +31,9 @@ Template.lobby.events
       Players.update Session.get('player_id'), { $set: { name: name } }
 
   'click button#new_game': (event, template) ->
-    ###audioIndex = 0
-    loadingInterval = setInterval ->
-      audioElement = $("audio.asset").get(audioIndex)
-      audioElement.load()
-      audioIndex++
-      if audioIndex >= $("audio.asset").length
-        clearTimeout loadingInterval
-    , 400###
+    force_play_audio 'audio.asset:first', (element) -> 
+      Questions.update current_question()._id, {
+        $set: { 'answerable': true }
+      }
     Meteor.call 'new_game', current_player()._id, (error, result) ->
       Meteor.Router.to "/games/#{current_player().game_id}/play"

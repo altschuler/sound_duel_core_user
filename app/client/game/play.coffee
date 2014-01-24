@@ -13,21 +13,6 @@ bind_asset_progress = (i) ->
     $('#asset-bar').attr 'style', "width: #{100 - percent}%"
     $('#asset-bar').text Math.floor value
 
-update_loadingbar = ->
-  $assets = $('.asset')
-  progress = 0
-  maximal_progress = $assets.length * 4;
-  progress = maximal_progress
-  debug = "DEBUG: "
-  for audio in $assets
-    progress += Math.min audio.readyState, 4
-    debug += audio.readyState + ", "
-  #$('#heading').text debug
-  $('#loading-bar').text Math.round(progress / maximal_progress * 100) + "%"
-  parent_width = $('#loading-bar').parent().width()
-  $('#loading-bar').css 'width', "#{(progress / maximal_progress) * parent_width}"
-
-
 # helpers
 
 Handlebars.registerHelper 'loading', -> loading_progress == 100
@@ -55,38 +40,25 @@ Template.game.helpers
     # TODO: alternatives shouldn't be called here
     if q then q.alternatives
 
+  alternativesDisabled: ->
+    q = current_question()
+    if not q or not q.answerable
+      'disabled'
+    else
+      ''
+      
+
 
 # rendered
 
-Template.load.rendered = ->
-  ###(async_update = ->
-    if $('#loading-bar').text() is '100%'
-      $('button#play').removeAttr 'disabled'
-      console.log "STAP"
-    else
-      update_loadingbar()
-      setTimeout async_update, 10
-  )()
-  ###
-  $('button#play').removeAttr 'disabled'
-  update_loadingbar()
+Template.game.rendered = ->
+  bind_asset_progress current_game().current_question
+
 
 # events
 
 Template.play.events
-  'click button#play': (event) ->
-    # render game view
-    html = Meteor.render ->
-      Template['game']()
-    $('div.container').html html
-
-    bind_asset_progress current_game().current_question
-
-    setTimeout( ->
-      $('.asset:first')[0].play()
-    , 500)
-
-  'click a.alternative': (event) ->
+  'click .alternative': (event) ->
     # pause asset
     $('.asset')[current_game().current_question].pause()
 
@@ -95,7 +67,7 @@ Template.play.events
     # if asset hasn't started, max points
     if isNaN points then points = CONFIG.POINTS_PER_QUESTION
 
-    answer = event.target.text[0]
+    answer = $(event.target).text()[0]
 
     # update game
     Games.update current_game()._id,
@@ -110,10 +82,10 @@ Template.play.events
     # if out of questions, end of game
     if current_question()
       bind_asset_progress current_game().current_question
-
-      setTimeout( ->
-        $('.asset#' + current_game().current_question)[0].play()
-      , 500)
+      force_play_audio '.asset#' + current_game().current_question, ->
+        Questions.update current_question()._id, {
+          $set: { 'answerable': true }
+        }
     else
       Games.update current_game()._id, {$set: {finished: true}}
 

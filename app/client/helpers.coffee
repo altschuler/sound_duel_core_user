@@ -1,5 +1,17 @@
 # app/client/helpers.coffee
 
+@force_play_audio = (audio_selector, callback) ->
+  play_interval = setInterval ->
+    $assets = $(audio_selector)
+    # Wait for the first audio asset.
+    if $assets.length > 0
+      assetElement = $assets.get(0)
+      if not assetElement.paused
+        clearInterval play_interval
+        callback(assetElement)
+      else
+        assetElement.play()
+  , 50 # TODO: Make 50, less of a magic number.
 
 @current_game = ->
   game = Games.findOne(Session.get 'game_id')
