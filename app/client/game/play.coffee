@@ -15,19 +15,17 @@ bind_asset_progress = (i) ->
 
 update_loadingbar = ->
   $assets = $('.asset')
-  progress = 0.0
-
+  progress = 0
+  maximal_progress = $assets.length * 4;
+  progress = maximal_progress
+  debug = "DEBUG: "
   for audio in $assets
-    if audio.duration
-      score = (audio.buffered.end(0) / audio.duration) * 90 #100
-    else
-      score = 0
-
-    progress += Math.round (score + 10) / $assets.length
-
-  $('#loading-bar').text progress
+    progress += Math.min audio.readyState, 4
+    debug += audio.readyState + ", "
+  #$('#heading').text debug
+  $('#loading-bar').text Math.round(progress / maximal_progress * 100) + "%"
   parent_width = $('#loading-bar').parent().width()
-  $('#loading-bar').css 'width', "#{(progress / 100) * parent_width}"
+  $('#loading-bar').css 'width', "#{(progress / maximal_progress) * parent_width}"
 
 
 # helpers
@@ -61,15 +59,17 @@ Template.game.helpers
 # rendered
 
 Template.load.rendered = ->
-  (async_update = ->
-    if $('#loading-bar').text() is '100'
+  ###(async_update = ->
+    if $('#loading-bar').text() is '100%'
       $('button#play').removeAttr 'disabled'
       console.log "STAP"
     else
       update_loadingbar()
       setTimeout async_update, 10
   )()
-
+  ###
+  $('button#play').removeAttr 'disabled'
+  update_loadingbar()
 
 # events
 

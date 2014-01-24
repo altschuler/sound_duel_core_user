@@ -17,7 +17,6 @@ refresh_db = ->
 
   # get audiofiles from /public
   audio_files = fs.readdirSync(CONFIG.ASSETS_DIR).filter (file) ->
-    console.log file
     ~file.indexOf('.mp3')
 
   sample_questions = JSON.parse(Assets.getText CONFIG.SAMPLE_DATA)

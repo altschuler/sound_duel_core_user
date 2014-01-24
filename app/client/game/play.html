@@ -20,7 +20,7 @@
 <template name="assets">
   {{#constant}}
     {{#each segments}}
-      <audio id={{index}} class="asset" src={{path}}></audio>
+      <audio id={{index}} class="asset" src={{path}} preload="none"></audio>
     {{/each}}
   {{/constant}}
 </template>
