@@ -22,7 +22,7 @@ Template.result.result = ->
 
 Template.result.events
   'click a#restart': ->
-    Session.set('player_id', '')
+    Session.set('guest', '')
     Session.set('game_id', '')
-    # Reset the game_id on the player.
     Meteor.Router.to '/'
+    #location.reload()

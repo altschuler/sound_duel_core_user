@@ -2,8 +2,7 @@
     "ASSETS_DIR":          "../client/app/audio/"
   , "SAMPLE_DATA":         "sample_data.json"
 
-  , "IDLE_TRESHOLD":       60000
-  , "REMOVE_TRESHOLD":     300000
+  , "ONLINE_TRESHOLD":     60000
 
   , "POINTS_PER_QUESTION": 1000
 }

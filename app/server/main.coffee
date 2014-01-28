@@ -10,7 +10,7 @@ refresh_db = ->
 
   # clear database
   # TODO: only for development
-  Players.remove({})
+  Meteor.users.remove({})
   Games.remove({})
   Questions.remove({})
   Sounds.remove({})
@@ -47,14 +47,10 @@ Meteor.startup ->
   # and remove long idling players
   Meteor.setInterval ->
     now = (new Date()).getTime()
-    idle_threshold = now - CONFIG.IDLE_TRESHOLD
-    remove_threshold = now - CONFIG.REMOVE_TRESHOLD
+    threshold = now - CONFIG.ONLINE_TRESHOLD
 
     # set players to idle
-    Players.update last_keepalive: { $lt: idle_threshold },
-      $set: { idle: true }
+    Meteor.users.update last_keepalive: { $lt: threshold },
+      $set: { online: false }
 
-    # remove idling players
-    Players.remove $lt: { last_keepalive: remove_threshold }
-
-  , CONFIG.IDLE_TRESHOLD
+  , CONFIG.ONLINE_TRESHOLD

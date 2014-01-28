@@ -1,6 +1,5 @@
 # app/client/game/play.coffee
 
-
 # methods
 
 bind_asset_progress = (asset) ->
@@ -10,6 +9,7 @@ bind_asset_progress = (asset) ->
 
     $('#asset-bar').attr 'style', "width: #{100 - percent}%"
     $('#asset-bar').text Math.floor value
+
 
 # helpers
 
@@ -40,12 +40,7 @@ Template.game.helpers
 
   alternativesDisabled: ->
     q = current_question()
-    if not q or not q.answerable
-      'disabled'
-    else
-      ''
-      
-
+    if not q or not q.answerable then 'disabled'
 
 # rendered
 
@@ -79,11 +74,14 @@ Template.play.events
     # if out of questions, end of game
     if current_question()
       bind_asset_progress current_asset()
+
       force_play_audio current_asset(), ->
-        Questions.update current_question()._id, {
+        Questions.update current_question_id(),
           $set: { 'answerable': true }
-        }
     else
-      Games.update current_game()._id, {$set: {finished: true}}
-      Players.update current_player()._id, {$set: {game_id: undefined}}
-      Meteor.Router.to "/games/#{current_game()._id}/result"
+      Games.update current_game_id(), { $set: { finished: true } }
+      
+      if Meteor.user()
+        Meteor.users.update Meteor.userId(), { $set: { game_id: undefined } }
+      
+      Meteor.Router.to "/games/#{current_game_id()}/result"

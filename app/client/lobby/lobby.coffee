@@ -2,25 +2,19 @@
 
 # helpers
 
-Template.lobby.rendered = ->
-  #Session.set('player_id', '')
-  console.log "Lobby Rendered!"
-
-Template.lobby.disabled = ->
-  if current_player() and current_player().name is '' then 'disabled="disabled"'
+Template.lobby.helpers
+  disabled: ->
+    if not current_guest() or current_guest == '' then 'disabled="disabled"'
 
 Template.players.helpers
   waiting: ->
-    count = player_count()
+    count = online_players().length
     if count == 0
-      "Ingen spillere der venter"
+      "Ingen spillere online"
     else if count == 1
-      "1 spiller der venter:"
+      "1 spiller online:"
     else
-      count + " spillere der venter:"
-
-Handlebars.registerHelper 'idle', (player) ->
-  if player.idle then "style=color:grey"
+      "#{count} spillere der er online:"
 
 
 # events
@@ -32,12 +26,14 @@ Template.lobby.events
     else
       # get name and remove ws
       name = template.find('input#name').value.replace /^\s+|\s+$/g, ""
-      Players.update Session.get('player_id'), { $set: { name: name } }
+      Session.set 'guest', name
 
   'click button#new_game': (event, template) ->
-    force_play_audio 'audio.asset:first', (element) -> 
-      Questions.update current_question()._id, {
-        $set: { 'answerable': true }
-      }
-    Meteor.call 'new_game', current_player()._id, (error, result) ->
-      Meteor.Router.to "/games/#{current_player().game_id}/play"
+    Meteor.call 'new_game', Meteor.userId(), (error, result) ->
+      Session.set 'game_id', result
+
+      force_play_audio 'audio.asset:first', (element) ->
+        Questions.update current_question_id(),
+          $set: { 'answerable': true }
+
+      Meteor.Router.to "/games/#{current_game_id()}/play"

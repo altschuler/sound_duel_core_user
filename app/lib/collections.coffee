@@ -57,8 +57,6 @@ Meteor.Collection.prototype.findOne = function(selector, options) {
       if not @segments?.length then return null
       @segments[Math.floor(Math.random() * @segments.length)]
 
-@Players   = new Meteor.Collection 'players'
-
 @Games     = new Meteor.Collection 'games'
 
 @Questions = new Meteor.Collection 'questions'#,
@@ -76,3 +74,4 @@ Meteor.Collection.prototype.findOne = function(selector, options) {
   #           elements.push element
   #           break
   #     elements
+

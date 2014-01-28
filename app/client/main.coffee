@@ -6,5 +6,5 @@ Meteor.startup ->
   # keep alive else idle
   Meteor.setInterval ->
     if Meteor.status().connected
-      Meteor.call 'keepalive', Session.get('player_id')
+      Meteor.call 'keepalive', Meteor.userId()
   , 20*1000

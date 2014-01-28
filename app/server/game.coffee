@@ -7,15 +7,12 @@ Meteor.methods
     # check player_id
     return unless player_id
 
-    Players.update player_id,
+    Meteor.users.update player_id,
       $set:
         last_keepalive: (new Date()).getTime()
-        idle: false
+        online: true
 
   new_game: (player_id) ->
-    # check player_id
-    return unless player_id
-
     # TODO: avoid getting the same questions
     questions = Questions.find({}, {limit: 5}).fetch()
 
@@ -25,6 +22,8 @@ Meteor.methods
       current_question: 0
       answers: []
 
-    Players.update player_id,
+    if player_id then Meteor.users.update player_id,
       $set:
         game_id: game_id
+
+    game_id

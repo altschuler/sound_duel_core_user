@@ -1,5 +1,9 @@
 # app/client/helpers.coffee
 
+@go_home = ->
+  Meteor.Router.to '/'
+  location.reload()
+
 @force_play_audio = (audio_selector, callback) ->
   play_interval = setInterval ->
     $assets = $(audio_selector)
@@ -13,16 +17,19 @@
         assetElement.play()
   , 500 # TODO: Make 250, less of a magic number.
 
+@current_game_id = ->
+  id = Session.get 'game_id'
+  unless id then go_home() else id
+
 @current_game = ->
-  game = Games.findOne(Session.get 'game_id')
-  unless game
-    Meteor.Router.to '/'
-    location.reload()
-  else
-    game
+  game = Games.findOne current_game_id()
+  unless game then go_home() else game
+
+@current_question_id = ->
+  current_game().question_ids[current_game().current_question]
 
 @current_question = ->
-  Questions.findOne current_game().question_ids[current_game().current_question]
+  Questions.findOne current_question_id()
 
 @current_asset = ->
   id = current_question().sound_id
@@ -31,34 +38,12 @@
 @number_of_questions = ->
   current_game().question_ids.length
 
-@current_player = ->
-  # lazy init player
-  id = Session.get 'player_id'
-  unless id and Players.findOne id
-    # create player and set id to session
-    id = Players.insert { name: '', idle: false }
-    Session.set 'player_id', id
-
-  Players.findOne id
+@current_guest = ->
+  Session.get 'guest'
 
 @online_players = ->
-  Players.find
-    _id:     { $ne: Session.get('player_id') },
-    name:    { $ne: '' },
-    game_id: { $exists: false }
+  Meteor.users.find
+    _id:    { $ne: Meteor.userId() }
+    online: { $ne: false }
   .fetch()
-
-@player_count = ->
-  online_players().length
-
-
-Handlebars.registerHelper 'current_player', current_player
-
-Handlebars.registerHelper 'current_game', current_game
-
-Handlebars.registerHelper 'game_finished', ->
-  current_game().finished
-
 Handlebars.registerHelper 'online_players', online_players
-
-Handlebars.registerHelper 'player_count', player_count
