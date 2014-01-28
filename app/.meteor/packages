@@ -13,3 +13,4 @@ bootstrap
 #i18next-meteor
 router
 npm
+accounts-base
