@@ -4,6 +4,7 @@
     "author": "BIT BLUEPRINT <hello@bitblueprint.com>",
     "repository": "github.com/bitblueprint/sound-duel",
     "dependencies": {
+        "coffee-script": ">= 1.6.3",
         "assert": ">= 1.1.0",
         "mocha": ">= 1.17.0",
         "selenium-webdriver": ">= 2.39.0",
