@@ -5,7 +5,7 @@
   location.reload()
 
 @forcePlayAudio = (audioSelector, callback) ->
-  playInterval = setInterval ->
+  playInterval = setInterval( ->
     $assets = $(audioSelector)
     # Wait for the first audio asset.
     if $assets.length > 0
@@ -15,7 +15,7 @@
         callback(assetElement)
       else
         assetElement.play()
-  , 500 # TODO: Make 250, less of a magic number.
+  , 500) # TODO: Make 250, less of a magic number.
 
 @currentGameId = ->
   id = Session.get 'gameId'
@@ -25,6 +25,10 @@
   game = Games.findOne currentGameId()
   unless game then goHome() else game
 
+@currentHighscore = ->
+  Highscores.findOne
+    gameId: currentGameId()
+
 @currentQuestionId = ->
   idx = currentGame().currentQuestion
   currentGame().questionIds[idx]
@@ -32,14 +36,28 @@
 @currentQuestion = ->
   Questions.findOne currentQuestionId()
 
-@currentAsset = ->
-  $(".asset##{currentQuestion().soundId}")[0]
-
 @numberOfQuestions = ->
   currentGame().questionIds.length
 
+@currentAsset = ->
+  $(".asset##{currentQuestion().soundId}")[0]
+
 @currentGuest = ->
   Session.get 'guest'
+
+# WIP
+@currentPlayerId = ->
+  id = Session.get 'playerId'
+  unless id and Meteor.users.findOne id
+    id = Meteor.users.insert
+      username: ''
+      'profile.online': true
+    Session.set 'playerId', id
+  console.log id
+  id
+
+@currentPlayer = ->
+  Meteor.users.findOne currentPlayerId()
 
 @onlinePlayers = ->
   Meteor.users.find
@@ -48,7 +66,3 @@
   .fetch()
 
 Handlebars.registerHelper 'onlinePlayers', onlinePlayers
-
-# @currentHighscore = ->
-#   Highscores.findOne
-#     gameId: currentGameId()

@@ -14,3 +14,4 @@ bootstrap
 router
 npm
 accounts-base
+accounts-password

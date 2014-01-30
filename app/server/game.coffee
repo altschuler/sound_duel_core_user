@@ -28,17 +28,37 @@ Meteor.methods
     Meteor.users.update playerId,
       $set:
         gameId: gameId
-      $addToSet:
-        highscoreIds: highscoreId
 
     gameId
 
   endGame: (playerId) ->
     gameId = Meteor.users.findOne(playerId).gameId
+    game = Games.findOne(gameId)
 
-    for q in Games.findOne(gameId).questionIds
-      Questions.update q, $set: { answerable: false }
+    # calculate score
+    points = 0
+    correct = 0
+    for a in game.answers
+      q = Questions.findOne(a.questionId)
+      if a.answer is q.correct
+        correct++
+        points += a.points
+
+    # update highscore
+    highscoreId = Highscores.findOne
+      gameId: gameId
+
+    Highscores.update highscoreId,
+      $set:
+        corrects: correct
+        score: points
+
+
+    for q in game.questionIds
+      Questions.update q, { $set: { answerable: false } }
 
     Games.update gameId, { $set: { finished: true } }
 
-    Meteor.users.update playerId, { $set: { gameId: undefined } }
+    Meteor.users.update playerId,
+      $set: { gameId: undefined }
+      $addToSet: { highscoreIds: highscoreId }

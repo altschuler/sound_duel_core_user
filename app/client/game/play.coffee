@@ -80,15 +80,5 @@ Template.play.events
         Questions.update currentQuestionId(),
           $set: { answerable: true }
     else
-      # Meteor.call 'endGame', Meteor.userId(), (error, result) ->
-      #   Meteor.Router.to "/games/#{currentGameId()}/result"
-
-      for id in currentGame().questionIds
-        Questions.update id, $set: { answerable: false }
-
-      Games.update currentGameId(), { $set: { finished: true } }
-
-      if Meteor.user()
-        Meteor.users.update Meteor.userId(), { $set: { gameId: undefined } }
-
-      Meteor.Router.to "/games/#{currentGameId()}/result"
+      Meteor.call 'endGame', Meteor.userId(), (error, result) ->
+        Meteor.Router.to "/games/#{currentGameId()}/result"

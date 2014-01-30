@@ -26,7 +26,10 @@ Template.lobby.events
     else
       # get name and remove ws
       name = template.find('input#name').value.replace /^\s+|\s+$/g, ""
-      Session.set 'guest', name
+
+      # WIP
+      Meteor.users.update currentPlayerId(),
+        username: name
 
   'click button#new-game': (event, template) ->
     Meteor.call 'newGame', Meteor.userId(), (error, result) ->
@@ -34,6 +37,6 @@ Template.lobby.events
 
       forcePlayAudio 'audio.asset:first', (element) ->
         Questions.update currentQuestionId(),
-          $set: { 'answerable': true }
+          $set: { answerable: true }
 
       Meteor.Router.to "/games/#{currentGameId()}/play"
