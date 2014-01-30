@@ -53,11 +53,13 @@ Meteor.Collection.prototype.findOne = function(selector, options) {
 
 @Sounds    = new Meteor.Collection 'sounds',
   defaults:
-    random_segment: ->
+    randomSegment: ->
       if not @segments?.length then return null
       @segments[Math.floor(Math.random() * @segments.length)]
 
 @Games     = new Meteor.Collection 'games'
+
+@Highscores = new Meteor.Collection 'highscores'
 
 @Questions = new Meteor.Collection 'questions'#,
   # defaults:
@@ -74,4 +76,3 @@ Meteor.Collection.prototype.findOne = function(selector, options) {
   #           elements.push element
   #           break
   #     elements
-

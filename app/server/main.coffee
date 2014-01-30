@@ -5,52 +5,54 @@ fs = Npm.require 'fs'
 
 # methods
 
-refresh_db = ->
+refreshDb = ->
   console.log "Refreshing db.."
 
   # clear database
   # TODO: only for development
   Meteor.users.remove({})
   Games.remove({})
+  Highscores.remove({})
   Questions.remove({})
   Sounds.remove({})
 
   # get audiofiles from /public
-  audio_files = fs.readdirSync(CONFIG.ASSETS_DIR).filter (file) ->
+  audioFiles = fs.readdirSync(CONFIG.ASSETS_DIR).filter (file) ->
     ~file.indexOf('.mp3')
 
-  sample_questions = JSON.parse(Assets.getText CONFIG.SAMPLE_DATA)
+  # parse questions from sample file
+  sampleQuestions = JSON.parse(Assets.getText CONFIG.SAMPLE_DATA)
 
   # populate database
-  for sample in sample_questions
-    question_id = Questions.insert(sample)
+  for sample in sampleQuestions
+    questionId = Questions.insert(sample)
 
-    segments = audio_files.filter (file) ->
-      ~file.indexOf(sample.soundfile_prefix)
+    # find associated segments
+    segments = audioFiles.filter (file) ->
+      ~file.indexOf(sample.soundfilePrefix)
 
-    sound_id = Sounds.insert segments: segments
+    soundId = Sounds.insert segments: segments
 
-    Questions.update question_id,
-      $set: { sound_id: sound_id }
+    Questions.update questionId, $set: { soundId: soundId }
 
   # print some info
-  console.log "#Questions: " + Questions.find().count()
-  console.log "#Sounds: " + audio_files.length
+  console.log "#Questions: #{Questions.find().count()}"
+  console.log "#Sounds: #{audioFiles.length}"
 
 
 # initialize
 
 Meteor.startup ->
-  refresh_db()
+  refreshDb()
 
   # update players to idle with keepalive
   # and remove long idling players
-  Meteor.setInterval ->
+  Meteor.setInterval( ->
     now = (new Date()).getTime()
     threshold = now - CONFIG.ONLINE_TRESHOLD
 
     # set players to idle
-    Meteor.users.update last_keepalive: { $lt: threshold },
+    Meteor.users.update lastKeepalive: { $lt: threshold },
       $set: { online: false }
 
-  , CONFIG.ONLINE_TRESHOLD
+  , CONFIG.ONLINE_TRESHOLD)

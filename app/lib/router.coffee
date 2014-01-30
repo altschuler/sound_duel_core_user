@@ -9,16 +9,16 @@ if Meteor.isClient
     '/games/:_id/play':
       to: 'play'
       and: (id) ->
-        Session.set 'game_id', id
+        Session.set 'gameId', id
     '/games/:_id/result':
       to: 'result'
       and: (id) ->
-        Session.set 'game_id', id
+        Session.set 'gameId', id
 
 
 # server
 
 # if Meteor.isServer
 #   Meteor.Router.add
-#     '/games/:id.json': (id) ->
+#     '/games/:_id.json': (id) ->
 #       Games.findOne id

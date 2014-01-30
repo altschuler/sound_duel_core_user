@@ -1,7 +1,7 @@
 [
   {
-    "soundfile_prefix": "EM-Finale_DK-DE",
-    "correct_answer": "A",
+    "soundfilePrefix": "EM-Finale_DK-DE",
+    "correctAnswer": "A",
     "alternatives": [
         {
             "name": "A",
@@ -22,8 +22,8 @@
     ]
   },
   {
-    "soundfile_prefix": "EM-Kval_DK-GB",
-    "correct_answer": "B",
+    "soundfilePrefix": "EM-Kval_DK-GB",
+    "correctAnswer": "B",
     "alternatives": [
         {
             "name": "A",
@@ -44,8 +44,8 @@
     ]
   },
   {
-    "soundfile_prefix": "EM-Semi_DK-NL",
-    "correct_answer": "C",
+    "soundfilePrefix": "EM-Semi_DK-NL",
+    "correctAnswer": "C",
     "alternatives": [
         {
             "name": "A",
@@ -66,8 +66,8 @@
     ]
   },
   {
-    "soundfile_prefix": "OL-Semi_DK-HU",
-    "correct_answer": "D",
+    "soundfilePrefix": "OL-Semi_DK-HU",
+    "correctAnswer": "D",
     "alternatives": [
         {
             "name": "A",
@@ -88,8 +88,8 @@
     ]
   },
   {
-    "soundfile_prefix": "VM-Kvart_DK-BR",
-    "correct_answer": "A",
+    "soundfilePrefix": "VM-Kvart_DK-BR",
+    "correctAnswer": "A",
     "alternatives": [
         {
             "name": "A",

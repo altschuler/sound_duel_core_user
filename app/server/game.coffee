@@ -3,27 +3,32 @@
 # methods
 
 Meteor.methods
-  keepalive: (player_id) ->
-    # check player_id
-    return unless player_id
+  keepalive: (playerId) ->
+    # check playerId
+    return unless playerId
 
-    Meteor.users.update player_id,
+    Meteor.users.update playerId,
       $set:
-        last_keepalive: (new Date()).getTime()
         online: true
+        lastKeepalive: (new Date()).getTime()
 
-  new_game: (player_id) ->
+  newGame: (playerId) ->
     # TODO: avoid getting the same questions
-    questions = Questions.find({}, {limit: 5}).fetch()
+    questions = Questions.find({}, { limit: 5 }).fetch()
 
-    game_id = Games.insert
-      points_per_question: CONFIG.POINTS_PER_QUESTION
-      question_ids: questions.map (q) -> q._id
-      current_question: 0
+    gameId = Games.insert
+      pointsPerQuestion: CONFIG.POINTS_PER_QUESTION
+      questionIds: questions.map (q) -> q._id
+      currentQuestion: 0
       answers: []
 
-    if player_id then Meteor.users.update player_id,
-      $set:
-        game_id: game_id
+    highscoreId = Highscores.insert
+      gameId: gameId
 
-    game_id
+    Meteor.users.update playerId,
+      $set:
+        gameId: gameId
+      $addToSet:
+        highscoreIds: highscoreId
+
+    gameId

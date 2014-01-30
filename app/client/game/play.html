@@ -10,14 +10,14 @@
   {{#constant}}
     <div class="assets">
       {{#each segments}}
-        <audio id={{id}} class="asset" src={{path}} controls></audio>
+        <audio id={{id}} class="asset" src={{path}}></audio>
       {{/each}}
     </div>
   {{/constant}}
 </template>
 
 <template name="game">
-  <h3 id="heading">{{current_question}}</h3>
+  <h3 id="heading">{{currentQuestion}}</h3>
 
   {{#constant}}
     <div class="progress progress-striped active">
@@ -28,7 +28,7 @@
 
   {{#each alternatives}}
     <div class="row">
-      <button id={{name}} class="alternative btn btn-block btn-lg btn-primary" {{alternativesDisabled}}>{{name}}) {{text}}</button>
+      <button id={{name}} class="alternative btn btn-block btn-lg btn-primary" {{alternativeDisabled}}>{{name}}) {{text}}</button>
     </div>
   {{/each}}
 </template>

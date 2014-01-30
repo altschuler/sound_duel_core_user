@@ -1,49 +1,55 @@
 # app/client/helpers.coffee
 
-@go_home = ->
+@goHome = ->
   Meteor.Router.to '/'
   location.reload()
 
-@force_play_audio = (audio_selector, callback) ->
-  play_interval = setInterval ->
-    $assets = $(audio_selector)
+@forcePlayAudio = (audioSelector, callback) ->
+  playInterval = setInterval ->
+    $assets = $(audioSelector)
     # Wait for the first audio asset.
     if $assets.length > 0
       assetElement = $assets.get(0)
       if not assetElement.paused
-        clearInterval play_interval
+        clearInterval playInterval
         callback(assetElement)
       else
         assetElement.play()
   , 500 # TODO: Make 250, less of a magic number.
 
-@current_game_id = ->
-  id = Session.get 'game_id'
-  unless id then go_home() else id
+@currentGameId = ->
+  id = Session.get 'gameId'
+  unless id then goHome() else id
 
-@current_game = ->
-  game = Games.findOne current_game_id()
-  unless game then go_home() else game
+@currentGame = ->
+  game = Games.findOne currentGameId()
+  unless game then goHome() else game
 
-@current_question_id = ->
-  current_game().question_ids[current_game().current_question]
+@currentQuestionId = ->
+  idx = currentGame().currentQuestion
+  currentGame().questionIds[idx]
 
-@current_question = ->
-  Questions.findOne current_question_id()
+@currentQuestion = ->
+  Questions.findOne currentQuestionId()
 
-@current_asset = ->
-  id = current_question().sound_id
+@currentAsset = ->
+  id = currentQuestion().soundId
   $('.asset#' + id).get(0)
 
-@number_of_questions = ->
-  current_game().question_ids.length
+@numberOfQuestions = ->
+  currentGame().questionIds.length
 
-@current_guest = ->
+@currentGuest = ->
   Session.get 'guest'
 
-@online_players = ->
+@onlinePlayers = ->
   Meteor.users.find
-    _id:    { $ne: Meteor.userId() }
-    online: { $ne: false }
+    _id: { $ne: Meteor.userId() }
+    'profile.online': true
   .fetch()
-Handlebars.registerHelper 'online_players', online_players
+
+Handlebars.registerHelper 'onlinePlayers', onlinePlayers
+
+# @currentHighscore = ->
+#   Highscores.findOne
+#     gameId: currentGameId()

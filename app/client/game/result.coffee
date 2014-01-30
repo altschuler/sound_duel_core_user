@@ -6,15 +6,15 @@ Template.result.result = ->
   points = 0
   correct = 0
 
-  for a in current_game().answers
-    q = Questions.findOne(a.question_id)
-    if a.answer is q.correct_answer
+  for a in currentGame().answers
+    q = Questions.findOne(a.questionId)
+    if a.answer is q.correctAnswer
       correct++
       points += a.points
 
   {
     "points": points,
-    "correct": correct + '/' + number_of_questions()
+    "correct": correct + '/' + numberOfQuestions()
   }
 
 
@@ -23,6 +23,6 @@ Template.result.result = ->
 Template.result.events
   'click a#restart': ->
     Session.set('guest', '')
-    Session.set('game_id', '')
+    Session.set('gameId', '')
     Meteor.Router.to '/'
     #location.reload()
