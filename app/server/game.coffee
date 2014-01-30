@@ -32,3 +32,13 @@ Meteor.methods
         highscoreIds: highscoreId
 
     gameId
+
+  endGame: (playerId) ->
+    gameId = Meteor.users.findOne(playerId).gameId
+
+    for q in Games.findOne(gameId).questionIds
+      Questions.update q, $set: { answerable: false }
+
+    Games.update gameId, { $set: { finished: true } }
+
+    Meteor.users.update playerId, { $set: { gameId: undefined } }

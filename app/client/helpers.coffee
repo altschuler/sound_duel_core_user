@@ -33,8 +33,7 @@
   Questions.findOne currentQuestionId()
 
 @currentAsset = ->
-  id = currentQuestion().soundId
-  $('.asset#' + id).get(0)
+  $(".asset##{currentQuestion().soundId}")[0]
 
 @numberOfQuestions = ->
   currentGame().questionIds.length

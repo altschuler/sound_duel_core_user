@@ -52,13 +52,15 @@ Template.game.rendered = ->
 Template.play.events
   'click .alternative': (event) ->
     # pause asset
-    $('.asset')[currentGame().currentQuestion].pause()
+    currentAsset().pause()
+
     # calculate points
     points = parseInt($('#asset-bar').text(), 10)
     # if asset hasn't started, max points
     if isNaN points then points = currentGame().pointsPerQuestion
 
-    answer = $(event.target).text()[0]
+    # get clicked alternative
+    answer = $(event.target).attr('id')
 
     # update game
     Games.update currentGame()._id,
@@ -76,8 +78,14 @@ Template.play.events
 
       forcePlayAudio currentAsset(), ->
         Questions.update currentQuestionId(),
-          $set: { 'answerable': true }
+          $set: { answerable: true }
     else
+      # Meteor.call 'endGame', Meteor.userId(), (error, result) ->
+      #   Meteor.Router.to "/games/#{currentGameId()}/result"
+
+      for id in currentGame().questionIds
+        Questions.update id, $set: { answerable: false }
+
       Games.update currentGameId(), { $set: { finished: true } }
 
       if Meteor.user()
