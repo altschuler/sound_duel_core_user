@@ -15,6 +15,7 @@ if Meteor.isClient
       and: (id) ->
         Session.set 'gameId', id
 
+    '/highscores': 'highscores'
 
 # server
 

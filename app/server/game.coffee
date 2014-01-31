@@ -24,10 +24,9 @@ Meteor.methods
 
     highscoreId = Highscores.insert
       gameId: gameId
+      playerId: playerId
 
-    Meteor.users.update playerId,
-      $set:
-        gameId: gameId
+    Meteor.users.update playerId, $set: { gameId: gameId }
 
     gameId
 
@@ -51,7 +50,6 @@ Meteor.methods
       $set:
         correctAnswers: correctAnswers
         score: score
-
 
     for q in game.questionIds
       Questions.update q, { $set: { answerable: false } }

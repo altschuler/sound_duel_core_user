@@ -22,11 +22,22 @@ Template.players.helpers
 # rendered
 
 Template.lobby.rendered = ->
-  if !!"#{$('input#name').val()}"
+  if currentPlayer()
     $('input#name').val currentPlayer().username
 
 
 # events
+
+startGame = ->
+  Meteor.call 'newGame', currentPlayerId(), (error, result) ->
+    Session.set 'gameId', result
+
+    forcePlayAudio 'audio.asset:first', (element) ->
+      Questions.update currentQuestionId(),
+        $set: { answerable: true }
+
+    Meteor.Router.to "/games/#{currentGameId()}/play"
+
 
 Template.lobby.events
   'keyup input#name': (event, template) ->
@@ -48,13 +59,7 @@ Template.lobby.events
   'click button#new-game': (event, template) ->
     name = template.find('input#name').value.replace /^\s+|\s+$/g, ""
 
-    newPlayer name, (id) ->
-
-      Meteor.call 'newGame', currentPlayerId(), (error, result) ->
-        Session.set 'gameId', result
-
-        forcePlayAudio 'audio.asset:first', (element) ->
-          Questions.update currentQuestionId(),
-            $set: { answerable: true }
-
-        Meteor.Router.to "/games/#{currentGameId()}/play"
+    if currentPlayer()
+      startGame()
+    else
+      newPlayer name, startGame

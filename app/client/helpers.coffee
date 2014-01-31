@@ -32,7 +32,6 @@
 @currentHighscore = ->
   highscore = Highscores.findOne
     gameId: currentGameId()
-  console.log highscore
   unless highscore then goHome() else highscore
 
 @currentQuestionId = ->
@@ -49,31 +48,33 @@
   $(".asset##{currentQuestion().soundId}")[0]
 
 @currentPlayerId = ->
-  id = Session.get 'playerId'
-  # lazy init
-  # unless id and Meteor.users.findOne id
-  #   id = Meteor.users.insert
-  #     username: ''
-  #   Meteor.users.update id,
-  #     $set: { 'profile.online': true }
-  #   Session.set 'playerId', id
-
-  id
+  Session.get 'playerId'
 
 @currentPlayer = ->
   Meteor.users.findOne currentPlayerId()
 
 @newPlayer = (name, callback) ->
-  Meteor.users.insert username: name, (error, id) ->
-    console.log "id: #{id}"
-    console.log error
+  unless name
+    alert "Brugernavn ikke satt"
+  else
+    id = Meteor.users.insert {
+      username: name
+      }, (error, id) ->
 
-    unless error
-      Session.set 'playerId', id
+      if error
+        Meteor.Router.to '/'
 
-      callback()
-    else
-      Meteor.Router.to '/', alert: "wow"
+        if error.error is 409
+          alert "Brugernavn taget"
+        else
+          alert error.message
+
+        console.log error
+      else
+        Session.set 'playerId', id
+        callback()
+
+    Meteor.users.update id, { $set: { 'profile.online': true } }
 
 @onlinePlayers = ->
   Meteor.users.find

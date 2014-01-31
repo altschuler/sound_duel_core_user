@@ -1,0 +1,16 @@
+<template name="highscores">
+    <div class="container text-center">
+        <table>
+            <tr>
+                <th>Brugernavn</th>
+                <th>Score</th>
+            </tr>
+            {{#each highscores}}
+                <tr>
+                    <td>{{username playerId}}</td>
+                    <td>{{score}}</td>
+                </tr>
+            {{/each}}
+        </table>
+    </div>
+</template>
