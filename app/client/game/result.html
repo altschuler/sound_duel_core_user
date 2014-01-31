@@ -1,11 +1,9 @@
 <template name="result">
   <div class="container">
-    {{#with result}}
-      <h3 id="heading">Resultater</h3>
+    <h3 id="heading">Resultater</h3>
 
-      <p id="ratio" class="lead">Du fik {{correct}} rigtige svar!</p>
-      <p id="points" class="lead">Point: {{points}}</p>
-    {{/with}}
+    <p id="ratio" class="lead">Du fik {{ratio}} rigtige svar!</p>
+    <p id="points" class="lead">Point: {{score}}</p>
 
     <a id="restart" class="btn btn-primary">Spil igen!</a>
   </div>

@@ -7,14 +7,13 @@ Template.result.helpers
     currentHighscore().score
 
   ratio: ->
-    "#{currentHighscore().correct}/#{numberOfQuestions()}"
+    "#{currentHighscore().correctAnswers}/#{numberOfQuestions()}"
 
 
 # events
 
 Template.result.events
   'click a#restart': ->
-    Session.set('guest', '')
     Session.set('gameId', '')
     Meteor.Router.to '/'
     #location.reload()

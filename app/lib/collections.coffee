@@ -71,7 +71,7 @@ Meteor.Collection.prototype.findOne = function(selector, options) {
   #       while true
   #         rand = Math.floor(Math.random * count)
   #         # TODO: following statement only works in mongo, not meteor
-  #         element = @find({limit: -1}).skip(rand).next()
+  #         element = @find({limpit: -1}).skip(rand).next()
   #         if elements.indexOf(element) < 0
   #           elements.push element
   #           break
@@ -80,6 +80,12 @@ Meteor.Collection.prototype.findOne = function(selector, options) {
 
 # allow
 
-# WIP
-# Meteor.users.allow
-#   insert: ->
+Meteor.users.allow
+  insert: (userId, doc) ->
+    true
+
+  update: (userId, doc, fields, modifier) ->
+    true
+
+  remove: (userId, doc) ->
+    false

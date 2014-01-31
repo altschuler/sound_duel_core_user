@@ -1,7 +1,6 @@
 {
   "packages": {
     "router": {},
-    "phantomjs": {},
     "npm": {}
   }
 }

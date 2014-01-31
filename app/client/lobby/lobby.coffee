@@ -4,7 +4,9 @@
 
 Template.lobby.helpers
   disabled: ->
-    if not currentGuest() or currentGuest == '' then 'disabled="disabled"'
+    # name = "#{$('input#name').val()}"
+    # # if not currentPlayer() or currentPlayer.username == '' then 'disabled'
+    # if !!name then 'disabled'
 
 Template.players.helpers
   waiting: ->
@@ -17,26 +19,42 @@ Template.players.helpers
       "#{count} spillere der er online:"
 
 
+# rendered
+
+Template.lobby.rendered = ->
+  if !!"#{$('input#name').val()}"
+    $('input#name').val currentPlayer().username
+
+
 # events
 
 Template.lobby.events
   'keyup input#name': (event, template) ->
     if event.keyCode is 13
-      $('#newGame').click()
-    else
-      # get name and remove ws
-      name = template.find('input#name').value.replace /^\s+|\s+$/g, ""
+      $('#new-game').click()
+    # else
+    #   name = "#{$('input#name').val()}"
+    #   if !!name
+    #     $('btn#new-game').attr 'disabled', 'disabled'
+    #   else
+    #     $('btn#new-game').removeAttr 'disabled'
 
-      # WIP
-      Meteor.users.update currentPlayerId(),
-        username: name
+      # get name and remove ws
+        # name = template.find('input#name').value.replace /^\s+|\s+$/g, ""
+      # update current player name
+      # Meteor.users.update currentPlayerId(),
+      #   $set: { username: name }
 
   'click button#new-game': (event, template) ->
-    Meteor.call 'newGame', Meteor.userId(), (error, result) ->
-      Session.set 'gameId', result
+    name = template.find('input#name').value.replace /^\s+|\s+$/g, ""
 
-      forcePlayAudio 'audio.asset:first', (element) ->
-        Questions.update currentQuestionId(),
-          $set: { answerable: true }
+    newPlayer name, (id) ->
 
-      Meteor.Router.to "/games/#{currentGameId()}/play"
+      Meteor.call 'newGame', currentPlayerId(), (error, result) ->
+        Session.set 'gameId', result
+
+        forcePlayAudio 'audio.asset:first', (element) ->
+          Questions.update currentQuestionId(),
+            $set: { answerable: true }
+
+        Meteor.Router.to "/games/#{currentGameId()}/play"

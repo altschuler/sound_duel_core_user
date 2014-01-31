@@ -41,10 +41,11 @@ Template.game.helpers
   alternativeDisabled: ->
     unless currentQuestion().answerable then 'disabled'
 
+
 # rendered
 
 Template.game.rendered = ->
-  bindAssetProgress currentAsset()
+  unless currentGameFinished() then bindAssetProgress currentAsset()
 
 
 # events
@@ -80,5 +81,5 @@ Template.play.events
         Questions.update currentQuestionId(),
           $set: { answerable: true }
     else
-      Meteor.call 'endGame', Meteor.userId(), (error, result) ->
+      Meteor.call 'endGame', currentPlayerId(), (error, result) ->
         Meteor.Router.to "/games/#{currentGameId()}/result"
