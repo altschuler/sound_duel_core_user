@@ -6,16 +6,20 @@
 
 @forcePlayAudio = (audioSelector, callback) ->
   playInterval = setInterval( ->
-    $assets = $(audioSelector)
+    $asset = $(audioSelector)
+
     # Wait for the first audio asset.
-    if $assets.length > 0
-      assetElement = $assets.get(0)
+    if $asset.length > 0
+      assetElement = $asset[0]
+
       unless assetElement.paused
         clearInterval playInterval
         callback assetElement
       else
+        console.log "play element: #{assetElement}"
         assetElement.play()
-  , 500) # TODO: Make 250, less of a magic number.
+
+  , 750) # TODO: Make 250, less of a magic number.
 
 @currentGameId = ->
   id = Session.get 'gameId'
@@ -57,25 +61,24 @@
   unless name
     alert "Brugernavn ikke satt"
   else
-    id = Meteor.users.insert {
-      username: name
-      }, (error, id) ->
-
+    id = Meteor.users.insert { username: name }, (error, id) ->
       if error
+        console.log error
+
         Meteor.Router.to '/'
 
         if error.error is 409
           alert "Brugernavn taget"
         else
           alert error.message
-
-        console.log error
+        
+        callback error, id
       else
         Session.set 'playerId', id
-        callback()
+        Meteor.users.update id, { $set: { 'profile.online': true } }
 
-    Meteor.users.update id, { $set: { 'profile.online': true } }
-
+      callback error, id
+        
 @onlinePlayers = ->
   Meteor.users.find
     _id: { $ne: currentPlayerId() }

@@ -1,5 +1,18 @@
 # app/client/lobby/lobby.coffee
 
+# methods
+
+startGame = ->
+  Meteor.call 'newGame', currentPlayerId(), (error, result) ->
+    Session.set 'gameId', result
+
+    forcePlayAudio 'audio.asset:first', (element) ->
+      Questions.update currentQuestionId(), { $set: { answerable: true } }
+
+
+    Meteor.Router.to "/games/#{currentGameId()}/play"
+
+
 # helpers
 
 Template.lobby.helpers
@@ -28,17 +41,6 @@ Template.lobby.rendered = ->
 
 # events
 
-startGame = ->
-  Meteor.call 'newGame', currentPlayerId(), (error, result) ->
-    Session.set 'gameId', result
-
-    forcePlayAudio 'audio.asset:first', (element) ->
-      Questions.update currentQuestionId(),
-        $set: { answerable: true }
-
-    Meteor.Router.to "/games/#{currentGameId()}/play"
-
-
 Template.lobby.events
   'keyup input#name': (event, template) ->
     if event.keyCode is 13
@@ -62,4 +64,12 @@ Template.lobby.events
     if currentPlayer()
       startGame()
     else
-      newPlayer name, startGame
+      newPlayer name, (error, result) ->
+        console.log "new player (id: #{result}, error: #{error})"
+
+        if not error and currentPlayerId()
+          console.log "starting game..."
+          startGame()
+
+        else
+          console.log "couldnt start game"
