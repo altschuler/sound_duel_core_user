@@ -1,13 +1,16 @@
 {
-    "name": "Sound-Duel",
-    "description": "Sound Duel is a generic pop quiz game",
-    "author": "BIT BLUEPRINT <hello@bitblueprint.com>",
-    "repository": "github.com/bitblueprint/sound-duel",
-    "dependencies": {
-        "coffee-script": ">= 1.6.3",
-        "assert": ">= 1.1.0",
-        "mocha": ">= 1.17.0",
-        "selenium-webdriver": ">= 2.39.0",
-        "coffeelint": ">= 1.0.5"
-    }
+  "name": "Sound-Duel",
+  "description": "Sound Duel is a generic pop quiz game",
+  "author": "BIT BLUEPRINT <hello@bitblueprint.com>",
+  "repository": "github.com/bitblueprint/sound-duel",
+  "dependencies": {
+    "coffee-script": ">= 1.6.3"
+  },
+  "devDependencies": {
+    "should": "~3.1.2",
+    "mocha": ">= 1.17.0",
+    "selenium": ">= 2.20.0",
+    "selenium-webdriver": ">= 2.39.0",
+    "coffeelint": ">= 1.0.5"
+  }
 }
