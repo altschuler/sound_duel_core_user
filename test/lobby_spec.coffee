@@ -1,9 +1,11 @@
 # test/lobby_spec.coffee
 
-assert    = require 'assert'
+should    = require 'should'
 webdriver = require 'selenium-webdriver'
 test      = require 'selenium-webdriver/testing'
 server    = require('selenium-webdriver/remote').SeleniumServer
+
+{load_new_game, answer_question} = require './utils'
 
 
 test.describe "Lobby:", ->
@@ -32,18 +34,18 @@ test.describe "Lobby:", ->
       driver.findElement(tagName: 'h1')
         .getText()
         .then (text) ->
-          assert text.match "Målsuppe"
+          text.should.match "Målsuppe"
 
 
     test.it "should see welcome message", ->
       driver.findElement(id: 'welcome')
         .getText()
         .then (text) ->
-          assert text.match "Indtast dit navn og tryk \"Spil!\""
+          text.should.match "Indtast dit navn og tryk \"Spil!\""
 
 
     test.it "should feel that DR recognizes the game", ->
       driver.findElement(tagName: 'img')
         .getAttribute('src')
         .then (src) ->
-          assert src.match 'logo'
+          src.should.match /.+dr-logo.svg/

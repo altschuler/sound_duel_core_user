@@ -1,9 +1,11 @@
 # test/game_spec.coffee
 
-assert    = require 'assert'
+should    = require 'should'
 webdriver = require 'selenium-webdriver'
 test      = require 'selenium-webdriver/testing'
 server    = require('selenium-webdriver/remote').SeleniumServer
+
+{load_new_game, answer_question} = require './utils'
 
 
 test.describe "Game:", ->
@@ -24,50 +26,26 @@ test.describe "Game:", ->
     driver.quit()
 
 
-  # methods
-
-  load_new_game = (name) ->
-    driver.get "http://localhost:3000"
-    driver.findElement(id: 'name')
-      .sendKeys name
-    driver.findElement(id: 'new_game')
-      .click()
-
-  answer_question = (all) ->
-    driver.findElements(css: '.alternative')
-      .then (elements) ->
-        elements[0].click()
-        driver.wait( ->
-          if all
-            driver.findElement(tagName: 'h3')
-              .getText()
-              .then (text) ->
-                unless text.match /Resultater/
-                  answer_question true
-          true
-        , 1000)
-
-
   # tests
 
   describe "Player", ->
 
     test.it "should not see audio assets", ->
-      load_new_game('ape')
+      load_new_game(driver, 'ape')
         .then ->
           driver.findElements(css: 'audio')
             .then (elements) ->
               for element in elements
                 element.getAttribute('controls')
                   .then (controls) ->
-                    assert !controls
+                    should.not.exist controls
                 element.getCssValue('display')
                   .then (style) ->
-                    assert style in ['none', 'hidden']
+                    style.should.be in ['none', 'hidden']
 
 
     test.it "should see a moving progress bar on audio playing", ->
-      load_new_game('karlsen')
+      load_new_game(driver, 'karlsen')
         .then ->
           old = { width: undefined, value: undefined }
 
@@ -93,7 +71,7 @@ test.describe "Game:", ->
 
 
     test.it "should only be presented correct asset", ->
-      load_new_game('ape')
+      load_new_game(driver, 'apelape')
         .then ->
           driver.findElements(css: 'audio')
             .then (elements) ->
@@ -112,13 +90,13 @@ test.describe "Game:", ->
     test.it "should be presented for multiple questions", ->
       first = undefined
 
-      load_new_game('joshua')
+      load_new_game(driver, 'joshua')
         .then( ->
           driver.findElement(css: '#heading')
             .getText()
             .then (text) ->
               first = text
-              assert text.match /\d+\/\d+/)
+              text.should.match /\d+\/\d+/)
         .then ->
           driver.findElement(css: '#A.alternative').click()
             .then ->
@@ -126,20 +104,20 @@ test.describe "Game:", ->
                 driver.findElement(css: '#heading')
                   .getText()
                   .then (text) ->
-                    assert text.match /\d+\/\d+/
-                    assert text != first
+                    text.should.match /\d+\/\d+/
+                    text.should.not.equal first
                     true
               , 1000)
 
 
     test.it "should be presented with score after ended game", ->
-      load_new_game('joshua')
+      load_new_game(driver, 'whale')
         .then( ->
-          answer_question true)
+          answer_question driver, true)
         .then ->
           driver.findElement(css: '#ratio').getText()
             .then (text) ->
-              assert text.match /Du fik \d+\/\d+ rigtige svar\!/
+              text.should.match /Du fik \d+\/\d+ rigtige svar\!/
           driver.findElement(css: '#points').getText()
             .then (text) ->
-              assert text.match /Point\: \d+/
+              text.should.match /Point\: \d+/
