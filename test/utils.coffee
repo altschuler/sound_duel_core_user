@@ -1,13 +1,13 @@
 # test/utils.coffee
 
-exports.load_new_game = (driver, name) ->
+load_new_game = (driver, name) ->
   driver.get "http://localhost:3000"
   driver.findElement(id: 'name')
     .sendKeys name
   driver.findElement(id: 'new-game')
     .click()
 
-exports.answer_question = (driver, all) ->
+answer_question = (driver, all) ->
   driver.findElements(css: '.alternative')
     .then (elements) ->
       elements[0].click()
@@ -17,6 +17,9 @@ exports.answer_question = (driver, all) ->
             .getText()
             .then (text) ->
               unless text.match /Resultater/
-                answer_question true
+                answer_question driver, true
         true
       , 1000)
+
+module.exports.load_new_game   = load_new_game
+module.exports.answer_question = answer_question

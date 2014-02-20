@@ -4,8 +4,7 @@ should    = require 'should'
 webdriver = require 'selenium-webdriver'
 test      = require 'selenium-webdriver/testing'
 server    = require('selenium-webdriver/remote').SeleniumServer
-
-{load_new_game, answer_question} = require './utils'
+utils     = require './utils'
 
 
 test.describe "Lobby:", ->

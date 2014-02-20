@@ -4,8 +4,7 @@ should    = require 'should'
 webdriver = require 'selenium-webdriver'
 test      = require 'selenium-webdriver/testing'
 server    = require('selenium-webdriver/remote').SeleniumServer
-
-{load_new_game, answer_question} = require './utils'
+utils     = require './utils'
 
 
 test.describe "Game:", ->
@@ -31,7 +30,7 @@ test.describe "Game:", ->
   describe "Player", ->
 
     test.it "should not see audio assets", ->
-      load_new_game(driver, 'ape')
+      utils.load_new_game(driver, 'ape')
         .then ->
           driver.findElements(css: 'audio')
             .then (elements) ->
@@ -45,7 +44,7 @@ test.describe "Game:", ->
 
 
     test.it "should see a moving progress bar on audio playing", ->
-      load_new_game(driver, 'karlsen')
+      utils.load_new_game(driver, 'karlsen')
         .then ->
           old = { width: undefined, value: undefined }
 
@@ -71,7 +70,7 @@ test.describe "Game:", ->
 
 
     test.it "should only be presented correct asset", ->
-      load_new_game(driver, 'apelape')
+      utils.load_new_game(driver, 'apelape')
         .then ->
           driver.findElements(css: 'audio')
             .then (elements) ->
@@ -90,7 +89,7 @@ test.describe "Game:", ->
     test.it "should be presented for multiple questions", ->
       first = undefined
 
-      load_new_game(driver, 'joshua')
+      utils.load_new_game(driver, 'joshua')
         .then( ->
           driver.findElement(css: '#heading')
             .getText()
@@ -111,9 +110,8 @@ test.describe "Game:", ->
 
 
     test.it "should be presented with score after ended game", ->
-      load_new_game(driver, 'whale')
-        .then( ->
-          answer_question driver, true)
+      utils.load_new_game(driver, 'whale')
+        .then( -> utils.answer_question(driver, true))
         .then ->
           driver.findElement(css: '#ratio').getText()
             .then (text) ->
