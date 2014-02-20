@@ -1,0 +1,20 @@
+#!/bin/env sh
+# simple test runner script
+
+log=test/mocha.log
+
+# start meteor
+cd app
+meteor &
+pid=$!
+cd ..
+echo -e "Meteor started: ${pid}\n"
+
+# run tests
+mocha &> $log
+
+# print (useful) results
+sed -n '/^[^ ]/p' $log
+
+# kill meteor
+kill -9 $pid && echo "Meteor killed."
