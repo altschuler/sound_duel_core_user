@@ -11,7 +11,7 @@ cd ..
 echo -e "Meteor started: ${pid}\n"
 
 # run tests
-mocha &> $log
+mocha $* &> $log
 
 # print (useful) results
 sed -n '/^[^ ]/p' $log
