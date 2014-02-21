@@ -10,16 +10,23 @@ load_new_game = (driver, name) ->
 answer_question = (driver, all) ->
   driver.findElements(css: '.alternative')
     .then (elements) ->
-      elements[0].click()
       driver.wait( ->
-        if all
-          driver.findElement(tagName: 'h3')
-            .getText()
-            .then (text) ->
-              unless text.match /Resultater/
-                answer_question driver, true
-        true
-      , 1000)
+        elements[0].getAttribute('disabled')
+          .then (disabled) ->
+            unless disabled
+              elements[0].click()
+              true
+      , 2000)
+        .then ->
+          if all
+            driver.wait( ->
+              driver.findElement(tagName: 'h3')
+                .getText()
+                .then (text) ->
+                  unless text.match /Resultater/
+                    answer_question driver, true
+              true
+            , 1000)
 
 module.exports.load_new_game   = load_new_game
 module.exports.answer_question = answer_question

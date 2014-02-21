@@ -97,16 +97,17 @@ test.describe "Game:", ->
               first = text
               text.should.match /\d+\/\d+/)
         .then ->
-          driver.findElement(css: '#A.alternative').click()
+          utils.answer_question(driver)
             .then ->
               driver.wait( ->
                 driver.findElement(css: '#heading')
                   .getText()
                   .then (text) ->
                     text.should.match /\d+\/\d+/
-                    text.should.not.equal first
-                    true
-              , 1000)
+                    unless text.match first
+                      text.should.not.equal first
+                      true
+              , 2000)
 
 
     test.it "should be presented with score after ended game", ->
