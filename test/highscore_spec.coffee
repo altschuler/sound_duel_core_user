@@ -36,11 +36,28 @@ test.describe "Highscore:", ->
           text.should.match /Highscore liste/)
 
     test.it "should see highscore after game", ->
+      points = undefined
+
       utils.load_new_game(driver, 'askeladden')
-        .then( -> utils.answer_question(driver, true))
-        driver.findElement(css: '#ratio').getText()
-          .then (text) ->
-            text.should.match /Du fik \d+\/\d+ rigtige svar\!/
-        driver.findElement(css: '#points').getText()
-          .then (text) ->
-            text.should.match /Point\: \d+/
+        .then ->
+          utils.answer_question(driver, true)
+            .then ->
+              driver.findElement(css: '#ratio').getText()
+                .then (text) ->
+                  text.should.match /Du fik \d+\/\d+ rigtige svar\!/
+              driver.findElement(css: '#points').getText()
+                .then (text) ->
+                  points = text.match(/Point\: (\d+)/)[1]
+              driver.findElement(css: '#restart').click()
+              driver.findElement(css: '#highscores').click()
+              driver.findElement(css: '#heading').getText()
+                .then (text) ->
+                  text.should.match /Highscore liste/
+              driver.findElements(tagName: 'tr')
+                .then (elements) ->
+                  for element in elements
+                    element.getText()
+                      .then (text) ->
+                        if text.match /askeladden.*/
+                          text.should.match "askeladden #{points}"
+                          return
