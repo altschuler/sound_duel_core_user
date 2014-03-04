@@ -21,6 +21,7 @@ Meteor.methods
       questionIds: questions.map (q) -> q._id
       currentQuestion: 0
       answers: []
+      state: 'init'
 
     highscoreId = Highscores.insert
       gameId: gameId
@@ -54,7 +55,7 @@ Meteor.methods
     for q in game.questionIds
       Questions.update q, { $set: { answerable: false } }
 
-    Games.update gameId, { $set: { finished: true } }
+    Games.update gameId, { $set: { state: 'finished' } }
 
     Meteor.users.update playerId,
       $set: { gameId: undefined }

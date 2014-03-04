@@ -2,6 +2,13 @@
 
 # methods
 
+notify = ({title, content, cancel, confirm}) ->
+  $('#popup-title').text title
+  $('#popup-content').text content
+  $('#popup-cancel').text cancel
+  $('#popup-confirm').text confirm
+  $('#popup').modal()
+
 bindAssetProgress = (asset) ->
   $(asset).bind 'timeupdate', ->
     percent = (this.currentTime * 100) / this.duration
@@ -10,10 +17,21 @@ bindAssetProgress = (asset) ->
     $('#asset-bar').attr 'style', "width: #{100 - percent}%"
     $('#asset-bar').text Math.floor value
 
+forcePlayAudio = (asset, callback) ->
+  asset.play()
+
+  setTimeout( ->
+    if asset.paused
+      notify
+        title: "Ops!"
+        content: "Beklager, noget gik galge når lyden skulle afspilles."
+        confirm: "Prøv igjen"
+    else
+      callback asset
+  , 1000)
+
 
 # helpers
-
-Handlebars.registerHelper 'loading', -> loadingProgress == 100
 
 Template.assets.helpers
   segments: ->
@@ -22,10 +40,9 @@ Template.assets.helpers
 
     hash = []
     for sound, i in sounds
-      hash.push {
-        id: sound._id,
-        path:  "/audio/#{sound.randomSegment()}"
-      }
+      hash.push
+        id:   sound._id,
+        path: "/audio/#{sound.randomSegment()}"
     hash
 
 Template.game.helpers
@@ -45,12 +62,25 @@ Template.game.helpers
 # rendered
 
 Template.game.rendered = ->
-  unless currentGameFinished() then bindAssetProgress currentAsset()
-
+  if currentGame().state is 'init'
+    notify
+      title:   "Blive klar!"
+      content: "Når du er klar til at spille, skal du trykke starte spill!"
+      cancel:  "Gå tilbake"
+      confirm: "Starte spill!"
 
 # events
 
 Template.play.events
+  'click #popup-confirm': (event) ->
+    bindAssetProgress currentAsset()
+    forcePlayAudio currentAsset(), (element) ->
+      Questions.update currentQuestionId(),
+        $set: { answerable: true }
+      Games.update currentGameId(),
+        $set: { state: 'inprogress' }
+
+
   'click .alternative': (event) ->
     # pause asset
     currentAsset().pause()
@@ -77,9 +107,11 @@ Template.play.events
     if currentQuestion()
       bindAssetProgress currentAsset()
 
-      forcePlayAudio currentAsset(), ->
-        Questions.update currentQuestionId(),
-          $set: { answerable: true }
+      setTimeout ->
+        forcePlayAudio currentAsset(), (element) ->
+          Questions.update currentQuestionId(),
+            $set: { answerable: true }
+      , 500
     else
       Meteor.call 'endGame', currentPlayerId(), (error, result) ->
         Meteor.Router.to "/games/#{currentGameId()}/result"

@@ -1,30 +1,30 @@
 <template name="lobby">
-  <div class="container text-center">
-    <h1>Målsuppe</h1>
+    <div class="container text-center">
+        <h1>Målsuppe</h1>
 
-    <p id="welcome" class="lead">Indtast dit navn og tryk "Spil!"</p>
+        <p id="welcome" class="lead">Indtast dit navn og tryk "Spil!"</p>
 
-    <div class="form-group">
-      <div class="input-append">
-        <input id="name" class="form-control input-medium" type="text" placeholder="Brugernavn">
-        <span class="input-group-btn">
-          <button id="new-game" class="btn btn-default btn-primary" type="button" {{disabled}}>Spil!</button>
-        </span>
-      </div>
+        <div class="form-group">
+            <div class="input-append">
+                <input id="name" class="form-control input-medium" type="text" placeholder="Brugernavn">
+                <span class="input-group-btn">
+                    <button id="new-game" class="btn btn-default btn-primary" type="button" {{disabled}}>Spil!</button>
+                </span>
+            </div>
+        </div>
+
+        <a id="highscores" href="{{highscoresPath}}">Highscore liste</a>
+
+        {{> players}}
     </div>
-
-    <a id="highscores" href="{{highscoresPath}}">Highscore liste</a>
-
-    {{> players}}
-  </div>
 </template>
 
 <template name="players">
-  <div class="players">
-    <h3>{{ waiting }}</h3>
+    <div class="players">
+        <h3>{{ waiting }}</h3>
 
-    {{#each onlinePlayers}}
-      <p class="span2">{{username}}</p>
-    {{/each}}
-  </div>
+        {{#each onlinePlayers}}
+        <p class="span2">{{username}}</p>
+        {{/each}}
+    </div>
 </template>

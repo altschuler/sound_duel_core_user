@@ -4,23 +4,6 @@
   Meteor.Router.to '/'
   location.reload()
 
-@forcePlayAudio = (audioSelector, callback) ->
-  playInterval = setInterval( ->
-    $asset = $(audioSelector)
-
-    # Wait for the first audio asset.
-    if $asset.length > 0
-      assetElement = $asset[0]
-
-      unless assetElement.paused
-        clearInterval playInterval
-        callback assetElement
-      else
-        console.log "play element: #{assetElement}"
-        assetElement.play()
-
-  , 750) # TODO: Make 250, less of a magic number.
-
 @currentGameId = ->
   id = Session.get 'gameId'
   if id then id else goHome()
@@ -31,7 +14,7 @@
 
 @currentGameFinished = ->
   outOfQuestions = currentGame().currentQuestion + 1 > numberOfQuestions()
-  currentGame().finished or outOfQuestions
+  currentGame().state is 'finished' or outOfQuestions
 
 @currentHighscore = ->
   highscore = Highscores.findOne
@@ -71,14 +54,14 @@
           alert "Brugernavn taget"
         else
           alert error.message
-        
+
         callback error, id
       else
         Session.set 'playerId', id
         Meteor.users.update id, { $set: { 'profile.online': true } }
 
       callback error, id
-        
+
 @onlinePlayers = ->
   Meteor.users.find
     _id: { $ne: currentPlayerId() }

@@ -5,11 +5,6 @@
 startGame = ->
   Meteor.call 'newGame', currentPlayerId(), (error, result) ->
     Session.set 'gameId', result
-
-    forcePlayAudio 'audio.asset:first', (element) ->
-      Questions.update currentQuestionId(), { $set: { answerable: true } }
-
-
     Meteor.Router.to "/games/#{currentGameId()}/play"
 
 
