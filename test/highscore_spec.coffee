@@ -59,5 +59,5 @@ test.describe "Highscore:", ->
                     element.getText()
                       .then (text) ->
                         if text.match /askeladden.*/
-                          text.should.match "askeladden #{points}"
+                          text.should.match "1 askeladden #{points}"
                           return

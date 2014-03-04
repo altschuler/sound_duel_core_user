@@ -2,10 +2,16 @@
 
 load_new_game = (driver, name) ->
   driver.get "http://localhost:3000"
-  driver.findElement(id: 'name')
-    .sendKeys name
-  driver.findElement(id: 'new-game')
-    .click()
+  driver.findElement(id: 'name').sendKeys name
+  driver.findElement(id: 'new-game').click()
+  # Selenium bug workaround
+  # http://code.google.com/p/selenium/issues/detail?id=2766
+  driver.wait( ->
+    driver.findElement(id: 'popup-confirm')
+  , 1000)
+  driver.executeScript "window.scrollTo(0, \
+    document.getElementById('popup-confirm').getBoundingClientRect().top);"
+  driver.findElement(id: 'popup-confirm').click()
 
 answer_question = (driver, all) ->
   driver.findElements(css: '.alternative')
