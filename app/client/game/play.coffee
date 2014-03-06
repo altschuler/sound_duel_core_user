@@ -2,13 +2,6 @@
 
 # methods
 
-notify = ({title, content, cancel, confirm}) ->
-  $('#popup-title').text title
-  $('#popup-content').text content
-  $('#popup-cancel').text cancel
-  $('#popup-confirm').text confirm
-  $('#popup').modal()
-
 bindAssetProgress = (asset) ->
   $(asset).bind 'timeupdate', ->
     percent = (this.currentTime * 100) / this.duration
@@ -65,7 +58,7 @@ Template.game.rendered = ->
   if currentGame().state is 'init'
     notify
       title:   "Blive klar!"
-      content: "Når du er klar til at spille, skal du trykke starte spill!"
+      content: "Når du er klar til at spille, skal du trykke 'Starte spill!'"
       cancel:  "Gå tilbake"
       confirm: "Starte spill!"
 

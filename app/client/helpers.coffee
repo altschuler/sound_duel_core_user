@@ -1,5 +1,12 @@
 # app/client/helpers.coffee
 
+@notify = ({title, content, cancel, confirm}) ->
+  $('#popup-title').text title
+  $('#popup-content').text content
+  $('#popup-cancel').text cancel
+  $('#popup-confirm').text confirm
+  $('#popup').modal()
+
 @goHome = ->
   Meteor.Router.to '/'
   location.reload()
