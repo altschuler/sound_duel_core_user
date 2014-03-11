@@ -23,6 +23,40 @@ forcePlayAudio = (asset, callback) ->
       callback asset
   , 1000)
 
+answerQuestion = (event) ->
+  # pause asset
+  currentAsset().pause()
+
+  # calculate points
+  points = parseInt($('#asset-bar').text(), 10)
+  # if asset hasn't started, max points
+  if isNaN points then points = currentGame().pointsPerQuestion
+
+  # get clicked alternative
+  answer = $(event.target).attr('id')
+
+  # update game
+  Games.update currentGame()._id,
+    $addToSet:
+      answers:
+        questionId: currentQuestion()._id
+        answer: answer
+        points: points
+    $inc:
+      currentQuestion: 1
+
+  # if out of questions, end of game
+  if currentQuestion()
+    bindAssetProgress currentAsset()
+    setTimeout ->
+      forcePlayAudio currentAsset(), (element) ->
+        Questions.update currentQuestionId(),
+          $set: { answerable: true }
+    , 500
+  else
+    Meteor.call 'endGame', currentPlayerId(), (error, result) ->
+      Meteor.Router.to "/games/#{currentGameId()}/result"
+
 
 # helpers
 
@@ -62,6 +96,7 @@ Template.game.rendered = ->
       cancel:  "Gå tilbake"
       confirm: "Starte spill!"
 
+
 # events
 
 Template.play.events
@@ -75,36 +110,4 @@ Template.play.events
 
 
   'click .alternative': (event) ->
-    # pause asset
-    currentAsset().pause()
-
-    # calculate points
-    points = parseInt($('#asset-bar').text(), 10)
-    # if asset hasn't started, max points
-    if isNaN points then points = currentGame().pointsPerQuestion
-
-    # get clicked alternative
-    answer = $(event.target).attr('id')
-
-    # update game
-    Games.update currentGame()._id,
-      $addToSet:
-        answers:
-          questionId: currentQuestion()._id
-          answer: answer
-          points: points
-      $inc:
-        currentQuestion: 1
-
-    # if out of questions, end of game
-    if currentQuestion()
-      bindAssetProgress currentAsset()
-
-      setTimeout ->
-        forcePlayAudio currentAsset(), (element) ->
-          Questions.update currentQuestionId(),
-            $set: { answerable: true }
-      , 500
-    else
-      Meteor.call 'endGame', currentPlayerId(), (error, result) ->
-        Meteor.Router.to "/games/#{currentGameId()}/result"
+    answerQuestion event

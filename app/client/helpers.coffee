@@ -47,28 +47,6 @@
 @currentPlayer = ->
   Meteor.users.findOne currentPlayerId()
 
-@newPlayer = (name, callback) ->
-  unless name
-    alert "Brugernavn ikke satt"
-  else
-    id = Meteor.users.insert { username: name }, (error, id) ->
-      if error
-        console.log error
-
-        Meteor.Router.to '/'
-
-        if error.error is 409
-          alert "Brugernavn taget"
-        else
-          alert error.message
-
-        callback error, id
-      else
-        Session.set 'playerId', id
-        Meteor.users.update id, { $set: { 'profile.online': true } }
-
-      callback error, id
-
 @onlinePlayers = ->
   Meteor.users.find
     _id: { $ne: currentPlayerId() }

@@ -12,13 +12,27 @@ Meteor.methods
         online: true
         lastKeepalive: (new Date()).getTime()
 
-  newGame: (playerId) ->
+
+  newPlayer: (name) ->
+    if Meteor.users.find({ username: name }).fetch().length > 0
+      throw new Meteor.Error 409, 'Username taken'
+
+    id = Meteor.users.insert { username: name }
+
+    Meteor.users.update id,
+      $set:
+        'profile.online': true
+        'profile.highscoreIds': []
+        'profile.invites': []
+
+    id
+
     # TODO: avoid getting the same questions
     questions = Questions.find({}, { limit: 5 }).fetch()
 
     gameId = Games.insert
-      pointsPerQuestion: CONFIG.POINTS_PER_QUESTION
       questionIds: questions.map (q) -> q._id
+      pointsPerQuestion: CONFIG.POINTS_PER_QUESTION
       currentQuestion: 0
       answers: []
       state: 'init'
@@ -58,5 +72,5 @@ Meteor.methods
     Games.update gameId, { $set: { state: 'finished' } }
 
     Meteor.users.update playerId,
-      $set: { gameId: undefined }
-      $addToSet: { highscoreIds: highscoreId }
+      $set: { 'profile.gameId': undefined }
+      $addToSet: { 'profile.highscoreIds': highscoreId }

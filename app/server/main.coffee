@@ -36,7 +36,6 @@ refreshDb = ->
     Questions.update questionId, $set: { soundId: soundId }
 
   # print some info
-  console.log "#Users: #{Meteor.users.find().count()}"
   console.log "#Questions: #{Questions.find().count()}"
   console.log "#Sounds: #{audioFiles.length}"
 
