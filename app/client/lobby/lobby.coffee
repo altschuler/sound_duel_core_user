@@ -33,6 +33,8 @@ Template.players.helpers
 Template.lobby.rendered = ->
   if currentPlayer()
     $('input#name').val currentPlayer().username
+    $('input#name').prop 'disabled', true
+    $('button#new-game').prop 'disabled', false
 
 
 # events
@@ -62,6 +64,11 @@ Template.lobby.events
     else
       newPlayer name, (error, result) ->
         console.log "new player (id: #{result}, error: #{error})"
+      name = "#{$('input#name').val()}".replace /^\s+|\s+$/g, ""
+      if name
+        $('button#new-game').prop 'disabled', false
+      else
+        $('button#new-game').prop 'disabled', true
 
         if not error and currentPlayerId()
           console.log "starting game..."
