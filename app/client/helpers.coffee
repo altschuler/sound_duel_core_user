@@ -13,7 +13,7 @@
 
 @currentGameId = ->
   id = Session.get 'gameId'
-  if id then id else goHome()
+  unless id then goHome() else id
 
 @currentGame = ->
   game = Games.findOne currentGameId()
@@ -42,7 +42,7 @@
   $(".asset##{currentQuestion().soundId}")[0]
 
 @currentPlayerId = ->
-  Session.get 'playerId'
+  localStorage.getItem 'playerId'
 
 @currentPlayer = ->
   Meteor.users.findOne currentPlayerId()

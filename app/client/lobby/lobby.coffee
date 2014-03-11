@@ -4,6 +4,7 @@
 
 startGame = ->
   Meteor.call 'newGame', currentPlayerId(), (error, result) ->
+        localStorage.setItem 'playerId', result
     Session.set 'gameId', result
     Meteor.Router.to "/games/#{currentGameId()}/play"
 
