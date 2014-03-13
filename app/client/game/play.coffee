@@ -108,6 +108,11 @@ Template.play.events
       Games.update currentGameId(),
         $set: { state: 'inprogress' }
 
+  'click #popup-cancel': (event) ->
+    Meteor.Router.to '/'
+    Session.set 'gameId', ''
+    # TODO: remove orphaned game
+
 
   'click .alternative': (event) ->
     answerQuestion event

@@ -59,6 +59,8 @@ Meteor.Collection.prototype.findOne = function(selector, options) {
 
 @Games = new Meteor.Collection 'games'
 
+@Challenges = new Meteor.Collection 'challenges'
+
 @Highscores = new Meteor.Collection 'highscores'
 
 @Questions = new Meteor.Collection 'questions'#,

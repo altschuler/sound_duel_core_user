@@ -2,27 +2,50 @@
 
 # methods
 
-startGame = ->
-  Meteor.call 'newGame', currentPlayerId(), (error, result) ->
-        localStorage.setItem 'playerId', result
-    Session.set 'gameId', result
-    Meteor.Router.to "/games/#{currentGameId()}/play"
+newPlayer = (callback) ->
+  name = "#{$('input#name').val()}".replace /^\s+|\s+$/g, ""
+  unless name
+    alert "Brugernavn ikke satt"
+    return
+
+  Meteor.call 'newPlayer', name, (error, result) ->
+    console.log "new player (id: #{result}, error: #{error})"
+    if error
+      console.log error
+      Meteor.Router.to '/'
+
+      if error.error is 409
+        alert "Brugernavn taget"
+      else
+        alert error.message
+
+    else
+      localStorage.setItem 'playerId', result
+      callback error, result
+
+
+newGame = ({challengeeId, answerChallengeId}) ->
+  startGame = ->
+    console.log "starting game..."
+    Meteor.call 'newGame', currentPlayerId(), {challengeeId, answerChallengeId}, (error, result) ->
+
+      Session.set 'gameId', result
+      Meteor.Router.to "/games/#{currentGameId()}/play"
+
+  if currentPlayer()
+    startGame()
+  else
+    newPlayer startGame
 
 
 # helpers
 
-Template.lobby.helpers
-  disabled: ->
-    # name = "#{$('input#name').val()}"
-    # # if not currentPlayer() or currentPlayer.username == '' then 'disabled'
-    # if !!name then 'disabled'
-
 Template.players.helpers
   waiting: ->
     count = onlinePlayers().length
-    if count == 0
+    if count is 0
       "Ingen spillere online"
-    else if count == 1
+    else if count is 1
       "1 spiller online:"
     else
       "#{count} spillere der er online:"
@@ -42,37 +65,20 @@ Template.lobby.rendered = ->
 Template.lobby.events
   'keyup input#name': (event, template) ->
     if event.keyCode is 13
-      $('#new-game').click()
-    # else
-    #   name = "#{$('input#name').val()}"
-    #   if !!name
-    #     $('btn#new-game').attr 'disabled', 'disabled'
-    #   else
-    #     $('btn#new-game').removeAttr 'disabled'
-
-      # get name and remove ws
-        # name = template.find('input#name').value.replace /^\s+|\s+$/g, ""
-      # update current player name
-      # Meteor.users.update currentPlayerId(),
-      #   $set: { username: name }
-
-  'click button#new-game': (event, template) ->
-    name = template.find('input#name').value.replace /^\s+|\s+$/g, ""
-
-    if currentPlayer()
-      startGame()
+      $('button#new-game').click()
     else
-      newPlayer name, (error, result) ->
-        console.log "new player (id: #{result}, error: #{error})"
       name = "#{$('input#name').val()}".replace /^\s+|\s+$/g, ""
       if name
         $('button#new-game').prop 'disabled', false
       else
         $('button#new-game').prop 'disabled', true
 
-        if not error and currentPlayerId()
-          console.log "starting game..."
-          startGame()
+  'click a.player': (event, template) ->
+    newGame { challengeeId: $(event.target).attr('id') }
 
-        else
-          console.log "couldnt start game"
+  'click button#new-game': newGame
+
+  'click #popup-confirm': (event) ->
+    setTimeout ->
+      newGame { acceptChallengeId: Session.get 'challengeId' }
+    , 500
