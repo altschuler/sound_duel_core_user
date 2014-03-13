@@ -3,7 +3,10 @@
 @notify = ({title, content, cancel, confirm}) ->
   $('#popup-title').text title
   $('#popup-content').text content
-  $('#popup-cancel').text cancel
+  unless cancel
+    $('#popup-cancel').hide()
+  else
+    $('#popup-cancel').text cancel
   $('#popup-confirm').text confirm
   $('#popup').modal()
 

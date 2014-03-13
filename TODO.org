@@ -3,4 +3,6 @@
 * TODO Not get the same questions each game
 * DONE Seconds per question depend on length of soundclip
   CLOSED: [2014-01-06 Mon 11:25]
-* TODO Avoid duplicate names
+* DONE Avoid duplicate names
+  CLOSED: [2014-03-13 Thu 10:52]
+* TODO Question not answerable when multiple players

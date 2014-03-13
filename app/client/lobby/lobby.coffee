@@ -3,19 +3,47 @@
 # methods
 
 checkChallenges = ->
-  challengeId = currentPlayer().profile.challenges.pop()
-  if challengeId
-    Session.set 'challengeId', challengeId
+  # check for results of earlier challenges
+  challenges = Challenges.find(
+    challengerId: currentPlayerId()
+  ).fetch()
 
-    challenge = Challenges.findOne challengeId
-    challenger = Meteor.users.findOne challenge.challengerId
+  for c in challenges
+    challengerGame = Games.findOne c.challengerGameId
+    challengeeGame = Games.findOne c.challengeeGameId
+    challengee = Meteor.users.findOne c.challengeeId
 
-    notify
-      title:   "Du er blevet udfordret!"
-      content: challenger.username +
-        " har udfordret dig til dyst. Vil du godkende?"
-      cancel:  "Gå tilbake"
-      confirm: "Starte spill!"
+    if challengerGame.state is 'finished' and challengeeGame.state is 'finished'
+      notify
+        title:   "Dyst besvaret!"
+        content: "#{challengee.username} har besvaret
+        din utfordring med. Se hvem der vant?"
+        cancel:  "Nei takk"
+        confirm: "Se resultat"
+
+      return
+
+  # check for challenges
+  challenges = Challenges.find(
+    challengeeId: currentPlayerId()
+  ).fetch()
+
+  for c in challenges
+    challengerGame = Games.findOne c.challengerGameId
+    challengeeGame = Games.findOne c.challengeeGameId
+
+    if challengeeGame.state is 'init' and challengerGame.state is 'finished'
+      Session.set 'challengeId', c._id
+      challenger = Meteor.users.findOne c.challengerId
+
+      notify
+        title:   "Du er blevet udfordret!"
+        content: challenger.username +
+          " har udfordret dig til dyst. Vil du godkende?"
+        cancel:  "Nei takk"
+        confirm: "Aksepter dyst"
+
+      return
 
 newPlayer = (callback) ->
   name = "#{$('input#name').val()}".replace /^\s+|\s+$/g, ""
@@ -38,15 +66,14 @@ newPlayer = (callback) ->
       localStorage.setItem 'playerId', result
       callback error, result
 
-
-newGame = ({challengeeId, answerChallengeId}) ->
+newGame = ({challengeeId, acceptChallengeId}) ->
   startGame = ->
     console.log "starting game..."
     Meteor.call 'newGame', currentPlayerId(),
-    {challengeeId, answerChallengeId}, (error, result) ->
+    {challengeeId, acceptChallengeId}, (error, result) ->
 
       Session.set 'gameId', result
-      Meteor.Router.to "/games/#{currentGameId()}/play"
+      Meteor.Router.to "/games/#{result}/play"
 
   if currentPlayer()
     startGame()
@@ -96,6 +123,8 @@ Template.lobby.events
   'click button#new-game': newGame
 
   'click #popup-confirm': (event) ->
-    setTimeout ->
-      newGame { acceptChallengeId: Session.get 'challengeId' }
-    , 500
+    # TODO: Smellz
+    if $('#popup-confirm').text().match "Aksepter dyst"
+      setTimeout ->
+        newGame { acceptChallengeId: Session.get 'challengeId' }
+      , 500

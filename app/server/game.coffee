@@ -24,18 +24,18 @@ Meteor.methods
       $set:
         'profile.online': true
         'profile.highscoreIds': []
-        'profile.challenges': []
 
     id
 
 
-  newGame: (playerId, {challengeeId, answerChallengeId}) ->
+  newGame: (playerId, {challengeeId, acceptChallengeId}) ->
     # cannot challange and answer at same time
-    if challengeeId and answerChallengeId
+    if challengeeId and acceptChallengeId
       throw new Meteor.Error
 
-    if answerChallengeId
-      gameId = Challenges.findOn(eanswerChallengeId).challengeeGameId
+    if acceptChallengeId
+      console.log 'accept challenge'
+      gameId = Challenges.findOne(acceptChallengeId).challengeeGameId
     else
       # TODO: avoid getting the same questions
       questions = Questions.find({}, { limit: 5 }).fetch()
@@ -43,9 +43,9 @@ Meteor.methods
       gameId = Games.insert
         questionIds: questions.map (q) -> q._id
         pointsPerQuestion: CONFIG.POINTS_PER_QUESTION
+        state: 'init'
         currentQuestion: 0
         answers: []
-        state: 'init'
 
     if challengeeId
       # TODO: avoid getting the same questions
@@ -54,18 +54,15 @@ Meteor.methods
       challengeeGameId = Games.insert
         questionIds: challengeQuestions.map (q) -> q._id
         pointsPerQuestion: CONFIG.POINTS_PER_QUESTION
+        state: 'init'
         currentQuestion: 0
         answers: []
-        state: 'init'
 
       challengeId = Challenges.insert
         challengerId: playerId
         challengeeId: challengeeId
         challengerGameId: gameId
         challengeeGameId: challengeeGameId
-
-      Meteor.users.update challengeeId,
-        $addToSet: { 'profile.challenges': challengeId }
 
     Meteor.users.update playerId, $set: { gameId: gameId }
     gameId

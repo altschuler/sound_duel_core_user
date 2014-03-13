@@ -12,6 +12,7 @@ refreshDb = ->
   # TODO: only for development
   Meteor.users.remove({})
   Games.remove({})
+  Challenges.remove({})
   Highscores.remove({})
   Questions.remove({})
   Sounds.remove({})
