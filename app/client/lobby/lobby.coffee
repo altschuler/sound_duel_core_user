@@ -2,6 +2,21 @@
 
 # methods
 
+checkChallenges = ->
+  challengeId = currentPlayer().profile.challenges.pop()
+  if challengeId
+    Session.set 'challengeId', challengeId
+
+    challenge = Challenges.findOne challengeId
+    challenger = Meteor.users.findOne challenge.challengerId
+
+    notify
+      title:   "Du er blevet udfordret!"
+      content: challenger.username +
+        " har udfordret dig til dyst. Vil du godkende?"
+      cancel:  "Gå tilbake"
+      confirm: "Starte spill!"
+
 newPlayer = (callback) ->
   name = "#{$('input#name').val()}".replace /^\s+|\s+$/g, ""
   unless name
@@ -27,7 +42,8 @@ newPlayer = (callback) ->
 newGame = ({challengeeId, answerChallengeId}) ->
   startGame = ->
     console.log "starting game..."
-    Meteor.call 'newGame', currentPlayerId(), {challengeeId, answerChallengeId}, (error, result) ->
+    Meteor.call 'newGame', currentPlayerId(),
+    {challengeeId, answerChallengeId}, (error, result) ->
 
       Session.set 'gameId', result
       Meteor.Router.to "/games/#{currentGameId()}/play"
@@ -58,6 +74,7 @@ Template.lobby.rendered = ->
     $('input#name').val currentPlayer().username
     $('input#name').prop 'disabled', true
     $('button#new-game').prop 'disabled', false
+    checkChallenges()
 
 
 # events
