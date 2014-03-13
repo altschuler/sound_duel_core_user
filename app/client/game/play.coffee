@@ -69,7 +69,7 @@ Template.assets.helpers
     for sound, i in sounds
       hash.push
         id:   sound._id,
-        path: "/audio/#{sound.randomSegment()}"
+        path: "/audio/#{randomSegment(sound)}"
     hash
 
 Template.game.helpers

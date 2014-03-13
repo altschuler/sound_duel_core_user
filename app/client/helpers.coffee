@@ -54,3 +54,7 @@
   .fetch()
 
 Handlebars.registerHelper 'onlinePlayers', onlinePlayers
+
+@randomSegment = (sound) ->
+  unless sound.segments?.length then return null
+  sound.segments[Math.floor(Math.random() * sound.segments.length)]
