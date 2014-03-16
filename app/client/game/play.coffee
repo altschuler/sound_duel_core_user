@@ -2,17 +2,24 @@
 
 # methods
 
+# binds audio element progression with progress bar
 bindAssetProgress = (asset) ->
   $(asset).bind 'timeupdate', ->
     percent = (this.currentTime * 100) / this.duration
     value = (currentGame().pointsPerQuestion * (100 - percent)) / 100
 
+    # update progress bar width depending on audio progress
     $('#asset-bar').attr 'style', "width: #{100 - percent}%"
     $('#asset-bar').text Math.floor value
 
-forcePlayAudio = (asset, callback) ->
+# start playback of audio element
+playAsset = (asset, callback) ->
+  # bind audio progress
+  bindAssetProgress currentAsset()
+  # play asset
   asset.play()
 
+  # check that the audio element is playing, if not deal with it
   setTimeout( ->
     if asset.paused
       notify
@@ -20,10 +27,11 @@ forcePlayAudio = (asset, callback) ->
         content: "Beklager, noget gik galge når lyden skulle afspilles."
         confirm: "Prøv igjen"
     else
-      callback asset
+      Questions.update currentQuestionId(), { $set: { answerable: true } }
+      callback asset if callback
   , 1000)
 
-answerQuestion = (event) ->
+answerQuestion = (answer) ->
   # pause asset
   currentAsset().pause()
 
@@ -32,10 +40,7 @@ answerQuestion = (event) ->
   # if asset hasn't started, max points
   if isNaN points then points = currentGame().pointsPerQuestion
 
-  # get clicked alternative
-  answer = $(event.target).attr('id')
-
-  # update game
+  # update current game object
   Games.update currentGame()._id,
     $addToSet:
       answers:
@@ -45,14 +50,13 @@ answerQuestion = (event) ->
     $inc:
       currentQuestion: 1
 
-  # if out of questions, end of game
+  # check for new question
+  # when more: bind progress, play audio and enable alternatives
   if currentQuestion()
-    bindAssetProgress currentAsset()
     setTimeout ->
-      forcePlayAudio currentAsset(), (element) ->
-        Questions.update currentQuestionId(),
-          $set: { answerable: true }
+      playAsset currentAsset()
     , 500
+  # when no questions end game and show result
   else
     Meteor.call 'endGame', currentPlayerId(), (error, result) ->
       Meteor.Router.to "/games/#{currentGameId()}/result"
@@ -65,12 +69,10 @@ Template.assets.helpers
     questions = currentGame().questionIds.map (id) -> Questions.findOne id
     sounds = questions.map (question) -> Sounds.findOne question.soundId
 
-    hash = []
-    for sound, i in sounds
-      hash.push
-        id:   sound._id,
-        path: "/audio/#{randomSegment(sound)}"
-    hash
+    # wrap the sound segments with id
+    sounds.map (sound) ->
+      id:   sound._id
+      path: "/audio/#{randomSegment(sound)}"
 
 Template.game.helpers
   currentQuestion: ->
@@ -89,6 +91,7 @@ Template.game.helpers
 # rendered
 
 Template.game.rendered = ->
+  # ask if player is ready when page is loaded
   if currentGame().state is 'init'
     notify
       title:   "Blive klar!"
@@ -100,19 +103,18 @@ Template.game.rendered = ->
 # events
 
 Template.play.events
+  # play asset if player is ready
   'click #popup-confirm': (event) ->
-    bindAssetProgress currentAsset()
-    forcePlayAudio currentAsset(), (element) ->
-      Questions.update currentQuestionId(),
-        $set: { answerable: true }
+    playAsset currentAsset(), (element) ->
       Games.update currentGameId(),
         $set: { state: 'inprogress' }
 
+  # go home if player not ready
   'click #popup-cancel': (event) ->
     Meteor.Router.to '/'
     Session.set 'gameId', ''
     # TODO: remove orphaned game
 
-
+  # answer question with clicked alternative
   'click .alternative': (event) ->
-    answerQuestion event
+    answerQuestion $(event.target).attr('id')

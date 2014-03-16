@@ -6,3 +6,4 @@
 * DONE Avoid duplicate names
   CLOSED: [2014-03-13 Thu 10:52]
 * TODO Question not answerable when multiple players
+* TODO Removed orphaned games
