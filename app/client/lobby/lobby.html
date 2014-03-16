@@ -23,11 +23,11 @@
 
 <template name="players">
     <div class="players">
-        <h3>{{ waiting }}</h3>
+        <h3>{{ waitingPlayers }}</h3>
         Tryk på en spiller for å invitere til dyst!</br>
 
         {{#each onlinePlayers}}
-        <p class="span2"><a class="player" id="{{_id}}" href="#">{{username}}</a></p>
+        <p class="span2"><a class="player" id="{{_id}}" href="#">{{ username }}</a></p>
         {{/each}}
     </div>
 </template>

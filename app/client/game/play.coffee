@@ -61,6 +61,10 @@ answerQuestion = (answer) ->
     Meteor.call 'endGame', currentPlayerId(), (error, result) ->
       Meteor.Router.to "/games/#{currentGameId()}/result"
 
+randomSegment = (sound) ->
+  unless sound.segments?.length then return null
+  sound.segments[Math.floor(Math.random() * sound.segments.length)]
+
 
 # helpers
 

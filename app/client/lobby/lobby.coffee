@@ -80,11 +80,18 @@ newGame = ({challengeeId, acceptChallengeId}) ->
   else
     newPlayer startGame
 
+onlinePlayers = ->
+  Meteor.users.find
+    _id: { $ne: currentPlayerId() }
+    'profile.online': true
+  .fetch()
 
 # helpers
 
 Template.players.helpers
-  waiting: ->
+  onlinePlayers: onlinePlayers
+
+  waitingPlayers: ->
     count = onlinePlayers().length
     if count is 0
       "Ingen spillere online"

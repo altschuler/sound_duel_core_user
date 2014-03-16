@@ -23,8 +23,8 @@
   unless game then goHome() else game
 
 @currentGameFinished = ->
-  outOfQuestions = currentGame().currentQuestion + 1 > numberOfQuestions()
-  currentGame().state is 'finished' or outOfQuestions
+  outOfQuestions = currentGame().currentQuestion >= numberOfQuestions()
+  outOfQuestions or currentGame().state is 'finished'
 
 @currentHighscore = ->
   highscore = Highscores.findOne
@@ -49,15 +49,3 @@
 
 @currentPlayer = ->
   Meteor.users.findOne currentPlayerId()
-
-@onlinePlayers = ->
-  Meteor.users.find
-    _id: { $ne: currentPlayerId() }
-    'profile.online': true
-  .fetch()
-
-Handlebars.registerHelper 'onlinePlayers', onlinePlayers
-
-@randomSegment = (sound) ->
-  unless sound.segments?.length then return null
-  sound.segments[Math.floor(Math.random() * sound.segments.length)]
