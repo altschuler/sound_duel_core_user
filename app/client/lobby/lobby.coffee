@@ -14,6 +14,8 @@ checkChallenges = ->
     challengee = Meteor.users.findOne c.challengeeId
 
     if challengerGame.state is 'finished' and challengeeGame.state is 'finished'
+      Session.set 'challengeId', c._id
+
       notify
         title:   "Dyst besvaret!"
         content: "#{challengee.username} har besvaret
@@ -46,13 +48,12 @@ checkChallenges = ->
       return
 
 newPlayer = (callback) ->
-  name = "#{$('input#name').val()}".replace /^\s+|\s+$/g, ""
-  unless name
+  username = "#{$('input#name').val()}".replace /^\s+|\s+$/g, ""
+  unless username
     alert "Brugernavn ikke satt"
     return
 
-  Meteor.call 'newPlayer', name, (error, result) ->
-    console.log "new player (id: #{result}, error: #{error})"
+  Meteor.call 'newPlayer', username, (error, result) ->
     if error
       console.log error
       Meteor.Router.to '/'
@@ -124,14 +125,18 @@ Template.lobby.events
       else
         $('button#new-game').prop 'disabled', true
 
+  'click button#new-game': newGame
+
   'click a.player': (event, template) ->
     newGame { challengeeId: $(event.target).attr('id') }
 
-  'click button#new-game': newGame
-
   'click #popup-confirm': (event) ->
     # TODO: Smellz
-    if $('#popup-confirm').text().match "Aksepter dyst"
-      setTimeout ->
-        newGame { acceptChallengeId: Session.get 'challengeId' }
-      , 500
+    switch $('#popup-confirm').text()
+      when "Aksepter dyst"
+        setTimeout ->
+          newGame { acceptChallengeId: currentChallengeId() }
+        , 500
+      when "Se resultat"
+        gameId = currentChallenge().challengerGameId
+        Meteor.Router.to "/games/#{gameId}/result"

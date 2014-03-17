@@ -26,9 +26,14 @@
   outOfQuestions = currentGame().currentQuestion >= numberOfQuestions()
   outOfQuestions or currentGame().state is 'finished'
 
+@currentChallengeId = ->
+  Session.get 'challengeId'
+
+@currentChallenge = ->
+  Challenges.findOne currentChallengeId()
+
 @currentHighscore = ->
-  highscore = Highscores.findOne
-    gameId: currentGameId()
+  highscore = Highscores.findOne { gameId: currentGameId() }
   unless highscore then goHome() else highscore
 
 @currentQuestionId = ->

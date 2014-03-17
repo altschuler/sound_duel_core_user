@@ -1,10 +1,29 @@
 <template name="result">
-  <div class="container">
-    <h3 id="heading">Resultater</h3>
+<div class="container">
+  <h3 id="heading">Resultater</h3>
 
+  {{#with result}}
     <p id="ratio" class="lead">Du fik {{ratio}} rigtige svar!</p>
     <p id="points" class="lead">Point: {{score}}</p>
+  {{/with}}
 
-    <a id="restart" class="btn btn-primary">Spil igen!</a>
-  </div>
+  {{#if ischallenge}}
+    {{> challenge}}
+  {{/if}}
+
+  <a id="restart" class="btn btn-primary">Spil igen!</a>
+</div>
+</template>
+
+<template name="challenge">
+  <h3>Dyst</h3>
+
+  {{#if answered}}
+    {{#with result}}
+      <p id="challengerRatio" class="lead">Din modstander fik {{ratio}} rigtige svar!</p>
+      <p id="challengerPoints" class="lead">Point: {{score}}</p>
+    {{/with}}
+  {{else}}
+    Din modstander har endnu ikke reageret på din udfordring. Du vil få besked, når resultatet er klar!
+  {{/if}}
 </template>

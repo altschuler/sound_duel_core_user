@@ -29,13 +29,14 @@ Meteor.methods
 
 
   newGame: (playerId, {challengeeId, acceptChallengeId}) ->
-    # cannot challange and answer at same time
+    # cannot challange and answer challange at same time
     if challengeeId and acceptChallengeId
       throw new Meteor.Error
 
+    # if accepting challenge, find the game
     if acceptChallengeId
-      console.log 'accept challenge'
       gameId = Challenges.findOne(acceptChallengeId).challengeeGameId
+    # else, create new game
     else
       # TODO: avoid getting the same questions
       questions = Questions.find({}, { limit: 5 }).fetch()
@@ -47,6 +48,7 @@ Meteor.methods
         currentQuestion: 0
         answers: []
 
+    # if challenging, create new game for challengee
     if challengeeId
       # TODO: avoid getting the same questions
       challengeQuestions = Questions.find({}, { limit: 5 }).fetch()
@@ -64,13 +66,14 @@ Meteor.methods
         challengerGameId: gameId
         challengeeGameId: challengeeGameId
 
-    Meteor.users.update playerId, $set: { gameId: gameId }
+    # set users gameId and return it
+    Meteor.users.update playerId, $set: { 'profile.gameId': gameId }
     gameId
 
 
   endGame: (playerId) ->
-    gameId = Meteor.users.findOne(playerId).gameId
-    game = Games.findOne gameId
+    player = Meteor.users.findOne playerId
+    game = Games.findOne player.profile.gameId
 
     # calculate score
     score = 0
@@ -83,16 +86,19 @@ Meteor.methods
 
     # update highscore
     highscoreId = Highscores.insert
-      gameId: gameId
+      gameId: game._id
       playerId: playerId
       correctAnswers: correctAnswers
       score: score
 
+    # mark all questions to not answerable
     for q in game.questionIds
       Questions.update q, { $set: { answerable: false } }
 
-    Games.update gameId, { $set: { state: 'finished' } }
+    # mark game as finished
+    Games.update game._id, { $set: { state: 'finished' } }
 
+    # set game id
     Meteor.users.update playerId,
       $set: { 'profile.gameId': undefined }
       $addToSet: { 'profile.highscoreIds': highscoreId }

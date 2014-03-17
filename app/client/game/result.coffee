@@ -3,17 +3,32 @@
 # helpers
 
 Template.result.helpers
-  score: ->
-    currentHighscore().score
+  result: ->
+    {
+      score: currentHighscore().score
+      ratio: "#{currentHighscore().correctAnswers}/#{numberOfQuestions()}"
+    }
 
-  ratio: ->
-    "#{currentHighscore().correctAnswers}/#{numberOfQuestions()}"
+  ischallenge: ->
+    currentChallengeId()
+
+Template.challenge.helpers
+  answered: ->
+    game = Games.findOne currentChallenge().challengeeGameId
+    game.state is 'finished'
+
+  result: ->
+    highscore = Highscores.findOne
+      gameId: currentChallenge().challengeeGameId
+    {
+      score: highscore.score
+      ratio: "#{highscore.correctAnswers}/#{numberOfQuestions()}"
+    }
 
 
 # events
 
 Template.result.events
   'click a#restart': ->
-    Session.set('gameId', '')
+    Session.set 'gameId', ''
     Meteor.Router.to '/'
-    #location.reload()
