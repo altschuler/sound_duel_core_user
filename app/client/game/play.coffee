@@ -52,7 +52,7 @@ answerQuestion = (answer) ->
 
   # check for new question
   # when more: bind progress, play audio and enable alternatives
-  if currentQuestion()
+  unless currentGameFinished()
     setTimeout ->
       playAsset currentAsset()
     , 500
@@ -84,9 +84,8 @@ Template.game.helpers
     "#{currentQuestion}/#{numberOfQuestions()}"
 
   alternatives: ->
-    q = currentQuestion()
-    # TODO: alternatives shouldn't be called here
-    if q then q.alternatives
+    unless currentGameFinished()
+      currentQuestion().alternatives
 
   alternativeDisabled: ->
     unless currentQuestion().answerable then 'disabled'

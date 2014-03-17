@@ -50,6 +50,8 @@ Meteor.methods
         currentQuestion: 0
         answers: []
 
+      challengeId = acceptChallengeId
+
     # if challenging, create new game for challengee
     if challengeeId
       # TODO: avoid getting the same questions
@@ -68,10 +70,12 @@ Meteor.methods
         challengerGameId: gameId
         challengeeGameId: challengeeGameId
 
-    # set users gameId and return it
+    # set users gameId and return it, together with challenge id
     Meteor.users.update playerId, $set: { 'profile.gameId': gameId }
-    gameId
-
+    {
+      gameId:      gameId
+      challengeId: challengeId
+    }
 
   endGame: (playerId) ->
     player = Meteor.users.findOne playerId

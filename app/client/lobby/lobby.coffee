@@ -62,12 +62,12 @@ newPlayer = (callback) ->
 
 newGame = ({challengeeId, acceptChallengeId}) ->
   startGame = ->
-    console.log "starting game..."
     Meteor.call 'newGame', currentPlayerId(),
     {challengeeId, acceptChallengeId}, (error, result) ->
 
-      Session.set 'gameId', result
-      Meteor.Router.to "/games/#{result}/play"
+      Session.set 'gameId', result.gameId
+      Session.set 'challengeId', result.challengeId
+      Meteor.Router.to "/games/#{result.gameId}/play"
 
   if currentPlayer()
     startGame()
