@@ -19,7 +19,7 @@ checkChallenges = ->
       notify
         title:   "Dyst besvaret!"
         content: "#{challengee.username} har besvaret
-        din utfordring med. Se hvem der vant?"
+        din utfordring. Se hvem der vant?"
         cancel:  "Nei takk"
         confirm: "Se resultat"
 
@@ -53,7 +53,7 @@ newPlayer = (callback) ->
   Meteor.call 'newPlayer', username, (error, result) ->
     if error
       if error.error is 409
-        alert "Brugernavn taget"
+        alert error.message
       else
         throw error
     else

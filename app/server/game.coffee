@@ -31,7 +31,7 @@ Meteor.methods
 
 
   newGame: (playerId, {challengeeId, acceptChallengeId}) ->
-    # cannot challange and answer challange at same time
+    # cannot challenge and answer challenge at same time
     if challengeeId and acceptChallengeId
       throw new Meteor.Error
 

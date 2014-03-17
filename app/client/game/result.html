@@ -7,7 +7,7 @@
     <p id="points" class="lead">Point: {{score}}</p>
   {{/with}}
 
-  {{#if ischallenge}}
+  {{#if challenge}}
     {{> challenge}}
   {{/if}}
 
@@ -24,6 +24,6 @@
       <p id="challengerPoints" class="lead">Point: {{score}}</p>
     {{/with}}
   {{else}}
-    Din modstander har endnu ikke reageret på din udfordring. Du vil få besked, når resultatet er klar!
+    <p class="lead">Din modstander har endnu ikke reageret på din udfordring. Du vil få besked, når resultatet er klar!</p>
   {{/if}}
 </template>

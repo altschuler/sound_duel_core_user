@@ -9,8 +9,7 @@ Template.result.helpers
       ratio: "#{currentHighscore().correctAnswers}/#{numberOfQuestions()}"
     }
 
-  ischallenge: ->
-    currentChallengeId()
+  challenge: -> currentGameIsChallenge()
 
 Template.challenge.helpers
   answered: ->
