@@ -49,20 +49,13 @@ checkChallenges = ->
 
 newPlayer = (callback) ->
   username = "#{$('input#name').val()}".replace /^\s+|\s+$/g, ""
-  unless username
-    alert "Brugernavn ikke satt"
-    return
 
   Meteor.call 'newPlayer', username, (error, result) ->
     if error
-      console.log error
-      Meteor.Router.to '/'
-
       if error.error is 409
         alert "Brugernavn taget"
       else
-        alert error.message
-
+        throw error
     else
       localStorage.setItem 'playerId', result
       callback error, result

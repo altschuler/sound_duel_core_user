@@ -14,8 +14,10 @@ Meteor.methods
 
 
   newPlayer: (name) ->
+    unless name
+      throw new Meteor.Error 409, 'Username not set'
     # username taken
-    if Meteor.users.find({ username: name }).fetch().length > 0
+    else if Meteor.users.find( username: name ).count() > 0
       throw new Meteor.Error 409, 'Username taken'
 
     id = Meteor.users.insert { username: name }
