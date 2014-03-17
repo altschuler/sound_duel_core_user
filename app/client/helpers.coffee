@@ -1,26 +1,45 @@
-# app/client/helpers.coffee
+# app/client/helpers.coffee#
 
+# methods
+
+# helper method for failing gracefully when required value is null
+failIfNull = (value=null, msg) ->
+  # if given value is null, route to home screen and throw error
+  unless value?
+    Meteor.Router.to '/'
+    throw new Error msg
+  # else, return the value
+  else
+    value
+
+
+# helpers
+
+# show popup dialog with text and options
 @notify = ({title, content, cancel, confirm}) ->
+  # set text
   $('#popup-title').text title
   $('#popup-content').text content
-  unless cancel
-    $('#popup-cancel').hide()
-  else
-    $('#popup-cancel').text cancel
   $('#popup-confirm').text confirm
+
+  # hide cancel button if not set
+  if cancel then $('#popup-cancel').text cancel else $('#popup-cancel').hide()
+
+  # show dialog
   $('#popup').modal()
 
-@goHome = ->
-  Meteor.Router.to '/'
-  location.reload()
+@currentPlayerId = ->
+  localStorage.getItem 'playerId'
+
+@currentPlayer = ->
+  Meteor.users.findOne currentPlayerId()
 
 @currentGameId = ->
-  id = Session.get 'gameId'
-  unless id then goHome() else id
+  failIfNull Session.get('gameId'), 'Session gameId not set'
 
 @currentGame = ->
-  game = Games.findOne currentGameId()
-  unless game then goHome() else game
+  failIfNull Games.findOne(currentGameId()),
+    "Current game not found (id: #{currentGameId()})"
 
 @currentGameFinished = ->
   outOfQuestions = currentGame().currentQuestion >= numberOfQuestions()
@@ -30,27 +49,28 @@
   Session.get 'challengeId'
 
 @currentChallenge = ->
-  Challenges.findOne currentChallengeId()
+  failIfNull Challenges.findOne(currentChallengeId()),
+    "Current challenge not found (id: #{currentChallengeId()})"
+
+@currentGameIsChallenge = ->
+  return currentChallengeId() or
+    Challenges.findOne { challengerGameId: currentGameId() } or
+    Challenges.findOne { challengeeGameId: currentGameId() }
 
 @currentHighscore = ->
-  highscore = Highscores.findOne { gameId: currentGameId() }
-  unless highscore then goHome() else highscore
+  failIfNull Highscores.findOne({ gameId: currentGameId() }),
+    'Current game has no highscore'
 
 @currentQuestionId = ->
   idx = currentGame().currentQuestion
   currentGame().questionIds[idx]
 
 @currentQuestion = ->
-  Questions.findOne currentQuestionId()
+  failIfNull Questions.findOne(currentQuestionId()),
+    "Current question not found (id: #{currentQuestionId()})"
 
 @numberOfQuestions = ->
   currentGame().questionIds.length
 
 @currentAsset = ->
   $(".asset##{currentQuestion().soundId}")[0]
-
-@currentPlayerId = ->
-  localStorage.getItem 'playerId'
-
-@currentPlayer = ->
-  Meteor.users.findOne currentPlayerId()
