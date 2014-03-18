@@ -14,8 +14,6 @@ bindAssetProgress = (asset) ->
 
 # start playback of audio element
 playAsset = (asset, callback) ->
-  # disable alternatives
-  $('.alternative').prop 'disabled', true
   # bind audio progress
   bindAssetProgress currentAsset()
   # play asset
@@ -94,11 +92,16 @@ Template.game.helpers
 Template.game.rendered = ->
   # ask if player is ready when page is loaded
   if currentGame().state is 'init' #
+    # prompt to start game
     notify
       title:   "Gør dig klar!"
       content: "Når du er klar til at spille, skal du trykke 'Starte spill!'"
       cancel:  "Gå tilbake"
       confirm: "Starte spill!"
+
+  # disable alternatives if asset is paused
+  if not currentGameFinished() and currentAsset().paused
+    $('.alternative').prop 'disabled', true
 
 
 # events
