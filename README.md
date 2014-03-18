@@ -1,7 +1,7 @@
 Sound-Duel
 ==========
 
-Sound Duel is a generic pop quiz game, built with [Meteor](https://www.meteor.com/). 
+Sound-Duel is a generic pop quiz game, built with [Meteor](https://www.meteor.com/).
 
 
 ## Installation
@@ -12,13 +12,15 @@ Sound Duel is a generic pop quiz game, built with [Meteor](https://www.meteor.co
 
     Manual installation (for developers) can be found at their [GitHub repo](https://github.com/meteor/meteor).
 
+ * Install [Meteorite](https://github.com/oortcloud/meteorite) with `npm`
+
+        # sudo npm install -g meteorite
+
  * Clone this repo
 
         # git clone https://github.com/bitblueprint/sound-duel
 
- * `cd` into the repo, install node dependencies and fire Meteor!
+ * `cd` into the repo and use [Meteorite](https://github.com/oortcloud/meteorite) to install dependencies and run Meteor:
 
-        # cd sound-duel
-        # npm install
-        # meteor
-
+        # cd Sound-Duel
+        # mrt
