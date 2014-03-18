@@ -1,29 +1,31 @@
 <template name="result">
-<div class="container">
-  <h3 id="heading">Resultater</h3>
+    <div class="container">
+        <h2 id="heading">Resultat</h3>
 
-  {{#with result}}
-    <p id="ratio" class="lead">Du fik {{ratio}} rigtige svar!</p>
-    <p id="points" class="lead">Point: {{score}}</p>
-  {{/with}}
+        <h3>Udfordrer: {{challenger}}</h3>
 
-  {{#if challenge}}
-    {{> challenge}}
-  {{/if}}
+        {{#with result}}
+        <p id="ratio" class="lead">Du fik {{ratio}} rigtige svar!</p>
+        <p id="points" class="lead">Point: {{score}}</p>
+        {{/with}}
 
-  <a id="restart" class="btn btn-primary">Spil igen!</a>
-</div>
+        {{#if challenge}}
+        {{> challenge}}
+        {{/if}}
+
+        <a id="restart" class="btn btn-primary">Spil igen!</a>
+    </div>
 </template>
 
 <template name="challenge">
-  <h3>Dyst</h3>
+    <h3>Modstander: {{opponent}}</h3>
 
-  {{#if answered}}
+    {{#if answered}}
     {{#with result}}
-      <p id="challengerRatio" class="lead">Din modstander fik {{ratio}} rigtige svar!</p>
-      <p id="challengerPoints" class="lead">Point: {{score}}</p>
+    <p id="challengerRatio" class="lead">Din modstander fik {{ratio}} rigtige svar!</p>
+    <p id="challengerPoints" class="lead">Point: {{score}}</p>
     {{/with}}
-  {{else}}
-    <p class="lead">Din modstander har endnu ikke reageret på din udfordring. Du vil få besked, når resultatet er klar!</p>
-  {{/if}}
+    {{else}}
+    <p class="lead">Din modstander har endnu ikke reageret på din udfordring.</p>
+    {{/if}}
 </template>

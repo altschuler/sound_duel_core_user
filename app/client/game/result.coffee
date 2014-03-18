@@ -1,5 +1,22 @@
 # app/client/game/result.coffee
 
+# methods
+
+playerRole = ->
+  isChallenger = currentPlayerId() is currentChallenge().challengerId
+  isChallengee = currentPlayerId() is currentChallenge().challengeeId
+
+  # check for error
+  if isChallenger and isChallengee
+    throw new Meteor.Error 500, 'Cannot be challenger and challengee'
+
+  # return the players role
+  if isChallenger
+    'challenger'
+  else if isChallengee
+    'challengee'
+
+
 # helpers
 
 Template.result.helpers
@@ -7,11 +24,16 @@ Template.result.helpers
     {
       score: currentHighscore().score
       ratio: "#{currentHighscore().correctAnswers}/#{numberOfQuestions()}"
+
     }
 
-  challenge: -> currentGameIsChallenge()
+  challenge: -> currentChallenge()?
 
 Template.challenge.helpers
+  opponent: ->
+    opponent = Meteor.users.findOne currentChallenge().challengeeId
+    opponent.username
+
   answered: ->
     game = Games.findOne currentChallenge().challengeeGameId
     game.state is 'finished'

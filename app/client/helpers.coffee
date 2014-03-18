@@ -50,17 +50,13 @@ failIfNull = (value=null, msg) ->
   outOfQuestions = currentGame().currentQuestion >= numberOfQuestions()
   outOfQuestions or currentGame().state is 'finished'
 
-@currentChallengeId = ->
-  Session.get 'challengeId'
-
 @currentChallenge = ->
-  failIfNull Challenges.findOne(currentChallengeId()),
-    "Current challenge not found (id: #{currentChallengeId()})"
+  c =  Challenges.findOne { challengerGameId: currentGameId() }
+  c ?= Challenges.findOne { challengeeGameId: currentGameId() }
+  c
 
-@currentGameIsChallenge = ->
-  return currentChallengeId() or
-    Challenges.findOne { challengerGameId: currentGameId() } or
-    Challenges.findOne { challengeeGameId: currentGameId() }
+@currentChallengeId = ->
+  currentChallenge()._id
 
 @currentHighscore = ->
   failIfNull Highscores.findOne({ gameId: currentGameId() }),

@@ -23,9 +23,8 @@ playAsset = (asset, callback) ->
   setTimeout( ->
     if asset.paused
       notify
-        title: "Ops!"
-        content: "Beklager, noget gik galge når lyden skulle afspilles."
-        confirm: "Prøv igjen"
+        title:   "Gør dig klar!"
+        confirm: "Spil!"
     else
       Questions.update currentQuestionId(), { $set: { answerable: true } }
       callback asset if callback
@@ -95,9 +94,9 @@ Template.game.helpers
 
 Template.game.rendered = ->
   # ask if player is ready when page is loaded
-  if currentGame().state is 'init'
+  if currentGame().state is 'init' #
     notify
-      title:   "Blive klar!"
+      title:   "Gør dig klar!"
       content: "Når du er klar til at spille, skal du trykke 'Starte spill!'"
       cancel:  "Gå tilbake"
       confirm: "Starte spill!"

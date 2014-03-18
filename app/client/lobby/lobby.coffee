@@ -11,15 +11,17 @@ checkChallenges = ->
   for c in challenges
     challengerGame = Games.findOne c.challengerGameId
     challengeeGame = Games.findOne c.challengeeGameId
-    challengee = Meteor.users.findOne c.challengeeId
+
 
     if challengerGame.state is 'finished' and challengeeGame.state is 'finished'
       Session.set 'challengeId', c._id
+      Session.set 'gameId', c.challengerGameId
+      challengee = Meteor.users.findOne c.challengeeId
 
       notify
         title:   "Dyst besvaret!"
-        content: "#{challengee.username} har besvaret
-        din utfordring. Se hvem der vant?"
+        content: challengee.username +
+          " har besvaret din utfordring. Se hvem der vant?"
         cancel:  "Nei takk"
         confirm: "Se resultat"
 
@@ -36,6 +38,7 @@ checkChallenges = ->
 
     if challengeeGame.state is 'init' and challengerGame.state is 'finished'
       Session.set 'challengeId', c._id
+      Session.set 'gameId', c.challengeeGameId
       challenger = Meteor.users.findOne c.challengerId
 
       notify
@@ -127,8 +130,10 @@ Template.lobby.events
     # TODO: Smellz
     switch $('#popup-confirm').text()
       when "Aksepter dyst"
+        #gameId = currentPlayer().gameId
+        challenge = Challenges.findOne { challengeeGameId: currentGameId() }
         setTimeout ->
-          newGame { acceptChallengeId: currentChallengeId() }
+          newGame { acceptChallengeId: challenge._id }
         , 500
       when "Se resultat"
         gameId = currentChallenge().challengerGameId
