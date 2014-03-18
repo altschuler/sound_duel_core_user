@@ -16,8 +16,9 @@ Sound Duel is a generic pop quiz game, built with [Meteor](https://www.meteor.co
 
         # git clone https://github.com/bitblueprint/sound-duel
 
- * `cd` into the repo and fire Meteor!
+ * `cd` into the repo, install node dependencies and fire Meteor!
 
         # cd sound-duel
+        # npm install
         # meteor
 
