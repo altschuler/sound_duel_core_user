@@ -97,10 +97,6 @@ Meteor.methods
       correctAnswers: correctAnswers
       score: score
 
-    # mark all questions to not answerable
-    for q in game.questionIds
-      Questions.update q, { $set: { answerable: false } }
-
     # mark game as finished
     Games.update game._id, { $set: { state: 'finished' } }
 

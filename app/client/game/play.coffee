@@ -14,6 +14,8 @@ bindAssetProgress = (asset) ->
 
 # start playback of audio element
 playAsset = (asset, callback) ->
+  # disable alternatives
+  $('.alternative').prop 'disabled', true
   # bind audio progress
   bindAssetProgress currentAsset()
   # play asset
@@ -26,7 +28,7 @@ playAsset = (asset, callback) ->
         title:   "Gør dig klar!"
         confirm: "Spil!"
     else
-      Questions.update currentQuestionId(), { $set: { answerable: true } }
+      $('.alternative').prop 'disabled', false
       callback asset if callback
   , 1000)
 
@@ -85,9 +87,6 @@ Template.game.helpers
   alternatives: ->
     unless currentGameFinished()
       currentQuestion().alternatives
-
-  alternativeDisabled: ->
-    unless currentQuestion().answerable then 'disabled'
 
 
 # rendered

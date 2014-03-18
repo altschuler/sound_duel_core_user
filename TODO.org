@@ -5,5 +5,6 @@
   CLOSED: [2014-01-06 Mon 11:25]
 * DONE Avoid duplicate names
   CLOSED: [2014-03-13 Thu 10:52]
-* TODO Question not answerable when multiple players
+* DONE Question not answerable when multiple players
+  CLOSED: [2014-03-18 Tue 12:58]
 * TODO Removed orphaned games
