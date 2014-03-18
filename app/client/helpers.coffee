@@ -17,13 +17,18 @@ failIfNull = (value=null, msg) ->
 
 # show popup dialog with text and options
 @notify = ({title, content, cancel, confirm}) ->
-  # set text
+  # set text or hide if not set
+  # title
   $('#popup-title').text title
-  $('#popup-content').text content
-  $('#popup-confirm').text confirm
-
-  # hide cancel button if not set
+  # body
+  if content
+    $('#popup-content').text content
+  else
+    $('#popup-content').hide()
+  # cancel button
   if cancel then $('#popup-cancel').text cancel else $('#popup-cancel').hide()
+  # confirm button
+  $('#popup-confirm').text confirm
 
   # show dialog
   $('#popup').modal()
