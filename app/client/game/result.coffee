@@ -21,10 +21,10 @@ playerRole = ->
 
 Template.result.helpers
   result: ->
+    highscore = Highscores.findOne { gameId: currentGame()._id }
     {
-      score: currentHighscore().score
-      ratio: "#{currentHighscore().correctAnswers}/#{numberOfQuestions()}"
-
+      score: highscore.score
+      ratio: "#{highscore.correctAnswers}/#{numberOfQuestions()}"
     }
 
   challenge: -> currentChallenge()?
@@ -39,8 +39,13 @@ Template.challenge.helpers
     game.state is 'finished'
 
   result: ->
-    highscore = Highscores.findOne
-      gameId: currentChallenge().challengeeGameId
+    role = playerRole()
+    if role is 'challenger'
+      highscore = Highscores.findOne
+        gameId: currentChallenge().challengeeGameId
+    else
+      highscore = Highscores.findOne
+        gameId: currentChallenge().challengerGameId
     {
       score: highscore.score
       ratio: "#{highscore.correctAnswers}/#{numberOfQuestions()}"

@@ -2,7 +2,7 @@
     <div class="container">
         <h2 id="heading">Resultat</h3>
 
-        <h3>Udfordrer: {{challenger}}</h3>
+        <h3>Dig</h3>
 
         {{#with result}}
         <p id="ratio" class="lead">Du fik {{ratio}} rigtige svar!</p>
@@ -26,6 +26,8 @@
     <p id="challengerPoints" class="lead">Point: {{score}}</p>
     {{/with}}
     {{else}}
-    <p class="lead">Din modstander har endnu ikke reageret på din udfordring.</p>
+    <p class="lead">Din modstander har endnu ikke svaret på din udfordring.</p>
     {{/if}}
+
+    <h2>{{winner}}</h2>
 </template>
