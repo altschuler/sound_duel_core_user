@@ -4,7 +4,7 @@ should    = require 'should'
 webdriver = require 'selenium-webdriver'
 test      = require 'selenium-webdriver/testing'
 server    = require('selenium-webdriver/remote').SeleniumServer
-helpers     = require './helpers'
+helpers   = require './helpers'
 
 
 test.describe "Highscore:", ->
@@ -31,33 +31,30 @@ test.describe "Highscore:", ->
 
     test.it "should be able to view highscore page", ->
       driver.findElement(id: 'highscores').click()
-      driver.findElement(id: 'heading').getText()
-        .then( (text) ->
-          text.should.match /Highscore liste/)
+      driver.findElement(id: 'heading').getText().then (text) ->
+        text.should.match /Highscore liste/
+
 
     test.it "should see highscore after game", ->
       points = undefined
 
-      helpers.loadNewGame(driver, 'askeladden')
-        .then ->
-          helpers.answerQuestion(driver, all: true)
-            .then ->
-              driver.findElement(css: '#ratio').getText()
-                .then (text) ->
-                  text.should.match /Du fik \d+\/\d+ rigtige svar\!/
-              driver.findElement(css: '#points').getText()
-                .then (text) ->
-                  points = text.match(/Point\: (\d+)/)[1]
-              driver.findElement(css: '#restart').click()
-              driver.findElement(css: '#highscores').click()
-              driver.findElement(css: '#heading').getText()
-                .then (text) ->
-                  text.should.match /Highscore liste/
-              driver.findElements(tagName: 'tr')
-                .then (elements) ->
-                  for element in elements
-                    element.getText()
-                      .then (text) ->
-                        if text.match /askeladden.*/
-                          text.should.match "1 askeladden #{points}"
-                          return
+      helpers.startNewGame driver, 'askeladden'
+      helpers.answerQuestion driver, all: true
+
+      driver.findElement(css: '#ratio').getText().then (text) ->
+        text.should.match /Du fik \d+\/\d+ rigtige svar\!/
+      driver.findElement(css: '#points').getText().then (text) ->
+        points = text.match(/Point\: (\d+)/)[1]
+
+      driver.findElement(css: '#restart').click()
+
+      driver.findElement(css: '#highscores').click()
+      driver.findElement(css: '#heading').getText().then (text) ->
+        text.should.match /Highscore liste/
+
+      driver.findElements(tagName: 'tr').then (elements) ->
+        for element in elements
+          element.getText().then (text) ->
+            if text.match /askeladden.*/
+              text[2..].should.match "askeladden #{points}"
+              return

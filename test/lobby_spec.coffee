@@ -30,21 +30,16 @@ test.describe "Lobby:", ->
   describe "Player", ->
 
     test.it "should see game name", ->
-      driver.findElement(tagName: 'h1')
-        .getText()
-        .then (text) ->
-          text.should.match "Målsuppe"
+      driver.findElement(css: 'h1:first-child').getText().then (text) ->
+        text.should.match "Målsuppe"
 
 
     test.it "should see welcome message", ->
-      driver.findElement(id: 'welcome')
-        .getText()
-        .then (text) ->
-          text.should.match "Indtast dit navn og tryk \"Spil!\""
+      driver.findElement(id: 'welcome').getText().then (text) ->
+        text.should.match "Indtast dit navn og tryk \"Spil!\""
 
 
     test.it "should feel that DR recognizes the game", ->
-      driver.findElement(tagName: 'img')
-        .getAttribute('src')
+      driver.findElement(css: 'div#logo>a>img').getAttribute('src')
         .then (src) ->
           src.should.match /.+dr-logo.svg/
