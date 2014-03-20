@@ -1,5 +1,37 @@
 # app/server/game.coffee
 
+# helpers
+
+findQuestions = ->
+  # TODO: avoid getting the same questions
+  Questions.find({},
+    limit: CONFIG.NUMBER_OF_QUESTION
+    # limit: 1 # For development
+    fields: { _id: 1 }
+  ).fetch()
+
+insertGame = ->
+  Games.insert
+    questionIds:       findQuestions()
+    pointsPerQuestion: CONFIG.POINTS_PER_QUESTION
+    state:             'init'
+    currentQuestion:   0
+    answers:           []
+
+insertChallenge = ({
+  playerId,
+  challengeeId,
+  gameId,
+  challengeeGameId })->
+
+  Challenges.insert
+    challengerId:     playerId
+    challengeeId:     challengeeId
+    challengerGameId: gameId
+    challengeeGameId: challengeeGameId
+    notified:         false
+
+
 # methods
 
 Meteor.methods
@@ -40,34 +72,17 @@ Meteor.methods
       gameId = Challenges.findOne(acceptChallengeId).challengeeGameId
     # else, create new game
     else
-      # TODO: avoid getting the same questions
-      questions = Questions.find({}, { limit: 5 }).fetch()
-
-      gameId = Games.insert
-        questionIds: questions.map (q) -> q._id
-        pointsPerQuestion: CONFIG.POINTS_PER_QUESTION
-        state: 'init'
-        currentQuestion: 0
-        answers: []
-
+      gameId = insertGame()
       challengeId = acceptChallengeId
 
     # if challenging, create new game for challengee
     if challengeeId
-      # TODO: avoid getting the same questions
-      challengeQuestions = Questions.find({}, { limit: 5 }).fetch()
+      challengeeGameId = insertGame()
 
-      challengeeGameId = Games.insert
-        questionIds: challengeQuestions.map (q) -> q._id
-        pointsPerQuestion: CONFIG.POINTS_PER_QUESTION
-        state: 'init'
-        currentQuestion: 0
-        answers: []
-
-      challengeId = Challenges.insert
-        challengerId: playerId
+      challengeId = insertChallenge
+        playerId: playerId
         challengeeId: challengeeId
-        challengerGameId: gameId
+        gameId: gameId
         challengeeGameId: challengeeGameId
 
     # set users gameId and return it, together with challenge id
