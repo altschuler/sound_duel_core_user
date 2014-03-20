@@ -8,6 +8,7 @@
 * DONE Question not answerable when multiple players
   CLOSED: [2014-03-18 Tue 12:58]
 * TODO Removed orphaned games
-* TODO Full height bug android
+* DONE Full height bug android
+  CLOSED: [2014-03-20 Thu 11:17]
 * TODO Winner text on result screen
 * TODO Not notified of seen results
