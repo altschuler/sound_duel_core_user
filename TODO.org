@@ -12,4 +12,5 @@
   CLOSED: [2014-03-20 Thu 11:17]
 * DONE Winner text on result screen
   CLOSED: [2014-03-20 Thu 11:37]
-* TODO Not notified of seen results
+* DONE Not notified of seen results
+  CLOSED: [2014-03-20 Thu 12:41]

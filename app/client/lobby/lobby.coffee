@@ -12,20 +12,23 @@ checkChallenges = ->
     challengerGame = Games.findOne c.challengerGameId
     challengeeGame = Games.findOne c.challengeeGameId
 
+    if challengerGame.state is 'finished' and
+      challengeeGame.state is 'finished' and
+      not c.notified
 
-    if challengerGame.state is 'finished' and challengeeGame.state is 'finished'
-      Session.set 'challengeId', c._id
-      Session.set 'gameId', c.challengerGameId
-      challengee = Meteor.users.findOne c.challengeeId
 
-      notify
-        title:   "Dyst besvaret!"
-        content: challengee.username +
-          " har besvaret din utfordring. Se hvem der vant?"
-        cancel:  "Nei takk"
-        confirm: "Se resultat"
+        Session.set 'challengeId', c._id
+        Session.set 'gameId', c.challengerGameId
+        challengee = Meteor.users.findOne c.challengeeId
 
-      return
+        notify
+          title:   "Dyst besvaret!"
+          content: challengee.username +
+            " har besvaret din utfordring. Se hvem der vant?"
+          cancel:  "Nei takk"
+          confirm: "Se resultat"
+
+        return
 
   # check for challenges
   challenges = Challenges.find(
@@ -136,5 +139,8 @@ Template.lobby.events
           newGame { acceptChallengeId: challenge._id }
         , 500
       when "Se resultat"
+        Challenges.update currentChallenge()._id, $set: { notified: true }
         gameId = currentChallenge().challengerGameId
-        Meteor.Router.to "/games/#{gameId}/result"
+        setTimeout ->
+          Meteor.Router.to "/games/#{gameId}/result"
+        , 500

@@ -2,7 +2,7 @@
 
 # methods
 
-playerRole = ->
+currentPlayerRole = ->
   isChallenger = currentPlayerId() is currentChallenge().challengerId
   isChallengee = currentPlayerId() is currentChallenge().challengeeId
 
@@ -36,10 +36,14 @@ Template.challenge.helpers
 
   answered: ->
     game = Games.findOne currentChallenge().challengeeGameId
+
+    if game.state is 'finished' and currentPlayerRole() is 'challenger'
+      Challenges.update currentChallenge()._id, $set: { notified: true }
+
     game.state is 'finished'
 
   result: ->
-    if playerRole() is 'challenger'
+    if currentPlayerRole() is 'challenger'
       highscore = Highscores.findOne
         gameId: currentChallenge().challengeeGameId
     else
@@ -68,7 +72,7 @@ Template.challenge.helpers
 
     if winner is 'tie'
       "Wow, du bundet!"
-    else if playerRole() is winner
+    else if currentPlayerRole() is winner
       "Tillykke, du har vundet!"
     else
       "Ugh, du har tabt!"
