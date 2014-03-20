@@ -39,8 +39,7 @@ Template.challenge.helpers
     game.state is 'finished'
 
   result: ->
-    role = playerRole()
-    if role is 'challenger'
+    if playerRole() is 'challenger'
       highscore = Highscores.findOne
         gameId: currentChallenge().challengeeGameId
     else
@@ -50,6 +49,29 @@ Template.challenge.helpers
       score: highscore.score
       ratio: "#{highscore.correctAnswers}/#{numberOfQuestions()}"
     }
+
+  winner: ->
+    unless Games.findOne(currentChallenge().challengeeGameId).state is 'finished'
+      return
+
+    challengeeHighscore = Highscores.findOne
+      gameId: currentChallenge().challengeeGameId
+    challengerHighscore = Highscores.findOne
+      gameId: currentChallenge().challengerGameId
+
+    if challengeeHighscore.score > challengerHighscore.score
+      winner = 'challengee'
+    else if challengeeHighscore.score < challengerHighscore.score
+      winner = 'challenger'
+    else
+      winner = 'tie'
+
+    if winner is 'tie'
+      "Wow, du bundet!"
+    else if playerRole() is winner
+      "Tillykke, du har vundet!"
+    else
+      "Ugh, du har tabt!"
 
 
 # events

@@ -10,5 +10,6 @@
 * TODO Removed orphaned games
 * DONE Full height bug android
   CLOSED: [2014-03-20 Thu 11:17]
-* TODO Winner text on result screen
+* DONE Winner text on result screen
+  CLOSED: [2014-03-20 Thu 11:37]
 * TODO Not notified of seen results
