@@ -9,9 +9,9 @@ load_new_game = (driver, name) ->
   driver.wait( ->
     driver.findElement(id: 'popup-confirm')
   , 1000)
-  driver.executeScript "window.scrollTo(0, \
-    document.getElementById('popup-confirm').getBoundingClientRect().top);"
-  driver.findElement(id: 'popup-confirm').click()
+  driver.executeScript "setTimeout((function() {
+      document.getElementById('popup-confirm').click();
+    }), 250);"
 
 answer_question = (driver, all) ->
   driver.findElements(css: '.alternative')
