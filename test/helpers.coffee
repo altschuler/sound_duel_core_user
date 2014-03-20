@@ -1,6 +1,6 @@
-# test/utils.coffee
+# test/helpers.coffee
 
-load_new_game = (driver, name) ->
+loadNewGame = (driver, name) ->
   driver.get "http://localhost:3000"
   driver.findElement(id: 'name').sendKeys name
   driver.findElement(id: 'new-game').click()
@@ -13,7 +13,6 @@ load_new_game = (driver, name) ->
       document.getElementById('popup-confirm').click();
     }), 250);"
 
-answer_question = (driver, all) ->
   driver.findElements(css: '.alternative')
     .then (elements) ->
       driver.wait( ->
@@ -26,13 +25,14 @@ answer_question = (driver, all) ->
         .then ->
           if all
             driver.wait( ->
-              driver.findElement(tagName: 'h3')
+              driver.findElement(id: 'heading')
                 .getText()
                 .then (text) ->
-                  unless text.match /Resultater/
-                    answer_question driver, true
+                  unless text.match /Resultat/
+                    answerQuestion driver, all: true
               true
             , 1000)
+answerQuestion = (driver, {all}={all:false}) ->
 
-module.exports.load_new_game   = load_new_game
-module.exports.answer_question = answer_question
+module.exports.loadNewGame   = loadNewGame
+module.exports.answerQuestion = answerQuestion

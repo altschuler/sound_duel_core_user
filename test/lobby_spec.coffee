@@ -4,7 +4,7 @@ should    = require 'should'
 webdriver = require 'selenium-webdriver'
 test      = require 'selenium-webdriver/testing'
 server    = require('selenium-webdriver/remote').SeleniumServer
-utils     = require './utils'
+utils     = require './helpers'
 
 
 test.describe "Lobby:", ->

@@ -4,7 +4,7 @@ should    = require 'should'
 webdriver = require 'selenium-webdriver'
 test      = require 'selenium-webdriver/testing'
 server    = require('selenium-webdriver/remote').SeleniumServer
-utils     = require './utils'
+helpers     = require './helpers'
 
 
 test.describe "Game:", ->
@@ -30,7 +30,7 @@ test.describe "Game:", ->
   describe "Player", ->
 
     test.it "should not see audio assets", ->
-      utils.load_new_game(driver, 'ape')
+      helpers.loadNewGame(driver, 'ape')
         .then ->
           driver.findElements(css: 'audio')
             .then (elements) ->
@@ -44,7 +44,7 @@ test.describe "Game:", ->
 
 
     test.it "should see a moving progress bar on audio playing", ->
-      utils.load_new_game(driver, 'karlsen')
+      helpers.loadNewGame(driver, 'karlsen')
         .then ->
           old = { width: undefined, value: undefined }
 
@@ -70,7 +70,7 @@ test.describe "Game:", ->
 
 
     test.it "should only be presented correct asset", ->
-      utils.load_new_game(driver, 'apelape')
+      helpers.loadNewGame(driver, 'apelape')
         .then ->
           driver.findElements(css: 'audio')
             .then (elements) ->
@@ -89,7 +89,7 @@ test.describe "Game:", ->
     test.it "should be presented for multiple questions", ->
       first = undefined
 
-      utils.load_new_game(driver, 'joshua')
+      helpers.loadNewGame(driver, 'joshua')
         .then( ->
           driver.findElement(css: '#heading')
             .getText()
@@ -97,7 +97,7 @@ test.describe "Game:", ->
               first = text
               text.should.match /\d+\/\d+/)
         .then ->
-          utils.answer_question(driver)
+          helpers.answerQuestion(driver)
             .then ->
               driver.wait( ->
                 driver.findElement(css: '#heading')
@@ -111,8 +111,8 @@ test.describe "Game:", ->
 
 
     test.it "should be presented with score after ended game", ->
-      utils.load_new_game(driver, 'whale')
-        .then( -> utils.answer_question(driver, true))
+      helpers.loadNewGame(driver, 'whale')
+        .then( -> helpers.answerQuestion(driver, all: true))
         .then ->
           driver.findElement(css: '#ratio').getText()
             .then (text) ->

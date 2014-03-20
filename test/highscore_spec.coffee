@@ -4,7 +4,7 @@ should    = require 'should'
 webdriver = require 'selenium-webdriver'
 test      = require 'selenium-webdriver/testing'
 server    = require('selenium-webdriver/remote').SeleniumServer
-utils     = require './utils'
+helpers     = require './helpers'
 
 
 test.describe "Highscore:", ->
@@ -38,9 +38,9 @@ test.describe "Highscore:", ->
     test.it "should see highscore after game", ->
       points = undefined
 
-      utils.load_new_game(driver, 'askeladden')
+      helpers.loadNewGame(driver, 'askeladden')
         .then ->
-          utils.answer_question(driver, true)
+          helpers.answerQuestion(driver, all: true)
             .then ->
               driver.findElement(css: '#ratio').getText()
                 .then (text) ->
