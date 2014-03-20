@@ -14,3 +14,4 @@
   CLOSED: [2014-03-20 Thu 11:37]
 * DONE Not notified of seen results
   CLOSED: [2014-03-20 Thu 12:41]
+* TODO Push notification of challenge unreliable
