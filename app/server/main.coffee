@@ -2,7 +2,6 @@
 
 fs = Npm.require 'fs'
 
-
 # methods
 
 refreshDb = ->
