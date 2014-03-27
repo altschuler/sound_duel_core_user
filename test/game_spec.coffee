@@ -9,20 +9,25 @@ helpers   = require './helpers'
 
 test.describe "Game:", ->
 
+  driver = null
+
   # hooks
 
-  driver = undefined
   test.before ->
     driver = new webdriver.Builder()
       .withCapabilities(webdriver.Capabilities.chrome())
       .build()
-
     driver.manage().timeouts().implicitlyWait(1000)
-
-    driver.get "http://localhost:3000"
 
   test.after ->
     driver.quit()
+
+  test.beforeEach ->
+    driver.get "http://localhost:3000"
+
+  test.afterEach ->
+    driver.get "http://localhost:3000/logout"
+
 
 
   # tests
@@ -91,9 +96,7 @@ test.describe "Game:", ->
         driver.wait( ->
           driver.findElement(css: '#heading').getText().then (text) ->
             text.should.match /\d+\/\d+/
-            unless text.match first
-              text.should.not.equal first
-              true
+            text.should.not.equal first
         , 2000)
 
 

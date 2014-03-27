@@ -9,20 +9,25 @@ helpers   = require './helpers'
 
 test.describe "Highscore:", ->
 
+  driver = null
+
   # hooks
 
-  driver = undefined
   test.before ->
     driver = new webdriver.Builder()
       .withCapabilities(webdriver.Capabilities.chrome())
       .build()
-
     driver.manage().timeouts().implicitlyWait(1000)
-
-    driver.get "http://localhost:3000"
 
   test.after ->
     driver.quit()
+
+  test.beforeEach ->
+    driver.get "http://localhost:3000"
+
+  test.afterEach ->
+    driver.get "http://localhost:3000/logout"
+
 
 
   # tests

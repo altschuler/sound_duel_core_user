@@ -17,6 +17,11 @@ if Meteor.isClient
 
     '/highscores': 'highscores'
 
+    '/logout':
+      to: 'lobby'
+      and: ->
+        localStorage.removeItem 'playerId'
+
 # server
 
 # if Meteor.isServer
