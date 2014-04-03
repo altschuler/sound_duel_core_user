@@ -1,33 +1,44 @@
 <template name="lobby">
-    {{> popup}}
+  {{> popup}}
 
-    <div class="container text-center">
-        <h1>Målsuppe</h1>
+  <div class="text-center">
+    <a id="highscores" href="{{pathFor 'highscores'}}">Highscore liste</a> <!-- TODO -->
 
-        <p id="welcome" class="lead">Indtast dit navn og tryk "Spil!"</p>
+    <h1>Målsuppe</h1>
 
-        <div class="form-group">
-            <div class="input-append">
-                <input id="name" class="form-control input-medium" type="text" placeholder="Brugernavn">
-                <span class="input-group-btn">
-                    <button id="new-game" class="btn btn-default btn-primary" type="button" disabled="disabled">Spil!</button>
-                </span>
-            </div>
-        </div>
+    <p id="welcome" class="lead">Indtast dit navn og tryk "Spil!"</p>
 
-        <a id="highscores" href="{{highscoresPath}}">Highscore liste</a>
-
-        {{> players}}
+    <!-- name form -->
+    <div class="form-group">
+      <div class="input-append">
+        <input id="name"
+               class="form-control input-medium"
+               type="text"
+               placeholder="Brugernavn">
+        <span class="input-group-btn">
+          <button id="new-game"
+                  class="btn btn-default btn-primary"
+                  type="button"
+                  disabled="disabled">
+            Spil!
+          </button>
+        </span>
+      </div>
     </div>
+
+    {{> players}}
+  </div>
 </template>
 
 <template name="players">
-    <div class="players">
-        <h3>{{waitingPlayers}}</h3>
-        Tryk på en spiller for å invitere til dyst!</br>
+  <div class="players">
+    <h3>{{waitingPlayers}}</h3>
+    Tryk på en spiller for å invitere til dyst!<br />
 
-        {{#each onlinePlayers}}
-        <p class="span2"><a class="player" id="{{_id}}" href="#">{{username}}</a></p>
-        {{/each}}
-    </div>
+    {{#each onlinePlayers}}
+      <p class="span2">
+        <a class="player" id={{_id}} href="#">{{username}}</a>
+      </p>
+    {{/each}}
+  </div>
 </template>

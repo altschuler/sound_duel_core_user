@@ -86,7 +86,7 @@ Meteor.methods
         challengeeGameId: challengeeGameId
 
     # set users gameId and return it, together with challenge id
-    Meteor.users.update playerId, $set: { 'profile.gameId': gameId }
+    # Meteor.users.update playerId, $set: { 'profile.gameId': gameId }
     {
       gameId:      gameId
       challengeId: challengeId

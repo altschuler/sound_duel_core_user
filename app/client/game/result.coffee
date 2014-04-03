@@ -83,4 +83,4 @@ Template.challenge.helpers
 Template.result.events
   'click a#restart': ->
     Session.set 'gameId', ''
-    Meteor.Router.to '/'
+    Router.go 'lobby'

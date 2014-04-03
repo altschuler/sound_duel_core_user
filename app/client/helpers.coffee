@@ -6,7 +6,7 @@
 failIfNull = (value=null, msg) ->
   # if given value is null, route to home screen and throw error
   unless value?
-    Meteor.Router.to '/'
+    Router.go 'lobby'
     throw new Error msg
   # else, return the value
   else

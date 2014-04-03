@@ -2,34 +2,39 @@
   {{> popup}}
   {{> assets}}
 
-  <div class="container">
-      {{> game}}
-  </div>
+  {{> game}}
 </template>
 
 <template name="assets">
-  {{#constant}}
-    <div class="assets">
-      {{#each segments}}
-        <audio id={{id}} class="asset" src={{path}}></audio>
-      {{/each}}
-    </div>
-  {{/constant}}
+  <div class="assets">
+    {{#each segments}}
+      <audio id="{{id}}"
+             class="asset"
+             src="{{path}}"
+             disabled="{{disabled}}">
+      </audio>
+    {{/each}}
+  </div>
 </template>
 
 <template name="game">
   <h3 id="heading">{{currentQuestion}}</h3>
 
-  {{#constant}}
-    <div class="progress progress-striped active">
-      <div id="asset-bar" class="bar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;">
-      </div>
+  <div class="progress progress-striped active">
+    <div id="asset-bar"
+         class="bar"
+         aria-valuenow="100"
+         aria-valuemin="0"
+         aria-valuemax="100"
+         style="width: 100%;">
     </div>
-  {{/constant}}
+  </div>
 
   {{#each alternatives}}
     <div class="row">
-      <button id={{name}} class="alternative btn btn-block btn-lg btn-primary">{{name}}) {{text}}</button>
+      <button id="{{name}}" class="alternative btn btn-block btn-lg btn-primary">
+        {{name}}) {{text}}
+      </button>
     </div>
   {{/each}}
 </template>

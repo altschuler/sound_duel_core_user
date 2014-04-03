@@ -16,7 +16,6 @@ checkChallenges = ->
       challengeeGame.state is 'finished' and
       not c.notified
 
-
         Session.set 'challengeId', c._id
         Session.set 'gameId', c.challengerGameId
         challengee = Meteor.users.findOne c.challengeeId
@@ -71,9 +70,9 @@ newGame = ({challengeeId, acceptChallengeId}) ->
     Meteor.call 'newGame', currentPlayerId(),
     {challengeeId, acceptChallengeId}, (error, result) ->
 
-      Session.set 'gameId', result.gameId
-      Session.set 'challengeId', result.challengeId
-      Meteor.Router.to "/games/#{result.gameId}/play"
+      # Session.set 'gameId', result.gameId
+      # Session.set 'challengeId', result.challengeId
+      Router.go 'game', _id: result.gameId, action: 'play'
 
   if currentPlayer()
     startGame()
@@ -142,5 +141,5 @@ Template.lobby.events
         Challenges.update currentChallenge()._id, $set: { notified: true }
         gameId = currentChallenge().challengerGameId
         setTimeout ->
-          Meteor.Router.to "/games/#{gameId}/result"
+          Router.go 'game', _id: gameId, action: 'result'
         , 500

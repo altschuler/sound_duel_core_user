@@ -1,20 +1,20 @@
 <template name="highscores">
-    <div class="container text-center">
-        <h3 id="heading">Highscore liste</h3>
+  <div class="text-center">
+    <h3 id="heading">Highscore liste</h3>
 
-        <table class="table table-striped">
-            <tr>
-                <th>#</th>
-                <th>Brugernavn</th>
-                <th>Score</th>
-            </tr>
-            {{#each withPosition highscores}}
-                <tr>
-                    <td>{{position}}</td>
-                    <td>{{playerUsername playerId}}</td>
-                    <td>{{score}}</td>
-                </tr>
-            {{/each}}
-        </table>
-    </div>
+    <table class="table table-striped">
+      <tr>
+        <th>#</th>
+        <th>Brugernavn</th>
+        <th>Score</th>
+      </tr>
+      {{#each withPosition highscores}}
+        <tr>
+          <td>{{position}}</td>
+          <td>{{playerUsername playerId}}</td>
+          <td>{{score}}</td>
+        </tr>
+      {{/each}}
+    </table>
+  </div>
 </template>

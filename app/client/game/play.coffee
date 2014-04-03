@@ -40,7 +40,7 @@ answerQuestion = (answer) ->
   if isNaN points then points = currentGame().pointsPerQuestion
 
   # update current game object
-  Games.update currentGame()._id,
+  Games.update currentGameId(),
     $addToSet:
       answers:
         questionId: currentQuestion()._id
@@ -58,7 +58,7 @@ answerQuestion = (answer) ->
   # when no questions end game and show result
   else
     Meteor.call 'endGame', currentPlayerId(), (error, result) ->
-      Meteor.Router.to "/games/#{currentGameId()}/result"
+      Router.go 'game', _id: currentGameId(), action: 'result'
 
 randomSegment = (sound) ->
   unless sound.segments?.length then return null
@@ -91,13 +91,12 @@ Template.game.helpers
 
 Template.game.rendered = ->
   # ask if player is ready when page is loaded
-  if currentGame().state is 'init' #
-    # prompt to start game
-    notify
-      title:   "Gør dig klar!"
-      content: "Når du er klar til at spille, skal du trykke 'Start spillet!'"
-      cancel:  "Gå tilbake"
-      confirm: "Start spillet!"
+  # and prompt to start game
+  notify
+    title:   "Gør dig klar!"
+    content: "Når du er klar til at spille, skal du trykke 'Start spillet!'"
+    cancel:  "Gå tilbake"
+    confirm: "Start spillet!"
 
   # disable alternatives if asset is paused
   if not currentGameFinished() and currentAsset().paused
@@ -109,16 +108,24 @@ Template.game.rendered = ->
 Template.play.events
   # play asset if player is ready
   'click #popup-confirm': (event) ->
-    playAsset currentAsset(), (element) ->
-      Games.update currentGameId(),
-        $set: { state: 'inprogress' }
+    switch $('#popup-confirm').text()
+      when "Start spillet!"
+        playAsset currentAsset(), (element) ->
+          Games.update currentGameId(),
+            $set: { state: 'inprogress' }
+          Meteor.users.update currentPlayerId(),
+            $set: { 'profile.gameId': currentGameId() } #HERE
+      when "Spil!"
+        playAsset currentAsset()
+
 
   # go home if player not ready
   'click #popup-cancel': (event) ->
-    Meteor.Router.to '/'
+    Router.go 'lobby'
     Session.set 'gameId', ''
     # TODO: remove orphaned game
 
   # answer question with clicked alternative
   'click .alternative': (event) ->
+    $('.alternative').prop 'disabled', true
     answerQuestion $(event.target).attr('id')

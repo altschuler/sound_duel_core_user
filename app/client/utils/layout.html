@@ -1,0 +1,9 @@
+<template name="layout">
+  <div id="logo">
+    <a href="{{pathFor 'lobby'}}"><img src="/images/dr-logo.svg" /></a>
+  </div>
+
+  <div class="container">
+    {{> yield}}
+  </div>
+</template>
