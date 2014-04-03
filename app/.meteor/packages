@@ -6,12 +6,11 @@
 standard-app-packages
 autopublish
 insecure
-preserve-inputs
 coffeescript
 less
 bootstrap
 #i18next-meteor
-router
 npm
 accounts-base
 accounts-password
+iron-router
