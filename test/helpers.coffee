@@ -1,10 +1,18 @@
 # test/helpers.coffee
 
-# Selenium bug workaround
-# http://code.google.com/p/selenium/issues/detail?id=2766
+# constants
+
+host = 'http://localhost:3000'
+module.exports.host = host
+
+
+# methods
+
 answerPopup = (driver, answer) ->
   id = if answer then 'popup-confirm' else 'popup-cancel'
 
+  # Selenium bug workaround
+  # http://code.google.com/p/selenium/issues/detail?id=2766
   driver.wait( ->
     driver.findElement id: id
   , 500)
@@ -12,12 +20,22 @@ answerPopup = (driver, answer) ->
     document.getElementById('#{id}').click();
   }), 250);"
 
+module.exports.answerPopup = answerPopup
+
 
 initNewPlayer = (driver, name) ->
   driver.findElement(id: 'name').sendKeys name
   driver.findElement(id: 'new-game').click()
 
   answerPopup driver, false
+
+module.exports.initNewPlayer = initNewPlayer
+
+
+logoutPlayer = (driver) ->
+  driver.get "#{host}/session/logout"
+
+module.exports.logoutPlayer = logoutPlayer
 
 
 startNewGame = (driver, name, {challengee}={challengee:null}) ->
@@ -32,6 +50,8 @@ startNewGame = (driver, name, {challengee}={challengee:null}) ->
 
   answerPopup driver, true
 
+module.exports.startNewGame = startNewGame
+
 
 answerChallenge = (driver, answer) ->
   answerPopup driver, answer
@@ -43,6 +63,8 @@ answerChallenge = (driver, answer) ->
     driver.executeScript "setTimeout((function() {
       document.getElementById('popup-confirm').click();
     }), 750);"
+
+module.exports.answerChallenge = answerChallenge
 
 
 answerQuestion = (driver, {all}={all:false}) ->
@@ -61,9 +83,16 @@ answerQuestion = (driver, {all}={all:false}) ->
           true
         , 1000)
 
+module.exports.answerQuestion = answerQuestion
 
-module.exports.answerPopup     = answerPopup
-module.exports.initNewPlayer   = initNewPlayer
-module.exports.startNewGame    = startNewGame
-module.exports.answerChallenge = answerChallenge
-module.exports.answerQuestion  = answerQuestion
+
+# hooks
+
+module.exports.after = (drivers) ->
+  driver.quit() for driver in drivers
+
+module.exports.afterEach = (drivers) ->
+  logoutPlayer driver for driver in drivers
+
+module.exports.beforeEach = (drivers) ->
+  driver.get host for driver in drivers

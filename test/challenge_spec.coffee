@@ -25,17 +25,11 @@ test.describe "Challenge:", ->
       .build()
     driver2.manage().timeouts().implicitlyWait(1000)
 
-  test.after ->
-    driver1.quit()
-    driver2.quit()
+  test.after -> helpers.after [driver1, driver2]
 
-  test.beforeEach ->
-    driver1.get "http://localhost:3000"
-    driver2.get "http://localhost:3000"
+  test.beforeEach -> helpers.beforeEach [driver1, driver2]
 
-  test.afterEach ->
-    driver1.get 'http://localhost:3000/logout'
-    driver2.get 'http://localhost:3000/logout'
+  test.afterEach -> helpers.afterEach [driver1, driver2]
 
 
   # tests

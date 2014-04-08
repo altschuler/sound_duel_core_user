@@ -19,15 +19,11 @@ test.describe "Highscore:", ->
       .build()
     driver.manage().timeouts().implicitlyWait(1000)
 
-  test.after ->
-    driver.quit()
+  test.after -> helpers.after [driver]
 
-  test.beforeEach ->
-    driver.get "http://localhost:3000"
+  test.beforeEach -> helpers.beforeEach [driver]
 
-  test.afterEach ->
-    driver.get "http://localhost:3000/logout"
-
+  test.afterEach -> helpers.afterEach [driver]
 
 
   # tests
