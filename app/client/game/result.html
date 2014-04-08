@@ -8,7 +8,7 @@
     <p id="points" class="lead">Point: {{score}}</p>
   {{/with}}
 
-  {{#if challenge}}
+  {{#if isChallenge}}
     {{> challenge}}
   {{/if}}
 
@@ -24,7 +24,7 @@
       <p id="opponentRatio" class="lead">Din modstander fik {{ratio}} rigtige svar!</p>
       <p id="opponentPoints" class="lead">Point: {{score}}</p>
     {{/with}}
-    {{else}}
+  {{else}}
     <p class="lead">Din modstander har endnu ikke svaret på din udfordring.</p>
   {{/if}}
 

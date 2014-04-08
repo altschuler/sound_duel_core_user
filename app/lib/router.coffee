@@ -20,12 +20,12 @@ if Meteor.isClient
       path: '/session/:action'
 
       onBeforeAction: (pause) ->
-        unless this.params.action in ['logout']
+        unless @params.action in ['logout']
           @render 'notFound'
           pause()
 
       action: ->
-        switch this.params.action
+        switch @params.action
           when 'logout'
             localStorage.removeItem 'playerId'
         @redirect '/'
@@ -35,14 +35,25 @@ if Meteor.isClient
       path: '/game/:_id/:action'
 
       onBeforeAction: (pause) ->
-        unless this.params.action in ['play', 'result']
+        unless @params.action in ['play', 'result']
           @render 'notFound'
           pause()
 
-      data: ->
-        Games.findOne this.params._id
+        gameId = @params._id
+        game = null
+        Deps.nonreactive ->
+          game = Games.findOne gameId
+        if not game? #or game.state is 'inprogress'
+          @render 'notFound'
+          pause()
+
+      waitOn: ->
+        Meteor.subscribe 'games'
+
+      onRun: ->
+        id = @params._id
+        Deps.nonreactive ->
+          Session.set 'gameId', id
 
       action: ->
-        Session.set 'gameId', this.params._id
-
-        @render this.params.action
+        @render @params.action

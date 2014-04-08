@@ -21,13 +21,13 @@ currentPlayerRole = ->
 
 Template.result.helpers
   result: ->
-    highscore = Highscores.findOne { gameId: currentGame()._id }
+    highscore = Highscores.findOne gameId: currentGame()._id
     {
       score: highscore.score
       ratio: "#{highscore.correctAnswers}/#{numberOfQuestions()}"
     }
 
-  challenge: -> currentChallenge()?
+  isChallenge: -> currentChallenge()?
 
 Template.challenge.helpers
   opponent: ->
@@ -37,6 +37,7 @@ Template.challenge.helpers
   answered: ->
     game = Games.findOne currentChallenge().challengeeGameId
 
+    # so challenger wont be notified of a seen result
     if game.state is 'finished' and currentPlayerRole() is 'challenger'
       Challenges.update currentChallenge()._id, $set: { notified: true }
 
