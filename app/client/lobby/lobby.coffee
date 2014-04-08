@@ -2,13 +2,11 @@
 
 # methods
 
-checkChallenges = ->
-  # check for results of earlier challenges
-  challenges = Challenges.find(
-    challengerId: currentPlayerId()
-  ).fetch()
-
+checkChallenges = (challenges) ->
+  # check for results
   for c in challenges
+    continue unless c.challengerId is currentPlayerId()
+
     challengerGame = Games.findOne c.challengerGameId
     challengeeGame = Games.findOne c.challengeeGameId
 
@@ -30,11 +28,9 @@ checkChallenges = ->
         return
 
   # check for challenges
-  challenges = Challenges.find(
-    challengeeId: currentPlayerId()
-  ).fetch()
-
   for c in challenges
+    continue unless c.challengeeId is currentPlayerId()
+
     challengerGame = Games.findOne c.challengerGameId
     challengeeGame = Games.findOne c.challengeeGameId
 
@@ -87,6 +83,15 @@ onlinePlayers = ->
 
 # helpers
 
+Template.lobby.helpers
+  challenge: ->
+    challenges = Challenges.find $or: [
+      { challengerId: currentPlayerId() }
+    , { challengeeId: currentPlayerId() }
+    ]
+    if challenges.count() > 0
+      checkChallenges challenges.fetch()
+
 Template.players.helpers
   onlinePlayers: onlinePlayers
 
@@ -107,7 +112,6 @@ Template.lobby.rendered = ->
     $('input#name').val currentPlayer().username
     $('input#name').prop 'disabled', true
     $('button#new-game').prop 'disabled', false
-    checkChallenges()
 
 
 # events
