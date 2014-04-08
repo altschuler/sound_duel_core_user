@@ -76,10 +76,11 @@ newGame = ({challengeeId, acceptChallengeId}) ->
     newPlayer startGame
 
 onlinePlayers = ->
-  Meteor.users.find
-    _id: { $ne: currentPlayerId() }
-    'profile.online': true
-  .fetch()
+    Meteor.users.find(
+      _id: { $ne: currentPlayerId() }
+      'profile.online': true
+    ).fetch()
+
 
 # helpers
 
@@ -132,9 +133,12 @@ Template.lobby.events
   'click a.player': (event, template) ->
     newGame { challengeeId: $(event.target).attr('id') }
 
+Template.popup.events
   'click #popup-confirm': (event) ->
-    # TODO: Smellz
-    switch $('#popup-confirm').text()
+    console.log 'popup event from lobby'
+
+    text = $('#popup-confirm').text().replace /^\s+|\s+$/g, ""
+    switch text
       when "Aksepter dyst"
         #gameId = currentPlayer().gameId
         challenge = Challenges.findOne { challengeeGameId: currentGameId() }

@@ -15,24 +15,6 @@ failIfNull = (value=null, msg) ->
 
 # helpers
 
-# show popup dialog with text and options
-@notify = ({title, content, cancel, confirm}) ->
-  # set text or hide if not set
-  # title
-  $('#popup-title').text title
-  # body
-  if content
-    $('#popup-content').text content
-  else
-    $('#popup-content').hide()
-  # cancel button
-  if cancel then $('#popup-cancel').text cancel else $('#popup-cancel').hide()
-  # confirm button
-  $('#popup-confirm').text confirm
-
-  # show dialog
-  $('#popup').modal()
-
 @currentPlayerId = ->
   localStorage.getItem 'playerId'
 
@@ -40,11 +22,13 @@ failIfNull = (value=null, msg) ->
   Meteor.users.findOne currentPlayerId()
 
 @currentGameId = ->
-  failIfNull Session.get('gameId'), 'Session gameId not set'
+  Session.get 'gameId'
+  #failIfNull Session.get('gameId'), 'Session gameId not set'
 
 @currentGame = ->
-  failIfNull Games.findOne(currentGameId()),
-    "Current game not found (id: #{currentGameId()})"
+  Games.findOne(currentGameId())
+  # failIfNull Games.findOne(currentGameId()),
+  #   "Current game not found (id: #{currentGameId()})"
 
 @currentGameFinished = ->
   outOfQuestions = currentGame().currentQuestion >= numberOfQuestions()

@@ -27,7 +27,7 @@ playAsset = (asset, callback) ->
         confirm: "Spil!"
     else
       $('.alternative').prop 'disabled', false
-      callback asset if callback
+      callback asset if callback?
   , 1000)
 
 answerQuestion = (answer) ->
@@ -105,26 +105,29 @@ Template.game.rendered = ->
 
 # events
 
-Template.play.events
+Template.popup.events
   # play asset if player is ready
   'click #popup-confirm': (event) ->
-    switch $('#popup-confirm').text()
+    console.log 'popup event from play'
+    text = $('#popup-confirm').text().replace /^\s+|\s+$/g, ""
+    switch text
       when "Start spillet!"
-        playAsset currentAsset(), (element) ->
-          Games.update currentGameId(),
-            $set: { state: 'inprogress' }
-          Meteor.users.update currentPlayerId(),
-            $set: { 'profile.gameId': currentGameId() } #HERE
+        Games.update currentGameId(), $set: {state: 'inprogress'}, (error) ->
+          playAsset currentAsset()
+        Meteor.users.update currentPlayerId(), $set:
+          'profile.gameId': currentGameId()
       when "Spil!"
         playAsset currentAsset()
 
-
-  # go home if player not ready
+  # go to lobby if player not ready
   'click #popup-cancel': (event) ->
-    Router.go 'lobby'
-    Session.set 'gameId', ''
     # TODO: remove orphaned game
+    Games.update currentGameId(), $set: { state: 'cancelled' }
+    Session.set 'gameId', ''
+    Router.go 'lobby'
 
+
+Template.play.events
   # answer question with clicked alternative
   'click .alternative': (event) ->
     $('.alternative').prop 'disabled', true

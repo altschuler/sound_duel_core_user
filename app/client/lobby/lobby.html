@@ -1,9 +1,9 @@
 <template name="lobby">
-  {{> popup}}
+  {{challenge}}
+
+  <a id="highscores" href="{{pathFor 'highscores'}}">Highscore liste</a>
 
   <div class="text-center">
-    <a id="highscores" href="{{pathFor 'highscores'}}">Highscore liste</a> <!-- TODO -->
-
     <h1 id="game-name">Målsuppe</h1>
 
     <p id="welcome" class="lead">Indtast dit navn og tryk "Spil!"</p>
