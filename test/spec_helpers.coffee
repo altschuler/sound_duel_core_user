@@ -1,4 +1,4 @@
-# test/helpers.coffee
+# test/spec_helpers.coffee
 
 # constants
 
