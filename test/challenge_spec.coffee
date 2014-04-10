@@ -39,10 +39,9 @@ test.describe "Challenge:", ->
     test.it "should be notified when challenged", ->
       # ready driver
       helpers.initNewPlayer driver1, 'harry'
-      driver2.get 'http://localhost:3000'
 
       # challenge and go to lobby
-      helpers.startNewGame driver2, 'ron', challengee:'harry'
+      helpers.startNewGame driver2, 'ron', challenge: 'harry'
       helpers.answerQuestion driver2, all: true
       driver2.findElement(id: 'restart').click()
 
@@ -57,10 +56,9 @@ test.describe "Challenge:", ->
 
       # ready drivers
       helpers.initNewPlayer driver1, 'jens'
-      driver2.get 'http://localhost:3000'
 
       # challenge and play game
-      helpers.startNewGame driver2, 'lise', challengee:'jens'
+      helpers.startNewGame driver2, 'lise', challenge: 'jens'
       helpers.answerQuestion driver2, all: true
 
       # store url and go to lobby
@@ -96,10 +94,9 @@ test.describe "Challenge:", ->
     test.it "should not be notified of seen result when", ->
       # ready drivers
       helpers.initNewPlayer driver1, 'alfred'
-      driver2.get 'http://localhost:3000'
 
       # challenge and play game
-      helpers.startNewGame driver2, 'magda', challengee:'alfred'
+      helpers.startNewGame driver2, 'magda', challenge: 'alfred'
       helpers.answerQuestion driver2, all: true
 
       # answer challenge
@@ -120,17 +117,25 @@ test.describe "Challenge:", ->
     test.it "should see result when challenged is answered", ->
       # ready drivers
       helpers.initNewPlayer driver1, 'mobydick'
-      driver2.get 'http://localhost:3000'
 
       # challenge and play game
-      helpers.startNewGame driver2, 'dumbledor', challengee:'mobydick'
+      helpers.startNewGame driver2, 'dumbledor', challenge: 'mobydick'
       helpers.answerQuestion driver2, all: true
 
       # answer challenge
       helpers.answerChallenge driver1, true
       helpers.answerQuestion driver1, all:true
 
-      # assert opponents score appears when answered
+      # assert opponents result appears when answered
+      driver1.findElement(id: 'opponentName').getText().then (text) ->
+        text.should.match /dumbledor/i
+      driver1.findElement(id: 'opponentRatio').getText().then (text) ->
+        text.should.match /.+ \d+\/\d+.+/i
+      driver1.findElement(id: 'opponentPoints').getText().then (text) ->
+        text.should.match /point: \d+/i
+
+      driver2.findElement(id: 'opponentName').getText().then (text) ->
+        text.should.match /mobydick/i
       driver2.findElement(id: 'opponentRatio').getText().then (text) ->
         text.should.match /.+ \d+\/\d+.+/i
       driver2.findElement(id: 'opponentPoints').getText().then (text) ->

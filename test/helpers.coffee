@@ -38,15 +38,15 @@ logoutPlayer = (driver) ->
 module.exports.logoutPlayer = logoutPlayer
 
 
-startNewGame = (driver, name, {challengee}={challengee:null}) ->
+startNewGame = (driver, name, {challenge}={challenge:null}) ->
   driver.findElement(id: 'name').sendKeys name
-  unless challengee
+  unless challenge
     driver.findElement(id: 'new-game').click()
   else
     driver.findElements(css: '.player').then (elements) ->
       for element in elements
         element.getText().then (text) ->
-          if text is challengee then element.click()
+          if text is challenge then element.click()
 
   answerPopup driver, true
 

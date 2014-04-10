@@ -38,7 +38,7 @@ Template.challenge.helpers
     if game.state is 'finished' and currentPlayerRole() is 'challenger'
       Challenges.update currentChallenge()._id, $set: { notified: true }
 
-    game.state isnt 'init'
+    game.state is 'finished'
 
   declined: ->
     Games.findOne(currentChallenge().challengeeGameId).state is 'declined'

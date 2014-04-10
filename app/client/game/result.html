@@ -17,19 +17,19 @@
 </template>
 
 <template name="challenge">
-  <h3>Modstander: {{opponent}}</h3>
+  <h3 id="opponentName">Modstander: {{opponent}}</h3>
 
-  {{#if answered}}
-    {{#if declined}}
-      <p class="lead">Din modstander har afvist din udfordring.</p>
-    {{else}}
+  {{#if declined}}
+    <p class="lead">Din modstander har afvist din udfordring.</p>
+  {{else}}
+    {{#if answered}}
       {{#with result}}
         <p id="opponentRatio" class="lead">Din modstander fik {{ratio}} rigtige svar!</p>
         <p id="opponentPoints" class="lead">Point: {{score}}</p>
       {{/with}}
+    {{else}}
+      <p class="lead">Din modstander har endnu ikke svaret på din udfordring.</p>
     {{/if}}
-  {{else}}
-    <p class="lead">Din modstander har endnu ikke svaret på din udfordring.</p>
   {{/if}}
 
   <h2>{{winner}}</h2>
