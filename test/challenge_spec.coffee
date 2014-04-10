@@ -51,6 +51,25 @@ test.describe "Challenge:", ->
           text.should.match /aksepter/i
       , 500)
 
+    test.it "should be notified when challenged is declined", ->
+      # ready driver
+      helpers.initNewPlayer driver1, 'potter'
+
+      # challenge
+      helpers.startNewGame driver2, 'hagrid', challenge: 'potter'
+      helpers.answerQuestion driver2, all: true
+
+      # decline challenge
+      helpers.answerPopup driver1, false
+
+      # assert challenger is informed
+      driver2.wait( ->
+        driver2.findElement(id: 'opponentStatus').getText().then (text) ->
+          return not text.match /endnu ikke svaret på din udfordring./i
+      , 200)
+      driver2.findElement(id: 'opponentStatus').getText().then (text) ->
+        text.should.match /Din modstander har afvist din udfordring/i
+
     test.it "should be notified of result when challenged is answered", ->
       challengerGameId = null
 

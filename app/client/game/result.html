@@ -20,7 +20,7 @@
   <h3 id="opponentName">Modstander: {{opponent}}</h3>
 
   {{#if declined}}
-    <p class="lead">Din modstander har afvist din udfordring.</p>
+    <p id="opponentStatus" class="lead">Din modstander har afvist din udfordring.</p>
   {{else}}
     {{#if answered}}
       {{#with result}}
@@ -28,7 +28,7 @@
         <p id="opponentPoints" class="lead">Point: {{score}}</p>
       {{/with}}
     {{else}}
-      <p class="lead">Din modstander har endnu ikke svaret på din udfordring.</p>
+      <p id="opponentStatus" class="lead">Din modstander har endnu ikke svaret på din udfordring.</p>
     {{/if}}
   {{/if}}
 
