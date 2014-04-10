@@ -122,7 +122,7 @@ Template.popup.events
   # go to lobby if player not ready
   'click #popup-cancel': (event) ->
     # TODO: remove orphaned game
-    Games.update currentGameId(), $set: { state: 'cancelled' }
+    Games.update currentGameId(), $set: { state: 'declined' }
     Session.set 'gameId', ''
     Router.go 'lobby'
 

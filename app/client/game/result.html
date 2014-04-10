@@ -20,10 +20,14 @@
   <h3>Modstander: {{opponent}}</h3>
 
   {{#if answered}}
-    {{#with result}}
-      <p id="opponentRatio" class="lead">Din modstander fik {{ratio}} rigtige svar!</p>
-      <p id="opponentPoints" class="lead">Point: {{score}}</p>
-    {{/with}}
+    {{#if declined}}
+      <p class="lead">Din modstander har afvist din udfordring.</p>
+    {{else}}
+      {{#with result}}
+        <p id="opponentRatio" class="lead">Din modstander fik {{ratio}} rigtige svar!</p>
+        <p id="opponentPoints" class="lead">Point: {{score}}</p>
+      {{/with}}
+    {{/if}}
   {{else}}
     <p class="lead">Din modstander har endnu ikke svaret på din udfordring.</p>
   {{/if}}

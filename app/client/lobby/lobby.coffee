@@ -25,6 +25,8 @@ checkChallenges = (challenges) ->
           cancel:  "Nei takk"
           confirm: "Se resultat"
 
+        Challenges.update currentChallenge()._id, $set: { notified: true }
+
         return
 
   # check for challenges
@@ -135,19 +137,11 @@ Template.lobby.events
 
 Template.popup.events
   'click #popup-confirm': (event) ->
-    console.log 'popup event from lobby'
-
     text = $('#popup-confirm').text().replace /^\s+|\s+$/g, ""
     switch text
       when "Aksepter dyst"
-        #gameId = currentPlayer().gameId
         challenge = Challenges.findOne { challengeeGameId: currentGameId() }
-        setTimeout ->
-          newGame { acceptChallengeId: challenge._id }
-        , 500
+        setTimeout (-> newGame { acceptChallengeId: challenge._id }), 500
       when "Se resultat"
-        Challenges.update currentChallenge()._id, $set: { notified: true }
         gameId = currentChallenge().challengerGameId
-        setTimeout ->
-          Router.go 'game', _id: gameId, action: 'result'
-        , 500
+        setTimeout (-> Router.go 'game', _id: gameId, action: 'result'), 500
