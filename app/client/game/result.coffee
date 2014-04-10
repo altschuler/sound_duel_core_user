@@ -2,18 +2,11 @@
 
 # methods
 
+# get the current player's role
 currentPlayerRole = ->
-  isChallenger = currentPlayerId() is currentChallenge().challengerId
-  isChallengee = currentPlayerId() is currentChallenge().challengeeId
-
-  # check for error
-  if isChallenger and isChallengee
-    throw new Meteor.Error 500, 'Cannot be challenger and challengee'
-
-  # return the players role
-  if isChallenger
+  if currentPlayerId() is currentChallenge().challengerId
     'challenger'
-  else if isChallengee
+  else
     'challengee'
 
 
@@ -31,7 +24,11 @@ Template.result.helpers
 
 Template.challenge.helpers
   opponent: ->
-    opponent = Meteor.users.findOne currentChallenge().challengeeId
+    opponent = null
+    if currentPlayerRole() is 'challengee'
+      opponent = Meteor.users.findOne currentChallenge().challengerId
+    else
+      opponent = Meteor.users.findOne currentChallenge().challengeeId
     opponent.username
 
   answered: ->
@@ -72,7 +69,7 @@ Template.challenge.helpers
       winner = 'tie'
 
     if winner is 'tie'
-      "Wow, du bundet!"
+      "Wow, der ble uafgjort!"
     else if currentPlayerRole() is winner
       "Tillykke, du har vundet!"
     else
