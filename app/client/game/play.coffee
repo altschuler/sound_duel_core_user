@@ -115,7 +115,7 @@ Template.popup.events
         Games.update currentGameId(), $set: {state: 'inprogress'}, (error) ->
           playAsset currentAsset()
         Meteor.users.update currentPlayerId(), $set:
-          'profile.gameId': currentGameId()
+          'profile.currentGameId': currentGameId()
       when "Spil!"
         playAsset currentAsset()
 

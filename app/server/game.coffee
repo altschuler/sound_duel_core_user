@@ -85,8 +85,7 @@ Meteor.methods
         gameId: gameId
         challengeeGameId: challengeeGameId
 
-    # set users gameId and return it, together with challenge id
-    # Meteor.users.update playerId, $set: { 'profile.gameId': gameId }
+    # return game id and challenge id
     {
       gameId:      gameId
       challengeId: challengeId
@@ -94,7 +93,7 @@ Meteor.methods
 
   endGame: (playerId) ->
     player = Meteor.users.findOne playerId
-    game = Games.findOne player.profile.gameId
+    game = Games.findOne player.profile.currentGameId
 
     # calculate score
     score = 0
@@ -117,5 +116,5 @@ Meteor.methods
 
     # set game id
     Meteor.users.update playerId,
-      $set: { 'profile.gameId': undefined }
+      $set: { 'profile.currentGameId': undefined }
       $addToSet: { 'profile.highscoreIds': highscoreId }
