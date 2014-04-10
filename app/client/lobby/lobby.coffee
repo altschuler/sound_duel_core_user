@@ -55,26 +55,24 @@ newPlayer = (callback) ->
 
   Meteor.call 'newPlayer', username, (error, result) ->
     if error
-      if error.error is 409
-        alert error.message
-      else
-        throw error
+      if error.error is 409 then alert error.message else throw error
     else
+      # store player id
       localStorage.setItem 'playerId', result
+      # fire callback (e.g. start game)
       callback error, result
 
 newGame = ({challengeeId, acceptChallengeId}) ->
   startGame = ->
     Meteor.call 'newGame', currentPlayerId(),
-    {challengeeId, acceptChallengeId}, (error, result) ->
-
-      # Session.set 'gameId', result.gameId
-      # Session.set 'challengeId', result.challengeId
+    { challengeeId, acceptChallengeId }, (error, result) ->
       Router.go 'game', _id: result.gameId, action: 'play'
 
   if currentPlayer()
+    # if logged in, start game
     startGame()
   else
+    # else create player and then start game
     newPlayer startGame
 
 onlinePlayers = ->
@@ -145,3 +143,9 @@ Template.popup.events
       when "Se resultat"
         gameId = currentChallenge().challengerGameId
         setTimeout (-> Router.go 'game', _id: gameId, action: 'result'), 500
+
+  'click #popup-cancel': (event) ->
+      text = $('#popup-cancel').text().replace /^\s+|\s+$/g, ""
+      switch text
+        when "Nei takk"
+          Games.update currentGameId(), $set: { state: 'declined' }

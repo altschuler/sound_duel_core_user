@@ -52,9 +52,7 @@ answerQuestion = (answer) ->
   # check for new question
   # when more: bind progress, play audio and enable alternatives
   unless currentGameFinished()
-    setTimeout ->
-      playAsset currentAsset()
-    , 500
+    setTimeout (-> playAsset currentAsset()), 500
   # when no questions end game and show result
   else
     Meteor.call 'endGame', currentPlayerId(), (error, result) ->
@@ -108,7 +106,6 @@ Template.game.rendered = ->
 Template.popup.events
   # play asset if player is ready
   'click #popup-confirm': (event) ->
-    console.log 'popup event from play'
     text = $('#popup-confirm').text().replace /^\s+|\s+$/g, ""
     switch text
       when "Start spillet!"
@@ -126,9 +123,8 @@ Template.popup.events
     Session.set 'gameId', ''
     Router.go 'lobby'
 
-
 Template.play.events
   # answer question with clicked alternative
   'click .alternative': (event) ->
     $('.alternative').prop 'disabled', true
-    answerQuestion $(event.target).attr('id')
+    answerQuestion event.target.id

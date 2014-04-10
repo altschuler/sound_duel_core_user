@@ -44,25 +44,28 @@ Template.challenge.helpers
     Games.findOne(currentChallenge().challengeeGameId).state is 'declined'
 
   result: ->
+    highscore = null
+
     if currentPlayerRole() is 'challenger'
       highscore = Highscores.findOne
         gameId: currentChallenge().challengeeGameId
     else
       highscore = Highscores.findOne
         gameId: currentChallenge().challengerGameId
+
     {
       score: highscore.score
       ratio: "#{highscore.correctAnswers}/#{numberOfQuestions()}"
     }
 
   winner: ->
-    unless Games.findOne(currentChallenge().challengeeGameId).state is 'finished'
-      return
+    challenge = currentChallenge()
+    return unless Games.findOne(challenge.challengeeGameId).state is 'finished'
 
     challengeeHighscore = Highscores.findOne
-      gameId: currentChallenge().challengeeGameId
+      gameId: challenge.challengeeGameId
     challengerHighscore = Highscores.findOne
-      gameId: currentChallenge().challengerGameId
+      gameId: challenge.challengerGameId
 
     if challengeeHighscore.score > challengerHighscore.score
       winner = 'challengee'

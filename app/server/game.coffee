@@ -112,7 +112,7 @@ Meteor.methods
       score: score
 
     # mark game as finished
-    Games.update game._id, { $set: { state: 'finished' } }
+    Games.update game._id, $set: { state: 'finished' }
 
     # set game id
     Meteor.users.update playerId,
