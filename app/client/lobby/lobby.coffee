@@ -10,24 +10,24 @@ checkChallenges = (challenges) ->
     challengerGame = Games.findOne c.challengerGameId
     challengeeGame = Games.findOne c.challengeeGameId
 
-    if challengerGame.state is 'finished' and
-      challengeeGame.state is 'finished' and
-      not c.notified
+    finished = challengerGame.state is 'finished' and
+      challengeeGame.state is 'finished'
 
-        Session.set 'challengeId', c._id
-        Session.set 'gameId', c.challengerGameId
-        challengee = Meteor.users.findOne c.challengeeId
+    if finished not c.notified
+      Session.set 'challengeId', c._id
+      Session.set 'gameId', c.challengerGameId
+      challengee = Meteor.users.findOne c.challengeeId
 
-        notify
-          title:   "Dyst besvaret!"
-          content: challengee.username +
-            " har besvaret din utfordring. Se hvem der vant?"
-          cancel:  "Nei takk"
-          confirm: "Se resultat"
+      notify
+        title:   "Dyst besvaret!"
+        content: challengee.username +
+          " har besvaret din utfordring. Se hvem der vant?"
+        cancel:  "Nei takk"
+        confirm: "Se resultat"
 
-        Challenges.update currentChallenge()._id, $set: { notified: true }
+      Challenges.update currentChallenge()._id, $set: { notified: true }
 
-        return
+      return
 
   # check for challenges
   for c in challenges
@@ -76,10 +76,10 @@ newGame = ({challengeeId, acceptChallengeId}) ->
     newPlayer startGame
 
 onlinePlayers = ->
-    Meteor.users.find(
-      _id: { $ne: currentPlayerId() }
-      'profile.online': true
-    ).fetch()
+  Meteor.users.find(
+    _id: { $ne: currentPlayerId() }
+    'profile.online': true
+  ).fetch()
 
 
 # helpers
@@ -145,7 +145,7 @@ Template.popup.events
         setTimeout (-> Router.go 'game', _id: gameId, action: 'result'), 500
 
   'click #popup-cancel': (event) ->
-      text = $('#popup-cancel').text().replace /^\s+|\s+$/g, ""
-      switch text
-        when "Nei takk"
-          Games.update currentGameId(), $set: { state: 'declined' }
+    text = $('#popup-cancel').text().replace /^\s+|\s+$/g, ""
+    switch text
+      when "Nei takk"
+        Games.update currentGameId(), $set: { state: 'declined' }

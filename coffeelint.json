@@ -63,7 +63,7 @@
     },
     "no_backticks": {
         "name": "no_backticks",
-        "level": "ignore"
+        "level": "error"
     },
     "no_implicit_parens": {
         "name": "no_implicit_parens",

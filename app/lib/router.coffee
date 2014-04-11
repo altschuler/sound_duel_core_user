@@ -5,8 +5,8 @@
 if Meteor.isClient
 
   Router.configure
-   layoutTemplate: 'layout'
-   notFoundTemplate: 'notFound'
+    layoutTemplate: 'layout'
+    notFoundTemplate: 'notFound'
 
   Router.map ->
     # lobby
