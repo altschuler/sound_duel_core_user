@@ -1,8 +1,8 @@
 {
-  "name": "Sound-Duel",
+  "name": "Sound-Duel-Core",
   "description": "Sound Duel is a generic pop quiz game",
   "author": "BIT BLUEPRINT <hello@bitblueprint.com>",
-  "repository": "github.com/bitblueprint/sound-duel",
+  "repository": "git@github.com:bitblueprint/Sound-Duel-Core.git",
   "dependencies": {
     "coffee-script": ">= 1.6.3"
   },
