@@ -1,61 +1,61 @@
 # test/highscore_spec.coffee
 
-should    = require 'should'
-webdriver = require 'selenium-webdriver'
-test      = require 'selenium-webdriver/testing'
-server    = require('selenium-webdriver/remote').SeleniumServer
-helpers   = require './spec_helpers'
+webdriverjs = require 'webdriverjs'
+chai = require 'chai'
+should = chai.should()
+expect = chai.expect
+helpers = require('./spec_helpers')
 
 
-test.describe "Highscore:", ->
-
-  driver = null
+describe "Highscore:", ->
 
   # hooks
 
-  test.before ->
-    driver = new webdriver.Builder()
-      .withCapabilities(webdriver.Capabilities.chrome())
-      .build()
-    driver.manage().timeouts().implicitlyWait(1000)
+  before ->
+    helpers.addCustomCommands browser
 
-  test.after -> helpers.after [driver]
+  beforeEach ->
+    browser.url('localhost:3000')
 
-  test.beforeEach -> helpers.beforeEach [driver]
-
-  test.afterEach -> helpers.afterEach [driver]
+  after (done) ->
+    browser.end(done)
 
 
   # tests
 
   describe "Player", ->
 
-    test.it "should be able to view highscore page", ->
-      driver.findElement(id: 'highscores').click()
-      driver.findElement(id: 'heading').getText().then (text) ->
-        text.should.match /Highscore liste/
+    it "should be able to view highscore page", (done) ->
+      browser
+        .click('#highscores')
+        .getText('#heading', (err, text) ->
+          expect(err).to.be.null
+          text.should.match /Highscore liste/
+        )
+        .call done
 
+    it "should see highscore after game", (done) ->
+      points = null
 
-    test.it "should see highscore after game", ->
-      points = undefined
-
-      helpers.startNewGame driver, 'askeladden'
-      helpers.answerQuestion driver, all: true
-
-      driver.findElement(css: '#ratio').getText().then (text) ->
-        text.should.match /Du fik \d+\/\d+ rigtige svar\!/
-      driver.findElement(css: '#points').getText().then (text) ->
-        points = text.match(/Point\: (\d+)/)[1]
-
-      driver.findElement(css: '#restart').click()
-
-      driver.findElement(css: '#highscores').click()
-      driver.findElement(css: '#heading').getText().then (text) ->
-        text.should.match /Highscore liste/
-
-      driver.findElements(tagName: 'tr').then (elements) ->
-        for element in elements
-          element.getText().then (text) ->
-            if text.match /askeladden.*/
-              text[2..].should.match "askeladden #{points}"
-              return
+      browser
+        .startNewGame('askeladden', {challenge:null})
+        .answerQuestion(all: true)
+        .call(-> console.log "done answering")
+        .getText('#ratio', (err, text) ->
+          expect(err).to.be.null
+          text.should.match /Du fik \d+\/\d+ rigtige svar\!/
+        )
+        .getText('#points', (err, text) ->
+          expect(err).to.be.null
+          points = text.match(/Point\: (\d+)/)[1]
+        )
+        .click('#restart')
+        .click('#highscores')
+        .getText('#heading', (err, text) ->
+          expect(err).to.be.null
+          text.should.match /Highscore liste/
+        )
+        # .getText('tr:last', (err, res) ->
+        #   console.log res
+        # )
+        .call done

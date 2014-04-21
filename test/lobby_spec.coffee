@@ -1,46 +1,48 @@
 # test/lobby_spec.coffee
 
-should    = require 'should'
-webdriver = require 'selenium-webdriver'
-test      = require 'selenium-webdriver/testing'
-server    = require('selenium-webdriver/remote').SeleniumServer
-helpers   = require './spec_helpers'
+webdriverjs = require 'webdriverjs'
+chai = require 'chai'
+should = chai.should()
+expect = chai.expect
 
 
-test.describe "Lobby:", ->
-
-  driver = null
+describe "Lobby:", ->
 
   # hooks
 
-  test.before ->
-    driver = new webdriver.Builder()
-      .withCapabilities(webdriver.Capabilities.chrome())
-      .build()
-    driver.manage().timeouts().implicitlyWait(1000)
+  beforeEach ->
+    browser.url('localhost:3000')
 
-  test.after -> helpers.after [driver]
-
-  test.beforeEach -> helpers.beforeEach [driver]
-
-  test.afterEach -> helpers.afterEach [driver]
+  after (done) ->
+    browser.end(done)
 
 
   # tests
 
   describe "Player", ->
 
-    test.it "should see game name", ->
-      driver.findElement(css: '#game-name').getText().then (text) ->
-        text.should.match "Målsuppe"
+    it "should see game name", (done) ->
+      browser
+        .getText('#game-name', (err, text) ->
+          expect(err).to.be.null
+          text.should.match /Målsuppe/
+        )
+        .call done
 
 
-    test.it "should see welcome message", ->
-      driver.findElement(id: 'welcome').getText().then (text) ->
-        text.should.match "Indtast dit navn og tryk \"Spil!\""
+    it "should see welcome message", (done) ->
+      browser
+        .getText('#welcome', (err, text) ->
+          expect(err).to.be.null
+          text.should.match /Indtast dit navn og tryk \"Spil!\"/
+        )
+        .call done
 
 
-    test.it "should feel that DR recognizes the game", ->
-      driver.findElement(css: 'div#logo>a>img').getAttribute('src')
-        .then (src) ->
+    it "should feel that DR recognizes the game", (done) ->
+      browser
+        .getCssProperty('#logo img', 'content', (err, src) ->
+          expect(err).to.be.null
           src.should.match /.+dr-logo.svg/
+        )
+        .call done

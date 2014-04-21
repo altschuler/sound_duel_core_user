@@ -1,98 +1,114 @@
 # test/spec_helpers.coffee
 
-# constants
-
-host = 'http://localhost:3000'
-module.exports.host = host
+webdriverjs = require 'webdriverjs'
+# chai = require 'chai'
+# should = chai.should()
+# expect = chai.expect
 
 
 # methods
 
-answerPopup = (driver, answer) ->
-  id = if answer then 'popup-confirm' else 'popup-cancel'
-
-  # Selenium bug workaround
-  # http://code.google.com/p/selenium/issues/detail?id=2766
-  driver.wait( ->
-    driver.findElement id: id
-  , 500)
-  driver.executeScript "setTimeout((function() {
-    document.getElementById('#{id}').click();
-  }), 250);"
-
-module.exports.answerPopup = answerPopup
+host = 'http://localhost:3000'
 
 
-initNewPlayer = (driver, name) ->
-  driver.findElement(id: 'name').sendKeys name
-  driver.findElement(id: 'new-game').click()
-
-  answerPopup driver, false
-
-module.exports.initNewPlayer = initNewPlayer
+home = (callback) ->
+  this.url host, (err) -> callback err
 
 
-logoutPlayer = (driver) ->
-  driver.get "#{host}/session/logout"
+answerPopup = (answer, callback) ->
+  id = if answer then '#popup-confirm' else '#popup-cancel'
 
-module.exports.logoutPlayer = logoutPlayer
+  this
+    .waitFor(id, 500)
+    .pause(500)
+    .click(id, (err) ->
+      callback(err)
+    )
 
-
-startNewGame = (driver, name, {challenge}={challenge:null}) ->
-  driver.findElement(id: 'name').sendKeys name
-  unless challenge
-    driver.findElement(id: 'new-game').click()
-  else
-    driver.findElements(css: '.player').then (elements) ->
-      for element in elements
-        element.getText().then (text) ->
-          if text is challenge then element.click()
-
-  answerPopup driver, true
-
-module.exports.startNewGame = startNewGame
+    # Selenium bug workaround
+    # http://code.google.com/p/selenium/issues/detail?id=2766
+    # .execute("setTimeout((function() {
+    #   document.getElementById('#{id}').click();
+    # }), 250);", (err) ->
+    #   console.log "answerPopup callback\n#{err}")
 
 
-answerChallenge = (driver, answer) ->
-  answerPopup driver, answer
-
-  if answer
-    driver.wait( ->
-      driver.findElement id: 'popup-confirm'
-    , 500)
-    driver.executeScript "setTimeout((function() {
-      document.getElementById('popup-confirm').click();
-    }), 750);"
-
-module.exports.answerChallenge = answerChallenge
+initNewPlayer = (name, callback) ->
+  this
+    .setValue('#name', name)
+    .click('#new-game')
+    .answerPopup(false, (err) -> callback err)
 
 
-answerQuestion = (driver, {all}={all:false}) ->
-  driver.findElements(css: '.alternative').then (elements) ->
-    driver.wait( ->
-      elements[0].getAttribute('disabled').then (disabled) ->
-        unless disabled
-          elements[0].click()
-          true
-    , 2000).then ->
+logout = (callback) ->
+  this.url "#{host}/session/logout", (err) -> callback err
+
+
+startNewGame = (name, {challenge}={challenge:null}, callback) ->
+  this
+    .setValue('#name', name)
+    .call(->
+      if challenge?
+        this.click(".player:contains(#{challenge})")
+      else
+        this.click('#new-game')
+    )
+    .answerPopup(true, (err) -> callback err)
+
+
+answerChallenge = (answer, callback) ->
+  this.answerPopup(answer, (err) -> callback(err))
+
+  # if answer
+  #   driver.wait( ->
+  #     driver.findElement id: 'popup-confirm'
+  #   , 500)
+  #   driver.executeScript "setTimeout((function() {
+  #     document.getElementById('popup-confirm').click();
+  #   }), 750);"
+
+
+answerQuestion = ({all}={all:false}, callback) ->
+  this
+    # .waitFor('button.alternative:enabled', 2000, (err) ->
+    #   #expect(err).to.be.null
+    #   console.log 'finished waiting'
+    #   this.buttonClick('.alternative:first')
+    # )
+    .pause(2000, ->
+      this.getAttribute('.alternative:first', 'disabled', (err, res) ->
+        if res
+          throw new Error('button.alternative not clickable (disabled)')
+        else
+          this.execute("$('.alternative:first').click()")
+      )
+    )
+    # .buttonClick('button.alternative:first', (err) ->
+    #   expect(err).to.be.null
+    # )
+    .call(->
       if all
-        driver.wait( ->
-          driver.findElement(id: 'heading').getText().then (text) ->
-            unless text.match /resultat/i
-              answerQuestion driver, all: true
-          true
-        , 1000)
+        this.url((err, res) ->
+          if res.value.match /.*\/result/
+            callback err
+          else
+            this.pause(250, -> this.answerQuestion all: true)
+        )
+    )
+    .call callback
 
-module.exports.answerQuestion = answerQuestion
 
+# export
 
-# hooks
+commands = [
+  { name: 'home',            fn: home }
+  { name: 'answerPopup',     fn: answerPopup }
+  { name: 'initNewPlayer',   fn: initNewPlayer }
+  { name: 'logout',          fn: logout }
+  { name: 'startNewGame',    fn: startNewGame }
+  { name: 'answerChallenge', fn: answerChallenge }
+  { name: 'answerQuestion',  fn: answerQuestion }
+]
 
-module.exports.after = (drivers) ->
-  driver.quit() for driver in drivers
-
-module.exports.afterEach = (drivers) ->
-  logoutPlayer driver for driver in drivers
-
-module.exports.beforeEach = (drivers) ->
-  driver.get host for driver in drivers
+module.exports.addCustomCommands = (browser) ->
+  browser.addCommand(cmd.name, cmd.fn) for cmd in commands
