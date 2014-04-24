@@ -18,5 +18,4 @@ node_modules
 .meteor/local
 .meteor/meteorite
 
-.vagrant/
 *.lock

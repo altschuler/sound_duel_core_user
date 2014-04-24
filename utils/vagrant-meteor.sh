@@ -15,4 +15,4 @@ sudo npm install -g meteorite
 # sound-duel
 mkdir /home/vagrant/meteor-local/
 rm -rf /vagrant/app/.meteor/local
-ln -s /home/vagrant/meteor-local /vagrant/app/.meteor/local
+ln -s /home/vagrant/meteor-local /vagrant/lib/core/app/.meteor/local
