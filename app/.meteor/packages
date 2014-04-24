@@ -13,3 +13,4 @@ npm
 accounts-base
 accounts-password
 iron-router
+flash-messages
