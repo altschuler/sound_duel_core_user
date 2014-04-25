@@ -7,6 +7,7 @@ failIfNull = (value=null, msg) ->
   # if given value is null, route to home screen and throw error
   unless value?
     Router.go 'lobby'
+    FlashMessages.sendError 'Ops! Something bad happened.'
     throw new Error msg
   # else, return the value
   else
@@ -16,6 +17,7 @@ failIfNull = (value=null, msg) ->
 # helpers
 
 @currentPlayerId = ->
+  # Session.get 'playerId' or localStorage.getItem 'playerId'
   localStorage.getItem 'playerId'
 
 @currentPlayer = ->
@@ -34,7 +36,7 @@ failIfNull = (value=null, msg) ->
   outOfQuestions = currentGame().currentQuestion >= numberOfQuestions()
   outOfQuestions or currentGame().state is 'finished'
 
-@currentChallenge = ->
+@currentChallenge = -> # TODO: use or keyword
   c =  Challenges.findOne { challengerGameId: currentGameId() }
   c ?= Challenges.findOne { challengeeGameId: currentGameId() }
   c
