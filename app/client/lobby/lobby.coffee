@@ -2,6 +2,15 @@
 
 # methods
 
+handleUsernameError = (error) ->
+  if error
+    $('button#new-game').prop 'disabled', true
+    if error.error is 409
+      FlashMessages.sendError error.reason
+    else
+      FlashMessages.sendError 'Ops! Something bad happened.'
+      throw error
+
 checkChallenges = (challenges) ->
   # check for results
   for c in challenges
@@ -13,7 +22,7 @@ checkChallenges = (challenges) ->
     finished = challengerGame.state is 'finished' and
       challengeeGame.state is 'finished'
 
-    if finished not c.notified
+    if finished and not c.notified
       Session.set 'challengeId', c._id
       Session.set 'gameId', c.challengerGameId
       challengee = Meteor.users.findOne c.challengeeId
@@ -51,29 +60,29 @@ checkChallenges = (challenges) ->
       return
 
 newPlayer = (callback) ->
-  username = "#{$('input#name').val()}".replace /^\s+|\s+$/g, ""
+  console.log 'newPlayer'
 
-  Meteor.call 'newPlayer', username, (error, result) ->
+  username = "#{$('input#name').val()}".replace /^\s+|\s+$/g, ""
+  currentId = if currentPlayer() then currentPlayerId() else null
+  console.log "currentId: #{currentId}"
+
+  Meteor.call 'newPlayer', currentId, username, (error, result) ->
     if error
-      if error.error is 409 then alert error.message else throw error
+      if error.error is 409
+        FlashMessages.sendError error.reason
+      else
+        FlashMessages.sendError 'Ops! Something bad happened.'
+        throw error
     else
       # store player id
       localStorage.setItem 'playerId', result
       # fire callback (e.g. start game)
-      callback error, result
+      callback error, result if callback?
 
-newGame = ({challengeeId, acceptChallengeId}) ->
-  startGame = ->
-    Meteor.call 'newGame', currentPlayerId(),
-    { challengeeId, acceptChallengeId }, (error, result) ->
-      Router.go 'game', _id: result.gameId, action: 'play'
-
-  if currentPlayer()
-    # if logged in, start game
-    startGame()
-  else
-    # else create player and then start game
-    newPlayer startGame
+startGame = ({challengeeId, acceptChallengeId}) ->
+  Meteor.call 'newGame', currentPlayerId(),
+  { challengeeId, acceptChallengeId }, (error, result) ->
+    Router.go 'game', _id: result.gameId, action: 'play'
 
 onlinePlayers = ->
   Meteor.users.find(
@@ -85,6 +94,9 @@ onlinePlayers = ->
 # helpers
 
 Template.lobby.helpers
+  username: ->
+    currentPlayer().username if currentPlayer()?
+
   challenge: ->
     challenges = Challenges.find $or: [
       { challengerId: currentPlayerId() }
@@ -109,29 +121,44 @@ Template.players.helpers
 # rendered
 
 Template.lobby.rendered = ->
-  if currentPlayer()
-    $('input#name').val currentPlayer().username
+  if currentPlayer()?
     $('input#name').prop 'disabled', true
     $('button#new-game').prop 'disabled', false
+  else
+    $('button#new-game').prop 'disabled', true
 
 
 # events
 
 Template.lobby.events
-  'keyup input#name': (event, template) ->
-    if event.keyCode is 13
-      $('button#new-game').click()
-    else
-      name = "#{$('input#name').val()}".replace /^\s+|\s+$/g, ""
-      if name
-        $('button#new-game').prop 'disabled', false
+  'keyup input#name': (event) ->
+    username = "#{$('input#name').val()}".replace /^\s+|\s+$/g, ""
+    unless username
+      $('button#new-game').prop 'disabled', true
+      return
+
+    if currentPlayer()
+      if currentPlayer().username isnt username
+        Meteor.call 'updatePlayerUsername', currentPlayerId(), username,
+        (error, result) ->
+          if error?
+            handleUsernameError error
+          else
+            $('button#new-game').prop 'disabled', false
       else
-        $('button#new-game').prop 'disabled', true
+        $('button#new-game').prop 'disabled', false
+    else
+      Meteor.call 'newPlayer', username, (error, result) ->
+        if error
+          handleUsernameError error
+        else
+          localStorage.setItem 'playerId', result
+          $('button#new-game').prop 'disabled', false
 
-  'click button#new-game': newGame
+  'click button#new-game': startGame
 
-  'click a.player': (event, template) ->
-    newGame { challengeeId: $(event.target).attr('id') }
+  'click a.player': (event) ->
+    startGame { challengeeId: event.target.id }
 
 Template.popup.events
   'click #popup-confirm': (event) ->
@@ -139,7 +166,7 @@ Template.popup.events
     switch text
       when "Aksepter dyst"
         challenge = Challenges.findOne { challengeeGameId: currentGameId() }
-        setTimeout (-> newGame { acceptChallengeId: challenge._id }), 500
+        setTimeout (-> startGame { acceptChallengeId: challenge._id }), 500
       when "Se resultat"
         gameId = currentChallenge().challengerGameId
         setTimeout (-> Router.go 'game', _id: gameId, action: 'result'), 500

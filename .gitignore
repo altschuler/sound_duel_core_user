@@ -17,3 +17,5 @@ node_modules
 
 .meteor/local
 .meteor/meteorite
+
+*.lock

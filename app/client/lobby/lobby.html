@@ -14,14 +14,13 @@
         <input id="name"
                class="form-control input-medium"
                type="text"
-               placeholder="Brugernavn">
+               placeholder="Brugernavn"
+               value="{{username}}">
         <span class="input-group-btn">
           <button id="new-game"
                   class="btn btn-default btn-primary"
                   type="button"
-                  disabled="disabled">
-            Spil!
-          </button>
+                  {{newGameDisabled}}>Spil!</button>
         </span>
       </div>
     </div>

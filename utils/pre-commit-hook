@@ -1,9 +1,0 @@
-#!/bin/sh
-# utils/pre-commit-hook
-
-# redirect output to stderr
-exec 1>&2
-
-# lint work tree
-cd "$(git rev-parse --show-toplevel)"
-coffeelint -q app test
