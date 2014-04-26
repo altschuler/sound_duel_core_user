@@ -110,8 +110,8 @@ Template.players.helpers
 nameInputTimeout = null
 
 Template.lobby.events
-  'keyup input#name': (event) ->
-    username = "#{$('input#name').val()}".replace /^\s+|\s+$/g, ""
+  'keyup input#username': (event) ->
+    username = "#{$('input#username').val()}".replace /^\s+|\s+$/g, ""
     unless username
       $('button#new-game').prop 'disabled', true
       return
