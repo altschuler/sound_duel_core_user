@@ -2,15 +2,6 @@
 
 # methods
 
-handleUsernameError = (error) ->
-  if error
-    $('button#new-game').prop 'disabled', true
-    if error.error is 409
-      FlashMessages.sendError error.reason
-    else
-      FlashMessages.sendError 'Ops! Something bad happened.'
-      throw error
-
 checkChallenges = (challenges) ->
   # check for results
   for c in challenges
@@ -59,36 +50,26 @@ checkChallenges = (challenges) ->
 
       return
 
-newPlayer = (callback) ->
-  console.log 'newPlayer'
-
-  username = "#{$('input#name').val()}".replace /^\s+|\s+$/g, ""
-  currentId = if currentPlayer() then currentPlayerId() else null
-  console.log "currentId: #{currentId}"
-
-  Meteor.call 'newPlayer', currentId, username, (error, result) ->
-    if error
-      if error.error is 409
-        FlashMessages.sendError error.reason
-      else
-        FlashMessages.sendError 'Ops! Something bad happened.'
-        throw error
-    else
-      # store player id
-      localStorage.setItem 'playerId', result
-      # fire callback (e.g. start game)
-      callback error, result if callback?
-
 startGame = ({challengeeId, acceptChallengeId}) ->
   Meteor.call 'newGame', currentPlayerId(),
   { challengeeId, acceptChallengeId }, (error, result) ->
     Router.go 'game', _id: result.gameId, action: 'play'
 
 onlinePlayers = ->
+  playerId = Session.get('playerId') or currentPlayerId()
   Meteor.users.find(
-    _id: { $ne: currentPlayerId() }
+    _id: { $ne: playerId }
     'profile.online': true
-  ).fetch()
+  )
+
+handleUsernameError = (error) ->
+  if error
+    $('button#new-game').prop 'disabled', true
+    if error.error is 409
+      FlashMessages.sendError error.reason
+    else
+      FlashMessages.sendError 'Ops! Something bad happened.'
+      throw error
 
 
 # helpers
@@ -96,6 +77,12 @@ onlinePlayers = ->
 Template.lobby.helpers
   username: ->
     currentPlayer().username if currentPlayer()?
+
+  usernameDisabled: ->
+    'disabled' if currentPlayer()?
+
+  newGameDisabled: ->
+    'disabled' unless currentPlayer()?
 
   challenge: ->
     challenges = Challenges.find $or: [
@@ -109,7 +96,7 @@ Template.players.helpers
   onlinePlayers: onlinePlayers
 
   waitingPlayers: ->
-    count = onlinePlayers().length
+    count = onlinePlayers().count()
     if count is 0
       "Ingen spillere online"
     else if count is 1
@@ -118,17 +105,9 @@ Template.players.helpers
       "#{count} spillere der er online:"
 
 
-# rendered
-
-Template.lobby.rendered = ->
-  if currentPlayer()?
-    $('input#name').prop 'disabled', true
-    $('button#new-game').prop 'disabled', false
-  else
-    $('button#new-game').prop 'disabled', true
-
-
 # events
+
+nameInputTimeout = null
 
 Template.lobby.events
   'keyup input#name': (event) ->
@@ -137,27 +116,37 @@ Template.lobby.events
       $('button#new-game').prop 'disabled', true
       return
 
-    if currentPlayer()
-      if currentPlayer().username isnt username
-        Meteor.call 'updatePlayerUsername', currentPlayerId(), username,
-        (error, result) ->
-          if error?
+    if nameInputTimeout?
+      console.log 'clearing timeout: ' + nameInputTimeout
+      clearTimeout nameInputTimeout
+
+    nameInputTimeout = setTimeout(->
+      if currentPlayer()
+        if currentPlayer().username isnt username
+          Meteor.call 'updatePlayerUsername', currentPlayerId(), username,
+          (error, result) ->
+            if error?
+              handleUsernameError error
+            else
+              $('button#new-game').prop 'disabled', false
+        else
+          $('button#new-game').prop 'disabled', false
+      else
+        Meteor.call 'newPlayer', username, (error, result) ->
+          if error
             handleUsernameError error
           else
+            localStorage.setItem 'playerId', result
+            Session.set 'playerId', result
             $('button#new-game').prop 'disabled', false
-      else
-        $('button#new-game').prop 'disabled', false
-    else
-      Meteor.call 'newPlayer', username, (error, result) ->
-        if error
-          handleUsernameError error
-        else
-          localStorage.setItem 'playerId', result
-          $('button#new-game').prop 'disabled', false
+    , 100)
 
   'click button#new-game': startGame
 
   'click a.player': (event) ->
+    unless currentPlayer()?
+      FlashMessages.sendError 'You must first choose a username.'
+      return
     startGame { challengeeId: event.target.id }
 
 Template.popup.events
