@@ -1,15 +1,19 @@
 # test/spec_helpers.coffee
 
-webdriverjs = require 'webdriverjs'
-# chai = require 'chai'
-# should = chai.should()
-# expect = chai.expect
+chai   = require 'chai'
+expect = chai.expect
 
 
-# methods
+# helpers
 
 host = 'http://localhost:3000'
 
+newUsername = ->
+  time = (new Date()).getTime()
+  "player#{time}"
+
+
+# methods
 
 home = (callback) ->
   this.url host, (err) -> callback err
@@ -21,9 +25,7 @@ answerPopup = (answer, callback) ->
   this
     .waitFor(id, 500)
     .pause(500)
-    .click(id, (err) ->
-      callback(err)
-    )
+    .click(id, (err) -> callback(err))
 
     # Selenium bug workaround
     # http://code.google.com/p/selenium/issues/detail?id=2766
@@ -33,27 +35,32 @@ answerPopup = (answer, callback) ->
     #   console.log "answerPopup callback\n#{err}")
 
 
-initNewPlayer = (name, callback) ->
-  this
-    .setValue('#name', name)
-    .click('#new-game')
-    .answerPopup(false, (err) -> callback err)
+newPlayer = (callback) ->
+  username = newUsername()
+  this.setValue '#username', username, (err) -> callback(err, username)
 
 
 logout = (callback) ->
   this.url "#{host}/session/logout", (err) -> callback err
 
 
-startNewGame = (name, {challenge}={challenge:null}, callback) ->
+newGame = ({challenge}, callback=null) ->
   this
-    .setValue('#name', name)
     .call(->
       if challenge?
-        this.click(".player:contains(#{challenge})")
+        console.log 'challenge'
+        # this.click(".player:contains(#{challenge})", (err) ->
+        this.click(".player)", (err) ->
+          expect(err).to.be.null
+        )
       else
-        this.click('#new-game')
+        this
+          .pause(200)
+          .buttonClick('#new-game', (err) ->
+            expect(err).to.be.null
+          )
     )
-    .answerPopup(true, (err) -> callback err)
+    .answerPopup true, (err) -> callback err
 
 
 answerChallenge = (answer, callback) ->
@@ -68,31 +75,20 @@ answerChallenge = (answer, callback) ->
   #   }), 750);"
 
 
-answerQuestion = ({all}={all:false}, callback) ->
+answerQuestions = ({all}, callback) ->
   this
-    # .waitFor('button.alternative:enabled', 2000, (err) ->
-    #   #expect(err).to.be.null
-    #   console.log 'finished waiting'
-    #   this.buttonClick('.alternative:first')
-    # )
     .pause(2000, ->
       this.getAttribute('.alternative:first', 'disabled', (err, res) ->
-        if res
-          throw new Error('button.alternative not clickable (disabled)')
-        else
-          this.execute("$('.alternative:first').click()")
+        this.execute("$('.alternative:first').click()")
       )
     )
-    # .buttonClick('button.alternative:first', (err) ->
-    #   expect(err).to.be.null
-    # )
-    .call(->
+    .call( ->
       if all
         this.url((err, res) ->
           if res.value.match /.*\/result/
             callback err
           else
-            this.pause(250, -> this.answerQuestion all: true)
+            this.pause(250, -> this.answerQuestions all: true)
         )
     )
     .call callback
@@ -103,11 +99,11 @@ answerQuestion = ({all}={all:false}, callback) ->
 commands = [
   { name: 'home',            fn: home }
   { name: 'answerPopup',     fn: answerPopup }
-  { name: 'initNewPlayer',   fn: initNewPlayer }
+  { name: 'newPlayer',       fn: newPlayer }
   { name: 'logout',          fn: logout }
-  { name: 'startNewGame',    fn: startNewGame }
+  { name: 'newGame',         fn: newGame }
   { name: 'answerChallenge', fn: answerChallenge }
-  { name: 'answerQuestion',  fn: answerQuestion }
+  { name: 'answerQuestions', fn: answerQuestions }
 ]
 
 module.exports.addCustomCommands = (browser) ->

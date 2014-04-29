@@ -1,17 +1,22 @@
 # test/lobby_spec.coffee
 
-webdriverjs = require 'webdriverjs'
 chai = require 'chai'
-should = chai.should()
 expect = chai.expect
+helpers = require('./spec_helpers')
 
 
 describe "Lobby:", ->
 
   # hooks
 
+  before ->
+    helpers.addCustomCommands browser
+
   beforeEach ->
-    browser.url('localhost:3000')
+    browser.home()
+
+  afterEach ->
+    browser.logout()
 
   after (done) ->
     browser.end(done)
@@ -23,9 +28,9 @@ describe "Lobby:", ->
 
     it "should see game name", (done) ->
       browser
-        .getText('#game-name', (err, text) ->
+        .getText('#game-name', (err, text, hello) ->
           expect(err).to.be.null
-          text.should.match /Målsuppe/
+          expect(text).to.match /Målsuppe/
         )
         .call done
 
@@ -34,15 +39,64 @@ describe "Lobby:", ->
       browser
         .getText('#welcome', (err, text) ->
           expect(err).to.be.null
-          text.should.match /Indtast dit navn og tryk \"Spil!\"/
+          expect(text).to.match /Indtast dit navn og tryk \"Spil!\"/
         )
         .call done
 
 
-    it "should feel that DR recognizes the game", (done) ->
+    it "should recognizes brand", (done) ->
       browser
         .getCssProperty('#logo img', 'content', (err, src) ->
           expect(err).to.be.null
-          src.should.match /.+dr-logo.svg/
+          expect(src).not.to.equal ''
         )
         .call done
+
+    it "should be able to register with username", (done) ->
+      username = null
+
+      browser
+        .newPlayer((err, newUsername) -> username = newUsername)
+        .getValue('#username', (err, text) ->
+          expect(err).to.be.null
+          expect(text).to.equal username
+        )
+        .getText('div.alert', (err, text) ->
+          expect(err).not.to.be.null
+          expect(text).to.be.null
+        )
+        .getAttribute('#new-game', 'disabled', (err, res) ->
+          expect(err).to.be.null
+          expect(res).to.be.null
+        )
+        .call done
+
+  # it "should be notified when username is already taken", (done) ->
+  #   username = null
+
+  #   browser
+  #     .newPlayer((err, newUsername) ->
+  #       console.log "callback 1 name: #{newUsername}"
+  #       username = newUsername
+  #     )
+  #     .pause(1004)
+  #     .logout()
+  #     .pause(1000)
+  #     # WTF: Bug with inserting variable as value?
+  #     .addValue('input#username', username, (err) ->
+  #       console.log 'wtf'
+  #       expect(err).to.be.null
+  #     )
+  #     # .newPlayer(, (err, newUsername) ->
+  #     #   console.log "callback 2 original name: #{username}"
+  #     #   console.log "callback 2 name: #{newUsername}"
+  #     #   expect(newUsername).to.be.equal username
+  #     # )
+  #     .waitFor('div.alert-error', 500, (err) ->
+  #       expect(err).to.be.null
+  #     )
+  #     .getText('div.alert-error', (err, text) ->
+  #       expect(err).to.be.null
+  #       expect(text).to.match /username already taken/i
+  #     )
+  #     .call done

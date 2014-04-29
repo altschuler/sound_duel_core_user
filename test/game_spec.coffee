@@ -1,106 +1,131 @@
 # test/game_spec.coffee
 
-should    = require 'should'
-webdriver = require 'selenium-webdriver'
-test      = require 'selenium-webdriver/testing'
-server    = require('selenium-webdriver/remote').SeleniumServer
-helpers   = require './spec_helpers'
+chai    = require 'chai'
+expect  = chai.expect
+helpers = require './spec_helpers'
 
 
-test.describe "Game:", ->
-
-  driver = null
+describe "Game:", ->
 
   # hooks
 
-  test.before ->
-    driver = new webdriver.Builder()
-      .withCapabilities(webdriver.Capabilities.chrome())
-      .build()
-    driver.manage().timeouts().implicitlyWait(1000)
+  before ->
+    helpers.addCustomCommands browser
 
-  test.after -> helpers.after [driver]
+  beforeEach ->
+    browser.home()
 
-  test.beforeEach -> helpers.beforeEach [driver]
+  afterEach ->
+    browser.logout()
 
-  test.afterEach -> helpers.afterEach [driver]
+  after (done) ->
+    browser.end(done)
 
 
   # tests
 
   describe "Player", ->
 
-    test.it "should not see audio assets", ->
-      helpers.startNewGame driver, 'ape'
-
-      driver.findElements(css: 'audio').then (elements) ->
-        for element in elements
-          element.getAttribute('controls').then (controls) ->
-            should.not.exist controls
-          element.getCssValue('display').then (style) ->
-            style.should.be in ['none', 'hidden']
-
-
-    test.it "should see a moving progress bar on audio playing", ->
-      old = { width: undefined, value: undefined }
-
-      helpers.startNewGame driver, 'karlsen'
-
-      driver.findElement(id: 'asset-bar').getAttribute('style')
-        .then (value) ->
-          old.width = value
-      driver.findElement(id: 'asset-bar').getText()
-        .then (text) ->
-          old.value = text
-
-      driver.wait( ->
-        driver.findElement(id: 'asset-bar').getAttribute('style')
-          .then (width) ->
-            old.width isnt width
-        driver.findElement(id: 'asset-bar').getText()
-          .then (text) ->
-            old.value isnt text
-      , 1500)
+    it "should not see audio assets", (done) ->
+      browser
+        .newPlayer()
+        .newGame({})
+        .getAttribute('audio', 'controls', (err, res) ->
+          expect(err).to.be.null
+          expect(res).to.be.null
+        )
+        .getCssProperty('audio', 'display', (err, res) ->
+          expect(err).to.be.null
+          expect(res).to.equal 'none'
+        )
+        .call done
 
 
-    test.it "should only be presented correct asset", ->
-      helpers.startNewGame driver, 'apelape'
+    it "should see a moving progress bar on audio playing", (done) ->
+      old = { width: null, value: null }
 
-      driver.findElements(css: 'audio').then (elements) ->
-        driver.wait( ->
-          for element,i in elements
-            element.then ->
-              driver.executeScript("return $('audio.asset')[#{i}].paused")
-                .then (v) ->
-                  if i is 0
-                    v is true
-                  else
-                    v is false
-        , 500)
-
-
-    test.it "should be presented for multiple questions", ->
-      first = undefined
-
-      helpers.startNewGame driver, 'joshua'
-
-      driver.findElement(css: '#heading').getText().then (text) ->
-        first = text
-        text.should.match /\d+\/\d+/
-
-      helpers.answerQuestion(driver).then ->
-        driver.wait( ->
-          driver.findElement(css: '#heading').getText().then (text) ->
-            text.should.match /\d+\/\d+/
-            text.should.not.equal first
-        , 2000)
+      browser
+        .newPlayer()
+        .newGame({})
+        .getCssProperty('#asset-bar', 'width', (err, res) ->
+          expect(err).to.be.null
+          expect(res).not.to.be.null
+          old.with = res
+        )
+        .getText('#asset-bar', (err, text) ->
+          expect(err).to.be.null
+          expect(text).not.to.be.null
+          old.text = text
+        )
+        .pause(500)
+        .getCssProperty('#asset-bar', 'width', (err, res) ->
+          expect(err).to.be.null
+          expect(res).not.to.equal old.width
+        )
+        .getText('#asset-bar', (err, text) ->
+          expect(err).to.be.null
+          expect(text).not.to.equal old.text
+        )
+        .call done
 
 
-    test.it "should be presented with score after ended game", ->
-      helpers.startNewGame driver, 'whale'
-      helpers.answerQuestion driver, all: true
+    it "should only be presented correct asset", (done) ->
+      browser
+        .newPlayer()
+        .newGame({})
+        .execute("return document.querySelectorAll('audio').length", (err, res) ->
+          expect(err).to.be.null
+          numOfAudios = res.value
+        )
+        .pause(1000)
+        .elements('audio', (err, res) ->
+          first = true
+          for i in res.value
+            this.elementIdAttribute(i.ELEMENT, 'paused', (err, res) ->
+              expect(err).to.be.null
+              paused = res.value
+              if first
+                first = false
+                expect(paused).to.be.null
+              else
+                expect(paused).to.be.equal 'true'
+            )
+        )
+        .call done
 
-      driver.findElement(css: '#ratio').getText().then (text) ->
-        text.should.match /Du fik \d+\/\d+ rigtige svar\!/
-      driver.findElement(css: '#points').getText().then (text) ->
-        text.should.match /Point\: \d+/
+
+    it "should be presented for multiple questions", (done) ->
+      first = null
+
+      browser
+        .newPlayer()
+        .newGame({})
+        .getText('#heading', (err, text) ->
+          expect(err).to.be.null
+          expect(text).to.match /\d+\/\d+/
+          first = text
+        )
+        .answerQuestions(all:false)
+        .pause(500)
+        .getText('#heading', (err, text) ->
+          expect(err).to.be.null
+          expect(text).to.match /\d+\/\d+/
+          expect(text).not.to.equal first
+        )
+        .call done
+
+
+    it "should be presented with score after ended game", (done) ->
+      browser
+        .newPlayer()
+        .newGame({})
+        .answerQuestions(all: true)
+        .getText('#ratio', (err, text) ->
+          expect(err).to.be.null
+          expect(text).to.match /du fik \d+\/\d+ rigtige svar\!/i
+        )
+        .getText('#points', (err, text) ->
+          expect(err).to.be.null
+          expect(text).to.match /point\: \d+/i
+        )
+        .call done
