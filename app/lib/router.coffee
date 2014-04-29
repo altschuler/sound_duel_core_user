@@ -27,8 +27,14 @@ if Meteor.isClient
       action: ->
         switch @params.action
           when 'logout'
-            localStorage.removeItem 'playerId'
-        @redirect '/'
+            id = localStorage.getItem 'playerId'
+            Meteor.call 'logoutPlayer', id, (err, res) =>
+              if err
+                FlashMessages.sendError 'Ops! Something bad happened.'
+                throw err
+              else
+                localStorage.removeItem 'playerId'
+                @redirect '/'
 
     # game
     @route 'game',
