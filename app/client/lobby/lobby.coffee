@@ -116,9 +116,7 @@ Template.lobby.events
       $('button#new-game').prop 'disabled', true
       return
 
-    if nameInputTimeout?
-      console.log 'clearing timeout: ' + nameInputTimeout
-      clearTimeout nameInputTimeout
+    clearTimeout nameInputTimeout if nameInputTimeout?
 
     nameInputTimeout = setTimeout(->
       if currentPlayer()
