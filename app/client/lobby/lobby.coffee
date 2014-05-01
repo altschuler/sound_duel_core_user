@@ -108,12 +108,24 @@ Template.players.helpers
       "#{count} spillere der er online:"
 
 
+# rendered
+
+Template.lobby.rendered = ->
+  $('.form-inline').bind 'keydown', (e) ->
+    if e.keyCode is 13
+      e.preventDefault()
+
+
 # events
 
 nameInputTimeout = null
 
 Template.lobby.events
   'keyup input#username': (event) ->
+    if event.keyCode is 13
+      $('#new-game').click()
+      return
+
     username = "#{$('input#username').val()}".replace /^\s+|\s+$/g, ""
     unless username
       $('button#new-game').prop 'disabled', true
