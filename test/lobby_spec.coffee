@@ -18,9 +18,6 @@ describe "Lobby:", ->
   afterEach ->
     browser.logout()
 
-  after (done) ->
-    browser.end(done)
-
 
   # tests
 

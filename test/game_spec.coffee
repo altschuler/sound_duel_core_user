@@ -18,9 +18,6 @@ describe "Game:", ->
   afterEach ->
     browser.logout()
 
-  after (done) ->
-    browser.end(done)
-
 
   # tests
 
@@ -73,9 +70,10 @@ describe "Game:", ->
       browser
         .newPlayer()
         .newGame({})
-        .execute("return document.querySelectorAll('audio').length", (err, res) ->
-          expect(err).to.be.null
-          numOfAudios = res.value
+        .execute("return document.querySelectorAll('audio').length",
+          (err, res) ->
+            expect(err).to.be.null
+            numOfAudios = res.value
         )
         .pause(1000)
         .elements('audio', (err, res) ->

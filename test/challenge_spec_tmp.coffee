@@ -1,24 +1,22 @@
 # test/challenge_spec.coffee
 
 webdriverjs = require 'webdriverjs'
-chai = require 'chai'
-should = chai.should()
-expect = chai.expect
-helpers = require('./spec_helpers')
+chai        = require 'chai'
+expect      = chai.expect
+helpers     = require './spec_helpers'
 
 
 describe "Challenge:", ->
 
-  browser_ = webdriverjs
-    .remote( desiredCapabilities: { browserName: 'chrome' } )
-    .init()
+  browser_ = webdriverjs.remote( browser.options )
   browsers = [ browser, browser_ ]
 
   # hooks
 
-  before ->
+  before (done) ->
     browsers[1].sessionId = browsers[0].sessionId
     helpers.addCustomCommands(b) for b in browsers
+    browsers[1].init(done)
 
   beforeEach ->
     b.home() for b in browsers
@@ -27,35 +25,60 @@ describe "Challenge:", ->
     b.logout() for b in browsers
 
   after (done) ->
-    b.end(done) for b in browsers
-
-  console.log browsers[1]
+    browser_.end(done)
 
   # tests
 
   describe "Player", ->
 
-    it "should be notified when challenged", (done) ->
+    # it "testy", (done) ->
+    #   console.log browsers[0]
+    #   console.log ''
+    #   console.log browsers[1]
+    #   browsers[0]
+    #     .newPlayer()
+    #     .once('startGame', ->
+    #       this.newGame({})
+    #     )
+
+    #   browsers[1]
+    #     .newPlayer()
+    #     .newGame({})
+    #     .call( -> browsers[0].emit('startGame'))
+
+
+    it "should be notified when challenged", ->
+      username = null
+
       browsers[0]
-        .initNewPlayer('harry')
-        .call(->
-          # challenge and go to lobby
-          browsers[1]
-            .startNewGame('ron', challenge: 'harry')
-            .answerQuestion(all: true)
-            .click('#restart')
+        .newPlayer((err, newUsername) ->
+          expect(err).to.be.null
+          username = newUsername
         )
-      # assert popup appears with challenge
-        .waitFor('#popup-confirm', 500, (err) ->
+        # .waitFor('#popup-confirm', 10000, (err) ->
+        #   expect(err).to.be.null
+        #   this.getText('#popup-confirm', (err, text) ->
+        #     console.log "text: #{text}"
+        #     expect(text).to.match /aksepter/i
+        #   )
+        # )
+        .on('checkChallenge', ->
           this.getText('#popup-confirm', (err, text) ->
-            text.should.match /aksepter/i
+            console.log "text: #{text}"
+            expect(text).to.match /aksepter/i
           )
         )
-        .call done
-      # .wait( ->
-      #   driver1.findElement(id: 'popup-confirm').getText().then (text) ->
-      #     text.should.match /aksepter/i
-      # , 500)
+        # .call done
+
+      browsers[1]
+        .newPlayer()
+        .call(-> console.log "username: #{username}")
+        .newGame((-> username), (err) ->
+          expect(err).to.be.null
+        )
+        .answerQuestions(all: true)
+        .call(-> browsers[0].emit(checkChallenge))
+
 
     # test.it "should be notified when challenged is declined", ->
     #   # ready driver

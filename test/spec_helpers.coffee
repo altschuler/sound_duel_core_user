@@ -44,16 +44,31 @@ logout = (callback) ->
   this.url "#{host}/session/logout", (err) -> callback err
 
 
-newGame = ({challenge}, callback=null) ->
+newGame = ({challenge}, callback) ->
+  username = challenge() if challenge?
+  expect(username).not.to.be.null
+  found = false
+
   this
     .call(->
-      if challenge?
-        console.log 'challenge'
-        # this.click(".player:contains(#{challenge})", (err) ->
-        this.click(".player)", (err) ->
-          expect(err).to.be.null
-        )
+      if username?
+        #console.log 'challenge'
+        this
+          .pause(200)
+          .elements('.player', (err, res) ->
+            expect(err).to.be.null
+            for e in res.value
+              this.elementIdText(e.ELEMENT, (err, res) ->
+                if res.value.match new RegExp(username)
+                  this.elementIdClick(e.ELEMENT, (err) ->
+                    expect(err).to.be.null
+                    found = true
+                  )
+              )
+          )
+          .call( -> expect(found).to.be.true)
       else
+        #console.log 'non-challenge'
         this
           .pause(200)
           .buttonClick('#new-game', (err) ->

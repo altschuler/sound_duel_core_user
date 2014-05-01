@@ -1,10 +1,8 @@
 # test/highscore_spec.coffee
 
-webdriverjs = require 'webdriverjs'
-chai = require 'chai'
-should = chai.should()
-expect = chai.expect
-helpers = require('./spec_helpers')
+chai    = require 'chai'
+expect  = chai.expect
+helpers = require './spec_helpers'
 
 
 describe "Highscore:", ->
@@ -15,10 +13,10 @@ describe "Highscore:", ->
     helpers.addCustomCommands browser
 
   beforeEach ->
-    browser.url('localhost:3000')
+    browser.home()
 
-  after (done) ->
-    browser.end(done)
+  afterEach ->
+    browser.logout()
 
 
   # tests
@@ -30,32 +28,46 @@ describe "Highscore:", ->
         .click('#highscores')
         .getText('#heading', (err, text) ->
           expect(err).to.be.null
-          text.should.match /Highscore liste/
+          expect(text).to.match /highscore liste/i
         )
         .call done
 
+
     it "should see highscore after game", (done) ->
+      username = null
       points = null
+      found = false
 
       browser
-        .startNewGame('askeladden', {challenge:null})
-        .answerQuestion(all: true)
-        .call(-> console.log "done answering")
+        .newPlayer((err, newUsername) ->
+          expect(err).to.be.null
+          username = newUsername
+        )
+        .newGame({})
+        .answerQuestions(all: true)
         .getText('#ratio', (err, text) ->
           expect(err).to.be.null
-          text.should.match /Du fik \d+\/\d+ rigtige svar\!/
+          expect(text).to.match /du fik \d+\/\d+ rigtige svar\!/i
         )
         .getText('#points', (err, text) ->
           expect(err).to.be.null
+          expect(text).to.match /point\: \d+/i
           points = text.match(/Point\: (\d+)/)[1]
         )
         .click('#restart')
         .click('#highscores')
         .getText('#heading', (err, text) ->
           expect(err).to.be.null
-          text.should.match /Highscore liste/
+          expect(text).to.match /highscore liste/i
         )
-        # .getText('tr:last', (err, res) ->
-        #   console.log res
-        # )
+        .elements('tr', (err, res) ->
+          expect(err).to.be.null
+          for e in res.value
+            this.elementIdText(e.ELEMENT, (err, res) ->
+              found = true if res.value.match new RegExp(username)
+            )
+        )
+        .call( ->
+          expect(found).to.be.true
+        )
         .call done
