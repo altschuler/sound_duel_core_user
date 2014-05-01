@@ -98,14 +98,14 @@ describe "Game:", ->
       browser
         .newPlayer()
         .newGame({})
-        .getText('#heading', (err, text) ->
+        .getText('#panel-title', (err, text) ->
           expect(err).to.be.null
           expect(text).to.match /\d+\/\d+/
           first = text
         )
         .answerQuestions(all:false)
         .pause(500)
-        .getText('#heading', (err, text) ->
+        .getText('#panel-title', (err, text) ->
           expect(err).to.be.null
           expect(text).to.match /\d+\/\d+/
           expect(text).not.to.equal first
