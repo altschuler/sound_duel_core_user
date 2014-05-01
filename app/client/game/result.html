@@ -1,12 +1,17 @@
 <template name="result">
   <h2 id="heading"><strong>Resultat</strong></h2>
 
-  <h3>Dig</h3>
-
-  {{#with result}}
-    <p id="ratio" class="lead">Du fik {{ratio}} rigtige svar!</p>
-    <p id="points" class="lead">Point: {{score}}</p>
-  {{/with}}
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title"><strong>Dig</strong></h3>
+    </div>
+    <div class="panel-body">
+      {{#with result}}
+        <p id="ratio" class="lead">Du fik {{ratio}} rigtige svar!</p>
+        <p id="points" class="lead">Point: {{score}}</p>
+      {{/with}}
+    </div>
+  </div>
 
   {{#if isChallenge}}
     {{> challenge}}
@@ -17,20 +22,27 @@
 </template>
 
 <template name="challenge">
-  <h3 id="opponentName">Modstander: {{opponent}}</h3>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 id="opponentName" class="panel-title">Modstander: <strong>{{opponent}}</strong></h3>
+    </div>
+    <div class="panel-body">
+      {{#if declined}}
+        <p id="opponentStatus" class="lead">Din modstander har afvist din udfordring.</p>
+        {{else}}
+        {{#if answered}}
+          {{#with result}}
+            <p id="opponentRatio" class="lead">Din modstander fik {{ratio}} rigtige svar!</p>
+            <p id="opponentPoints" class="lead">Point: {{score}}</p>
+          {{/with}}
+          {{else}}
+          <p id="opponentStatus" class="lead">Din modstander har endnu ikke svaret på din udfordring.</p>
+        {{/if}}
+      {{/if}}
+    </div>
+  </div>
 
-  {{#if declined}}
-    <p id="opponentStatus" class="lead">Din modstander har afvist din udfordring.</p>
-  {{else}}
-    {{#if answered}}
-      {{#with result}}
-        <p id="opponentRatio" class="lead">Din modstander fik {{ratio}} rigtige svar!</p>
-        <p id="opponentPoints" class="lead">Point: {{score}}</p>
-      {{/with}}
-    {{else}}
-      <p id="opponentStatus" class="lead">Din modstander har endnu ikke svaret på din udfordring.</p>
-    {{/if}}
-  {{/if}}
-
-  <h2>{{winner}}</h2>
+  <div class="{{isWinner}}">
+    <p class="lead">{{winner}}</p>
+  </div>
 </template>
