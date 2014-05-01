@@ -2,19 +2,23 @@
   <div class="text-center">
     <h3 id="heading">Highscore liste</h3>
 
-    <table class="table table-striped">
-      <tr>
-        <th>#</th>
-        <th>Brugernavn</th>
-        <th>Score</th>
-      </tr>
-      {{#each withPosition highscores}}
+    <table id="highscore-table" class="table table-bordered table-hover">
+      <thead>
         <tr>
-          <td>{{position}}</td>
-          <td>{{playerUsername playerId}}</td>
-          <td>{{score}}</td>
+          <th>#</th>
+          <th>Brugernavn</th>
+          <th>Score</th>
         </tr>
-      {{/each}}
+      </thead>
+      <tbody>
+        {{#each withPosition highscores}}
+          <tr>
+            <td>{{position}}</td>
+            <td>{{playerUsername playerId}}</td>
+            <td>{{score}}</td>
+          </tr>
+        {{/each}}
+      </tbody>
     </table>
   </div>
 </template>
