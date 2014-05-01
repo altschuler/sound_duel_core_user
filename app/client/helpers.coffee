@@ -7,7 +7,6 @@ failIfNull = (value=null, msg) ->
   # if given value is null, route to home screen and throw error
   unless value?
     Router.go 'lobby'
-    FlashMessages.sendError 'Ops! Something bad happened.'
     throw new Error msg
   # else, return the value
   else

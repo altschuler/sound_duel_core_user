@@ -65,13 +65,12 @@ onlinePlayers = ->
   )
 
 handleUsernameError = (error) ->
-  if error
-    $('button#new-game').prop 'disabled', true
-    if error.error is 409
-      FlashMessages.sendError error.reason
-    else
-      FlashMessages.sendError 'Ops! Something bad happened.'
-      throw error
+  $('button#new-game').prop 'disabled', true
+  if error.error is 409
+    Session.set 'usernameError', error.reason
+  else
+    Session.set 'usernameError', 'Ops! Something bad happened.'
+    throw error
 
 
 # helpers
@@ -79,6 +78,8 @@ handleUsernameError = (error) ->
 Template.lobby.helpers
   username: ->
     currentPlayer().username if currentPlayer()?
+
+  usernameError: -> Session.get 'usernameError'
 
   usernameDisabled: ->
     'disabled' if currentPlayer()?
@@ -118,6 +119,8 @@ Template.lobby.events
       $('button#new-game').prop 'disabled', true
       return
 
+    Session.set 'usernameError', ''
+
     clearTimeout nameInputTimeout if nameInputTimeout?
 
     nameInputTimeout = setTimeout(->
@@ -133,7 +136,7 @@ Template.lobby.events
           $('button#new-game').prop 'disabled', false
       else
         Meteor.call 'newPlayer', username, (error, result) ->
-          if error
+          if error?
             handleUsernameError error
           else
             localStorage.setItem 'playerId', result
@@ -145,7 +148,7 @@ Template.lobby.events
 
   'click a.player': (event) ->
     unless currentPlayer()?
-      FlashMessages.sendError 'You must first choose a username.'
+      Session.set 'usernameError', 'You must first choose a username.'
       return
     startGame { challengeeId: event.target.id }
 

@@ -9,6 +9,11 @@
     <p id="welcome" class="lead">Indtast dit navn og tryk "Spil!"</p>
 
     <div id="username-form" class="row">
+      {{#if usernameError}}
+        <div class="alert alert-danger">
+          <p>{{usernameError}}</p>
+        </div>
+      {{/if}}
       <form class="form-inline" role="form">
         <div class="input-group">
           <input id="username"

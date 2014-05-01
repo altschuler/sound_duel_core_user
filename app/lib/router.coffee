@@ -30,7 +30,6 @@ if Meteor.isClient
             id = localStorage.getItem 'playerId'
             Meteor.call 'logoutPlayer', id, (err, res) =>
               if err
-                FlashMessages.sendError 'Ops! Something bad happened.'
                 throw err
               else
                 localStorage.removeItem 'playerId'
