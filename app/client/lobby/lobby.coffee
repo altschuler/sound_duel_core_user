@@ -21,8 +21,8 @@ checkChallenges = (challenges) ->
       notify
         title:   "Dyst besvaret!"
         content: challengee.username +
-          " har besvaret din utfordring. Se hvem der vant?"
-        cancel:  "Nei takk"
+          " har besvaret din udfordring. Se hvem der vandt?"
+        cancel:  "Nej tak"
         confirm: "Se resultat"
 
       Challenges.update currentChallenge()._id, $set: { notified: true }
@@ -47,8 +47,8 @@ checkChallenges = (challenges) ->
         title:   "Du er blevet udfordret!"
         content: challenger.username +
           " har udfordret dig til dyst. Vil du godkende?"
-        cancel:  "Nei takk"
-        confirm: "Aksepter dyst"
+        cancel:  "Nej tak"
+        confirm: "Accepter dyst"
 
       return false
 

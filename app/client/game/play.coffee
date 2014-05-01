@@ -93,7 +93,7 @@ Template.game.rendered = ->
   notify
     title:   "Gør dig klar!"
     content: "Når du er klar til at spille, skal du trykke 'Start spillet!'"
-    cancel:  "Gå tilbake"
+    cancel:  "Gå tilbage"
     confirm: "Start spillet!"
 
   # disable alternatives if asset is paused
