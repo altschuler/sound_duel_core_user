@@ -3,13 +3,9 @@
 # methods
 
 checkChallenges = (challenges) ->
-  console.log "checkChallenges"
   # check for results
   challenges.forEach (c) ->
-    console.log "check result: #{c}"
-    unless c.challengerId is currentPlayerId()
-      console.log 'continue'
-      return true
+    return true unless c.challengerId is currentPlayerId()
 
     challengerGame = Games.findOne c.challengerGameId
     challengeeGame = Games.findOne c.challengeeGameId
@@ -31,17 +27,13 @@ checkChallenges = (challenges) ->
 
       Challenges.update currentChallenge()._id, $set: { notified: true }
 
-      console.log "break"
       return false
 
   challenges.rewind()
 
   # check for challenges
   challenges.forEach (c) ->
-    console.log "check challenge: #{c}"
-    unless c.challengeeId is currentPlayerId()
-      console.log 'continue'
-      return true
+    return true unless c.challengeeId is currentPlayerId()
 
     challengerGame = Games.findOne c.challengerGameId
     challengeeGame = Games.findOne c.challengeeGameId
@@ -58,7 +50,6 @@ checkChallenges = (challenges) ->
         cancel:  "Nei takk"
         confirm: "Aksepter dyst"
 
-      console.log 'break'
       return false
 
 startGame = ({challengeeId, acceptChallengeId}) ->
@@ -96,7 +87,6 @@ Template.lobby.helpers
     'disabled' unless currentPlayer()?
 
   challenge: ->
-    console.log 'challenge helper'
     challenges = Challenges.find $or: [
       { challengerId: currentPlayerId() }
     , { challengeeId: currentPlayerId() }
