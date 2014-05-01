@@ -3,9 +3,13 @@
 # methods
 
 checkChallenges = (challenges) ->
+  console.log "checkChallenges"
   # check for results
-  for c in challenges
-    continue unless c.challengerId is currentPlayerId()
+  challenges.forEach (c) ->
+    console.log "check result: #{c}"
+    unless c.challengerId is currentPlayerId()
+      console.log 'continue'
+      return true
 
     challengerGame = Games.findOne c.challengerGameId
     challengeeGame = Games.findOne c.challengeeGameId
@@ -27,11 +31,17 @@ checkChallenges = (challenges) ->
 
       Challenges.update currentChallenge()._id, $set: { notified: true }
 
-      return
+      console.log "break"
+      return false
+
+  challenges.rewind()
 
   # check for challenges
-  for c in challenges
-    continue unless c.challengeeId is currentPlayerId()
+  challenges.forEach (c) ->
+    console.log "check challenge: #{c}"
+    unless c.challengeeId is currentPlayerId()
+      console.log 'continue'
+      return true
 
     challengerGame = Games.findOne c.challengerGameId
     challengeeGame = Games.findOne c.challengeeGameId
@@ -48,7 +58,8 @@ checkChallenges = (challenges) ->
         cancel:  "Nei takk"
         confirm: "Aksepter dyst"
 
-      return
+      console.log 'break'
+      return false
 
 startGame = ({challengeeId, acceptChallengeId}) ->
   Meteor.call 'newGame', currentPlayerId(),
@@ -85,12 +96,13 @@ Template.lobby.helpers
     'disabled' unless currentPlayer()?
 
   challenge: ->
+    console.log 'challenge helper'
     challenges = Challenges.find $or: [
       { challengerId: currentPlayerId() }
     , { challengeeId: currentPlayerId() }
     ]
     if challenges.count() > 0
-      checkChallenges challenges.fetch()
+      checkChallenges challenges
 
 Template.players.helpers
   onlinePlayers: onlinePlayers
