@@ -5,20 +5,19 @@
 # show popup dialog with text and options
 @notify = (content) ->
   Session.set 'popup-content', content
-  # insert popup template with data
-  UI.insert UI.render(Template.popup), document.body
   # show dialog
   $('#popup').modal()
 
-
+content = ->
+  Session.get('popup-content')
 # helpers
 
 Template.popup.helpers
   title: ->
-    Session.get('popup-content').title
+    content().title if content()
   content: ->
-    Session.get('popup-content').content
+    content().content if content()
   cancel: ->
-    Session.get('popup-content').cancel
+    content().cancel if content()
   confirm: ->
-    Session.get('popup-content').confirm
+    content().confirm if content()
