@@ -6,6 +6,7 @@
 bindAssetProgress = (asset) ->
   $(asset).bind 'timeupdate', ->
     percent = (this.currentTime * 100) / this.duration
+    Session.set 'gameProgress', percent
     value = (currentGame().pointsPerQuestion * (100 - percent)) / 100
 
     # update progress bar width depending on audio progress
@@ -80,6 +81,17 @@ Template.game.helpers
     currentQuestion = (currentGame().currentQuestion + 1)
     "#{currentQuestion}/#{numberOfQuestions()}"
 
+  progressBarColor: ->
+    progress = Session.get 'gameProgress'
+    if progress is 100
+      ''
+    else if progress > 66
+      'progress-bar-danger'
+    else if progress > 33
+      'progress-bar-warning'
+    else
+      'progress-bar-success'
+
   alternatives: ->
     unless currentGameFinished()
       currentQuestion().alternatives
@@ -103,6 +115,12 @@ Template.game.rendered = ->
 
 # events
 
+Template.play.events
+  # answer question with clicked alternative
+  'click .alternative': (event) ->
+    $('.alternative').prop 'disabled', true
+    answerQuestion event.target.id
+
 Template.popup.events
   # play asset if player is ready
   'click #popup-confirm': (event) ->
@@ -122,9 +140,3 @@ Template.popup.events
     Games.update currentGameId(), $set: { state: 'declined' }
     Session.set 'gameId', ''
     Router.go 'lobby'
-
-Template.play.events
-  # answer question with clicked alternative
-  'click .alternative': (event) ->
-    $('.alternative').prop 'disabled', true
-    answerQuestion event.target.id

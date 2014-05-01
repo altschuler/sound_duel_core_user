@@ -153,7 +153,7 @@ Template.popup.events
   'click #popup-confirm': (event) ->
     text = $('#popup-confirm').text().replace /^\s+|\s+$/g, ""
     switch text
-      when "Aksepter dyst"
+      when "Accepter dyst"
         challenge = Challenges.findOne { challengeeGameId: currentGameId() }
         setTimeout (-> startGame { acceptChallengeId: challenge._id }), 500
       when "Se resultat"
@@ -163,5 +163,5 @@ Template.popup.events
   'click #popup-cancel': (event) ->
     text = $('#popup-cancel').text().replace /^\s+|\s+$/g, ""
     switch text
-      when "Nei takk"
+      when "Nej tak"
         Games.update currentGameId(), $set: { state: 'declined' }

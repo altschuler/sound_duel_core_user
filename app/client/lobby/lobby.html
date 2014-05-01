@@ -4,25 +4,26 @@
   <a id="highscores" href="{{pathFor 'highscores'}}">Highscore liste</a>
 
   <div class="text-center">
-    <h1 id="game-name">Målsuppe</h1>
+    <h1 id="game-name"><strong>Målsuppe</strong></h1>
 
     <p id="welcome" class="lead">Indtast dit navn og tryk "Spil!"</p>
 
-    <!-- name form -->
-    <div class="form-group">
-      <div class="input-append">
-        <input id="username"
-               class="form-control input-medium"
-               type="text"
-               placeholder="Brugernavn"
-               value="{{username}}" {{usernameDisabled}}>
-        <span class="input-group-btn">
-          <button id="new-game"
-                  class="btn btn-default btn-primary"
-                  type="button"
-                  {{newGameDisabled}}>Spil!</button>
-        </span>
-      </div>
+    <div id="username-form" class="row">
+      <form class="form-inline" role="form">
+        <div class="input-group">
+          <input id="username"
+                 class="form-control"
+                 type="text"
+                 placeholder="Brugernavn"
+                 value="{{username}}" {{usernameDisabled}}>
+          <span class="input-group-btn">
+            <button id="new-game"
+                    class="btn btn-default btn-primary"
+                    type="button"
+                    {{newGameDisabled}}>Spil!</button>
+          </span>
+        </div>
+      </form>
     </div>
 
     {{> players}}

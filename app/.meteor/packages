@@ -7,10 +7,10 @@ standard-app-packages
 insecure
 coffeescript
 less
-bootstrap
 #i18next-meteor
 npm
 accounts-base
 accounts-password
 iron-router
 flash-messages
+bootstrap-3

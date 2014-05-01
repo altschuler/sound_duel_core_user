@@ -21,7 +21,7 @@
 
   <div class="progress progress-striped active">
     <div id="asset-bar"
-         class="bar"
+         class="progress-bar {{progressBarColor}}"
          aria-valuenow="100"
          aria-valuemin="0"
          aria-valuemax="100"
@@ -29,11 +29,13 @@
     </div>
   </div>
 
-  {{#each alternatives}}
-    <div class="row">
-      <button id="{{name}}" class="alternative btn btn-block btn-lg btn-primary">
-        {{name}}) {{text}}
-      </button>
-    </div>
-  {{/each}}
+  <div id="alternative-container">
+    {{#each alternatives}}
+      <div class="row">
+        <button id="{{name}}" class="alternative btn btn-block btn-lg btn-primary">
+          {{name}}) {{text}}
+        </button>
+      </div>
+    {{/each}}
+  </div>
 </template>
