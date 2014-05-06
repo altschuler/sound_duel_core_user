@@ -25,7 +25,7 @@ describe "Lobby:", ->
 
     it "should see game name", (done) ->
       browser
-        .getText('#game-name', (err, text, hello) ->
+        .getText('#game-name', (err, text) ->
           expect(err).to.be.null
           expect(text).to.match /Målsuppe/
         )
@@ -53,7 +53,7 @@ describe "Lobby:", ->
       username = null
 
       browser
-        .newPlayer((err, newUsername) -> username = newUsername)
+        .newPlayer({}, (err, newUsername) -> username = newUsername)
         .getValue('#username', (err, text) ->
           expect(err).to.be.null
           expect(text).to.equal username
@@ -68,32 +68,26 @@ describe "Lobby:", ->
         )
         .call done
 
-  # it "should be notified when username is already taken", (done) ->
-  #   username = null
+  it "should be notified when username is already taken", (done) ->
+    username = null
 
-  #   browser
-  #     .newPlayer((err, newUsername) ->
-  #       console.log "callback 1 name: #{newUsername}"
-  #       username = newUsername
-  #     )
-  #     .pause(1004)
-  #     .logout()
-  #     .pause(1000)
-  #     # WTF: Bug with inserting variable as value?
-  #     .addValue('input#username', username, (err) ->
-  #       console.log 'wtf'
-  #       expect(err).to.be.null
-  #     )
-  #     # .newPlayer(, (err, newUsername) ->
-  #     #   console.log "callback 2 original name: #{username}"
-  #     #   console.log "callback 2 name: #{newUsername}"
-  #     #   expect(newUsername).to.be.equal username
-  #     # )
-  #     .waitFor('div.alert-error', 500, (err) ->
-  #       expect(err).to.be.null
-  #     )
-  #     .getText('div.alert-error', (err, text) ->
-  #       expect(err).to.be.null
-  #       expect(text).to.match /username already taken/i
-  #     )
-  #     .call done
+    browser
+      .newPlayer({}, (err, newUsername) ->
+        expect(newUsername).to.match /player\d*/
+        username = newUsername
+      )
+      .pause(500)
+      .logout()
+      .call( ->
+        @newPlayer({username: username}, (err, newUsername) ->
+          expect(newUsername).to.equal username
+        )
+      )
+      .waitFor('div.alert-danger', 500, (err) ->
+        expect(err).to.be.null
+      )
+      .getText('div.alert-danger', (err, text) ->
+        expect(err).to.be.null
+        expect(text).to.match /username already taken/i
+      )
+      .call done

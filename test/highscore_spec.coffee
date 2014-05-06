@@ -39,7 +39,7 @@ describe "Highscore:", ->
       found = false
 
       browser
-        .newPlayer((err, newUsername) ->
+        .newPlayer({}, (err, newUsername) ->
           expect(err).to.be.null
           username = newUsername
         )

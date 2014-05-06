@@ -25,7 +25,7 @@ describe "Game:", ->
 
     it "should not see audio assets", (done) ->
       browser
-        .newPlayer()
+        .newPlayer({})
         .newGame({})
         .getAttribute('audio', 'controls', (err, res) ->
           expect(err).to.be.null
@@ -42,7 +42,7 @@ describe "Game:", ->
       old = { width: null, value: null }
 
       browser
-        .newPlayer()
+        .newPlayer({})
         .newGame({})
         .getCssProperty('#asset-bar', 'width', (err, res) ->
           expect(err).to.be.null
@@ -68,7 +68,7 @@ describe "Game:", ->
 
     it "should only be presented correct asset", (done) ->
       browser
-        .newPlayer()
+        .newPlayer({})
         .newGame({})
         .execute("return document.querySelectorAll('audio').length",
           (err, res) ->
@@ -96,16 +96,16 @@ describe "Game:", ->
       first = null
 
       browser
-        .newPlayer()
+        .newPlayer({})
         .newGame({})
-        .getText('#panel-title', (err, text) ->
+        .getText('.panel-title', (err, text) ->
           expect(err).to.be.null
           expect(text).to.match /\d+\/\d+/
           first = text
         )
-        .answerQuestions(all:false)
+        .answerQuestions(all: false)
         .pause(500)
-        .getText('#panel-title', (err, text) ->
+        .getText('.panel-title', (err, text) ->
           expect(err).to.be.null
           expect(text).to.match /\d+\/\d+/
           expect(text).not.to.equal first
@@ -115,7 +115,7 @@ describe "Game:", ->
 
     it "should be presented with score after ended game", (done) ->
       browser
-        .newPlayer()
+        .newPlayer({})
         .newGame({})
         .answerQuestions(all: true)
         .getText('#ratio', (err, text) ->

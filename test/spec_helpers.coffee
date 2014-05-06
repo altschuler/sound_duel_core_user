@@ -7,10 +7,12 @@ expect = chai.expect
 # helpers
 
 host = 'http://localhost:3000'
+module.exports.host = host
 
-newUsername = ->
+newUniqueUsername = ->
   time = (new Date()).getTime()
   "player#{time}"
+module.exports.newUniqueUsername = newUniqueUsername
 
 
 # methods
@@ -35,9 +37,10 @@ answerPopup = (answer, callback) ->
     #   console.log "answerPopup callback\n#{err}")
 
 
-newPlayer = (callback) ->
-  username = newUsername()
-  this.setValue '#username', username, (err) -> callback(err, username)
+newPlayer = ({username}, callback) ->
+  newUsername = username or newUniqueUsername()
+  this.setValue '#username', newUsername, (err) ->
+    callback err, newUsername
 
 
 logout = (callback) ->
