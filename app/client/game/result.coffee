@@ -2,7 +2,6 @@
 
 # methods
 
-# get the current player's role
 currentPlayerRole = ->
   if currentPlayerId() is currentChallenge().challengerId
     'challenger'
@@ -11,7 +10,7 @@ currentPlayerRole = ->
 
 winnerRole = ->
   challenge = currentChallenge()
-  return '' unless Games.findOne(challenge.challengeeGameId).state is 'finished'
+  return unless Games.findOne(challenge.challengeeGameId).state is 'finished'
 
   challengeeHighscore = Highscores.findOne
     gameId: challenge.challengeeGameId
@@ -24,6 +23,7 @@ winnerRole = ->
     'challenger'
   else
     'tie'
+
 
 # helpers
 
@@ -39,11 +39,11 @@ Template.result.helpers
 
 Template.challenge.helpers
   opponent: ->
-    opponent = null
     if currentPlayerRole() is 'challengee'
       opponent = Meteor.users.findOne currentChallenge().challengerId
     else
       opponent = Meteor.users.findOne currentChallenge().challengeeId
+
     opponent.username
 
   answered: ->
@@ -59,8 +59,6 @@ Template.challenge.helpers
     Games.findOne(currentChallenge().challengeeGameId).state is 'declined'
 
   result: ->
-    highscore = null
-
     if currentPlayerRole() is 'challenger'
       highscore = Highscores.findOne
         gameId: currentChallenge().challengeeGameId
@@ -76,6 +74,7 @@ Template.challenge.helpers
   isWinner: ->
     winner = winnerRole()
     return unless winner
+
     if winner is 'tie'
       "alert alert-warning"
     else if winner is currentPlayerRole()
@@ -86,6 +85,7 @@ Template.challenge.helpers
   winner: ->
     winner = winnerRole()
     return unless winner
+
     if winner is 'tie'
       "Wow, der ble uafgjort!"
     else if winner is currentPlayerRole()
