@@ -77,32 +77,25 @@ newGame = ({challenge}, callback) ->
     .answerPopup true, (err) -> callback err
 
 
-answerChallenge = (answer, callback) ->
-  this.answerPopup(answer, (err) -> callback(err))
-
-  # if answer
-  #   driver.wait( ->
-  #     driver.findElement id: 'popup-confirm'
-  #   , 500)
-  #   driver.executeScript "setTimeout((function() {
-  #     document.getElementById('popup-confirm').click();
-  #   }), 750);"
-
-
 answerQuestions = ({all}, callback) ->
   this
-    .pause(2000, ->
-      this.getAttribute('.alternative:first', 'disabled', (err, res) ->
-        this.execute("$('.alternative:first').click()")
-      )
+    .url((err, res) ->
+      expect(res.value).to.match /.*\/play/
     )
+    .pause(2000)
+    .getAttribute('.alternative', 'disabled', (err, res) ->
+      expect(err).to.be.null
+      expect(res).to.be.null
+    )
+    .execute("document.querySelector('.alternative').click()")
+    .pause(250)
     .call( ->
       if all
         this.url((err, res) ->
-          if res.value.match /.*\/result/
-            callback err
-          else
-            this.pause(250, -> this.answerQuestions all: true)
+          unless res.value.match /.*\/result/
+            this
+              .pause(250)
+              .answerQuestions(all: true)
         )
     )
     .call callback
@@ -116,7 +109,6 @@ commands = [
   { name: 'newPlayer',       fn: newPlayer }
   { name: 'logout',          fn: logout }
   { name: 'newGame',         fn: newGame }
-  { name: 'answerChallenge', fn: answerChallenge }
   { name: 'answerQuestions', fn: answerQuestions }
 ]
 
