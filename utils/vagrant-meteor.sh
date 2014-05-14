@@ -14,7 +14,14 @@ rm -f node-v0.10.26-linux-x86.tar.gz
 curl https://install.meteor.com | sudo sh
 sudo npm install -g meteorite
 
+#grunt-cli
+sudo npm install -g grunt-cli
+
 # sound-duel
-mkdir /home/vagrant/meteor-local/
-rm -rf /vagrant/app/.meteor/local
-ln -s /home/vagrant/meteor-local /vagrant/lib/core/app/.meteor/local
+# symlinks does not work, rsync-auto does not work
+# rsync on every change manually
+#mkdir /home/vagrant/meteor-local/
+#rm -rf /vagrant/lib/core/app/.meteor/local
+#sudo mount --bind /vagrant/ /home/vagrant/meteor-local/
+cp -r /vagrant/ /home/vagrant/co-sound-local/
+#rsync -a -v /vagrant/ /home/vagrant/co-sound-local/
