@@ -17,7 +17,8 @@ failIfNull = (value=null, msg) ->
 
 @currentPlayerId = ->
   # Session.get 'playerId' or localStorage.getItem 'playerId'
-  localStorage.getItem 'playerId'
+  #localStorage.getItem 'playerId'
+  Meteor.userId()
 
 @currentPlayer = ->
   Meteor.users.findOne currentPlayerId()

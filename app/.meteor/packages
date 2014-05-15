@@ -14,3 +14,6 @@ accounts-password
 iron-router
 bootstrap-3
 email
+accounts-facebook
+accounts-ui
+service-configuration

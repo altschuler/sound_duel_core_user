@@ -9,6 +9,9 @@ if Meteor.isClient
     notFoundTemplate: 'notFound'
 
   Router.map ->
+    # login
+    @route 'login', path: '/login'
+
     # lobby
     @route 'lobby', path: '/'
 
@@ -66,6 +69,7 @@ if Meteor.isClient
   Router.onBeforeAction( (pause) ->
     if !Meteor.user()
       console.log("Not logged in")
-      @render 'login'
+      #@render 'login'
+      Router.go 'login'
       pause()
   , {except: 'login'})

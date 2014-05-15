@@ -6,29 +6,13 @@
   <div class="text-center">
     <h1 id="game-name"><strong>Målsuppe</strong></h1>
 
-    <p id="welcome" class="lead">Indtast dit navn og tryk "Spil!"</p>
+    <p id="welcome" class="lead">
+      Hej {{username}} og velkommen til VM spillet
+    </p>
 
-    <div id="username-form" class="row">
-      {{#if usernameError}}
-        <div class="alert alert-danger">
-          <p>{{usernameError}}</p>
-        </div>
-      {{/if}}
-      <form class="form-inline" role="form">
-        <div class="input-group">
-          <input id="username"
-                 class="form-control"
-                 type="text"
-                 placeholder="Brugernavn"
-                 value="{{username}}" {{usernameDisabled}}>
-          <span class="input-group-btn">
-            <button id="new-game"
-                    class="btn btn-default btn-primary"
-                    type="button"
-                    {{newGameDisabled}}>Spil!</button>
-          </span>
-        </div>
-      </form>
+    <div>
+      <button data-startGame>Spil singleplayer</button>
+      <button>Spil multiplayer</button>
     </div>
 
     {{> players}}

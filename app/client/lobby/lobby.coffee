@@ -77,7 +77,7 @@ handleUsernameError = (error) ->
 
 Template.lobby.helpers
   username: ->
-    currentPlayer().username if currentPlayer()?
+    Meteor.user().profile.name
 
   usernameError: -> Session.get 'usernameError'
 
@@ -156,7 +156,7 @@ Template.lobby.events
             $('button#new-game').prop 'disabled', false
     , 100)
 
-  'click button#new-game': startGame
+  'click button[data-startGame]': startGame
 
   'click a.player': (event) ->
     unless currentPlayer()?
