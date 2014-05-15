@@ -52,9 +52,9 @@ checkChallenges = (challenges) ->
 
       return false
 
-startGame = ({challengeeId, acceptChallengeId}) ->
+startGame = ({challengeeId, acceptChallengeId, challengeeEmail}) ->
   Meteor.call 'newGame', currentPlayerId(),
-  { challengeeId, acceptChallengeId }, (error, result) ->
+  { challengeeId, acceptChallengeId, challengeeEmail }, (error, result) ->
     Router.go 'game', _id: result.gameId, action: 'play'
 
 onlinePlayers = ->

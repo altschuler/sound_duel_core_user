@@ -10,8 +10,9 @@ bindAssetProgress = (asset) ->
     value = (currentGame().pointsPerQuestion * (100 - percent)) / 100
 
     # update progress bar width depending on audio progress
-    $('#asset-bar').attr 'style', "width: #{100 - percent}%"
-    $('#asset-bar').text Math.floor value
+    $('#asset-bar')
+    .attr('style', "width: #{100 - percent}%")
+    .text Math.floor(value)
 
 # start playback of audio element
 playAsset = (asset, callback) ->

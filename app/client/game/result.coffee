@@ -24,6 +24,15 @@ winnerRole = ->
   else
     'tie'
 
+notifyFinishedGame = ->
+  if currentPlayerRole() is 'challenger'
+    challenger = (Meteor.users.findOne currentChallenge().challengerId)
+    .username
+    Meteor.call 'sendEmail',
+    challenger + '<alice@ex.com>',
+    'DR Målsuppe <bob@ex.com>',
+    'Sub',
+    'Email.send test'
 
 # helpers
 
@@ -100,3 +109,10 @@ Template.result.events
   'click a#restart': ->
     Session.set 'gameId', ''
     Router.go 'lobby'
+
+
+# on render
+
+Template.challenge.rendered = ->
+  notifyFinishedGame()
+

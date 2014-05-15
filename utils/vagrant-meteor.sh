@@ -24,4 +24,4 @@ sudo npm install -g grunt-cli
 #rm -rf /vagrant/lib/core/app/.meteor/local
 #sudo mount --bind /vagrant/ /home/vagrant/meteor-local/
 cp -r /vagrant/ /home/vagrant/co-sound-local/
-#rsync -a -v /vagrant/ /home/vagrant/co-sound-local/
+#sudo rsync -a -v /vagrant/ /home/vagrant/co-sound-local/

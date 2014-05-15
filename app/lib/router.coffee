@@ -62,3 +62,10 @@ if Meteor.isClient
 
       action: ->
         @render @params.action
+
+  Router.onBeforeAction( (pause) ->
+    if !Meteor.user()
+      console.log("Not logged in")
+      @render 'login'
+      pause()
+  , {except: 'login'})
