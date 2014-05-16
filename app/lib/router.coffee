@@ -67,9 +67,16 @@ if Meteor.isClient
         @render @params.action
 
   Router.onBeforeAction( (pause) ->
-    if !Meteor.user()
+    if Meteor.loggingIn()
+      console.log("Logging in")
+      
+      pause()
+    else if not Meteor.userId()
       console.log("Not logged in")
       #@render 'login'
       Router.go 'login'
       pause()
+    else
+      console.log("Logged in as:")
+      console.log(Meteor.user())
   , {except: 'login'})
