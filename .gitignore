@@ -19,3 +19,5 @@ node_modules
 .meteor/meteorite
 
 *.lock
+
+app/server/config.coffee
