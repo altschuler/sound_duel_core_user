@@ -11,7 +11,7 @@ Template.highscores.helpers
 
 UI.registerHelper 'playerUsername', (playerId) ->
   player = Meteor.users.findOne(playerId)
-  if player then player.username else '?'
+  if player then player.profile.name else '?'
 
 UI.registerHelper 'withPosition', (context, options) ->
   result = []
