@@ -1,0 +1,15 @@
+<template name="notAvailable">
+  <p class="lead">
+    {{ name }}
+    {{#if true}}
+    Denne quiz er ikke længere tilgængelig
+    {{else}}
+    Denne quiz er ikke tilgængelig endnu
+    {{/if}}
+    {{!--
+    #else
+    Denne quiz er ikke tilgængelig
+    --}}
+  </p>
+  <a href="{{pathFor 'lobby'}}">Tilbage til lobbyen</a>
+</template>

@@ -36,6 +36,15 @@ failIfNull = (value=null, msg) ->
   # failIfNull Games.findOne(currentGameId()),
   #   "Current game not found (id: #{currentGameId()})"
 
+@currentQuizId = ->
+  Session.get 'currentQuizId'
+  #failIfNull Session.get('gameId'), 'Session gameId not set'
+
+@currentQuiz = ->
+  Quizzes.findOne(currentQuizId())
+  # failIfNull Quizs.findOne(currentQuizId()),
+  #   "Current game not found (id: #{currentQuizId()})"
+
 @currentGameFinished = ->
   outOfQuestions = currentGame().currentQuestion >= numberOfQuestions()
   outOfQuestions or currentGame().state is 'finished'
@@ -53,15 +62,15 @@ failIfNull = (value=null, msg) ->
     'Current game has no highscore'
 
 @currentQuestionId = ->
-  idx = currentGame().currentQuestion
-  currentGame().questionIds[idx]
+  idx = Session.get('currentQuestion')
+  currentQuiz().questionIds[idx]
 
 @currentQuestion = ->
   failIfNull Questions.findOne(currentQuestionId()),
     "Current question not found (id: #{currentQuestionId()})"
 
 @numberOfQuestions = ->
-  currentGame().questionIds.length
+  Quizzes.findOne(currentGame().quizId).questionIds.length
 
 @currentAsset = ->
   $(".asset##{currentQuestion().soundId}")[0]

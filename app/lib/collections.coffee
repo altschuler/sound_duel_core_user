@@ -8,6 +8,8 @@
 
 @Highscores = new Meteor.Collection 'highscores'
 
+@Quizzes = new Meteor.Collection 'quizzes'
+
 @Questions = new Meteor.Collection 'questions'
 
 @Sounds = new Meteor.Collection 'sounds'
@@ -32,6 +34,9 @@ if Meteor.isServer
   Meteor.publish 'highscores', ->
     Highscores.find()
 
+  Meteor.publish 'quizzes', ->
+    Quizzes.find()
+
   Meteor.publish 'questions', ->
     Questions.find()
 
@@ -45,6 +50,7 @@ if Meteor.isClient
   Meteor.subscribe 'highscores'
   Meteor.subscribe 'questions'
   Meteor.subscribe 'sounds'
+  Meteor.subscribe 'quizzes'
 
 
 # allow

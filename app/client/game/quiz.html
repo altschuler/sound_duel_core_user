@@ -1,9 +1,10 @@
-<template name="play">
+<template name="quiz">
   {{> assets}}
 
-  {{> game}}
+  {{> question}}
 </template>
 
+<!-- This template preloads all the sound media for the quiz -->
 <template name="assets">
   <div class="assets">
     {{#each segments}}
@@ -16,13 +17,13 @@
   </div>
 </template>
 
-<template name="game">
-  <div class="panel panel-default">
+
+<template name="question">
+  <div data-sound-duel-question class="panel panel-default">
     <div class="panel-heading">
       <h2 class="panel-title"><strong>{{currentQuestion}}</strong></h2>
     </div>
     <div class="panel-body">
-
       <div class="progress progress-striped active">
         <div id="asset-bar"
              class="progress-bar {{progressBarColor}}"
@@ -33,6 +34,9 @@
         </div>
       </div>
 
+      <div class="sound-duel-countdown">
+        3
+      </div>
       <div id="alternative-container">
         {{#each alternatives}}
           <div class="row">

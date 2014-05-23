@@ -46,10 +46,9 @@ notifyFinishedGame = ->
 
 Template.result.helpers
   result: ->
-    highscore = Highscores.findOne gameId: currentGame()._id
     {
-      score: highscore.score
-      ratio: "#{highscore.correctAnswers}/#{numberOfQuestions()}"
+      score: currentGame().score
+      ratio: "#{currentGame().correctAnswers}/#{numberOfQuestions()}"
     }
 
   isChallenge: -> currentChallenge()?
@@ -81,16 +80,9 @@ Template.challenge.helpers
     Games.findOne(currentChallenge().challengeeGameId).state is 'declined'
 
   result: ->
-    if currentPlayerRole() is 'challenger'
-      highscore = Highscores.findOne
-        gameId: currentChallenge().challengeeGameId
-    else
-      highscore = Highscores.findOne
-        gameId: currentChallenge().challengerGameId
-
     {
-      score: highscore.score
-      ratio: "#{highscore.correctAnswers}/#{numberOfQuestions()}"
+      score: currentGame().score
+      ratio: "#{currentGame().correctAnswers}/#{numberOfQuestions()}"
     }
 
   isWinner: ->

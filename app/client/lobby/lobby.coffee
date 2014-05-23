@@ -9,6 +9,7 @@ startChallenge = -> notify
   confirm: "Inviter"
 
 startGame = ({challengeeId, acceptChallengeId, challengeeEmail}) ->
+  Session.set 'currentQuestion', 0
   Meteor.call 'newGame', currentPlayerId(),
   { challengeeId, acceptChallengeId, challengeeEmail }, (error, result) ->
     Router.go 'game', _id: result.gameId, action: 'play'
