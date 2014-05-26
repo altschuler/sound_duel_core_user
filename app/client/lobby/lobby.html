@@ -1,5 +1,5 @@
 <template name="lobby">
-  {{challenge}}
+  
 
   <a id="highscores" href="{{pathFor 'highscores'}}">Highscore liste</a>
 
@@ -11,11 +11,31 @@
     </p>
 
     <div>
-      <button data-startGame>Spil singleplayer</button>
-      <button>Spil multiplayer</button>
+      <a class="btn btn-primary" href="{{pathFor 'single'}}">Spil singleplayer</a>
+      <a class="btn btn-primary" href="{{pathFor 'duel'}}">Spil multiplayer</a>
     </div>
 
+    {{> challenges}}
+
     {{> players}}
+  </div>
+</template>
+
+<template name="challenges">
+  <div class="challenges">
+    <h3>{{challengesCount}} nye dyst-notifikationer</h3>
+    {{#each challengeInvites}}
+      <p class="span2">
+        Du er blevet udfordret af {{username}}!
+        <button class="btn js-invite-accept" data-gameId="{{gameId}}">Accepter</button>
+        <button class="btn js-invite-decline" data-gameId="{{gameId}}">Afslå</button>
+      </p>
+    {{/each}}
+    {{#each challengeResults}}
+      <p class="span2">
+        <a class="result" href="{{pathFor 'game' _id=gameId action='result'}}">Se resultat for {{username}}</a>
+      </p>
+    {{/each}}
   </div>
 </template>
 
@@ -26,7 +46,7 @@
 
     {{#each onlinePlayers}}
       <p class="span2">
-        <a class="player" id={{_id}} href="#">{{username}}</a>
+        <a class="player" id={{_id}} href="#">{{profile.name}}</a>
       </p>
     {{/each}}
   </div>

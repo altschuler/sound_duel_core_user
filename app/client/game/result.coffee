@@ -27,10 +27,9 @@ winnerRole = ->
 notifyFinishedGame = ->
   if currentPlayerRole() is 'challenger'
     challenger = (Meteor.users.findOne currentChallenge().challengerId)
-    .username
     Meteor.call 'sendEmail',
-    challenger + '<alice@ex.com>',
-    'DR Målsuppe <bob@ex.com>',
+    challenger.profile.name + '<'+challenger.services.facebook.email+'>',
+    'DR Målsuppe <spil@dr.dk>',
     'Sub',
     'Email.send test'
 
@@ -50,10 +49,13 @@ Template.challenge.helpers
   opponent: ->
     if currentPlayerRole() is 'challengee'
       opponent = Meteor.users.findOne currentChallenge().challengerId
+    else if currentChallenge().challengeeEmail
+      opponent = Meteor.users.findOne {
+        'services.facebook.email': currentChallenge().challengeeEmail
+      }
     else
       opponent = Meteor.users.findOne currentChallenge().challengeeId
-
-    opponent.username
+    opponent.profile.name
 
   answered: ->
     game = Games.findOne currentChallenge().challengeeGameId

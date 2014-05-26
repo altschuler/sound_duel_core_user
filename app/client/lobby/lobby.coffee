@@ -2,55 +2,11 @@
 
 # methods
 
-checkChallenges = (challenges) ->
-  # check for results
-  challenges.forEach (c) ->
-    return true unless c.challengerId is currentPlayerId()
-
-    challengerGame = Games.findOne c.challengerGameId
-    challengeeGame = Games.findOne c.challengeeGameId
-
-    finished = challengerGame.state is 'finished' and
-      challengeeGame.state is 'finished'
-
-    if finished and not c.notified
-      Session.set 'challengeId', c._id
-      Session.set 'gameId', c.challengerGameId
-      challengee = Meteor.users.findOne c.challengeeId
-
-      notify
-        title:   "Dyst besvaret!"
-        content: challengee.username +
-          " har besvaret din udfordring. Se hvem der vandt?"
-        cancel:  "Nej tak"
-        confirm: "Se resultat"
-
-      Challenges.update currentChallenge()._id, $set: { notified: true }
-
-      return false
-
-  challenges.rewind()
-
-  # check for challenges
-  challenges.forEach (c) ->
-    return true unless c.challengeeId is currentPlayerId()
-
-    challengerGame = Games.findOne c.challengerGameId
-    challengeeGame = Games.findOne c.challengeeGameId
-
-    if challengeeGame.state is 'init' and challengerGame.state is 'finished'
-      Session.set 'challengeId', c._id
-      Session.set 'gameId', c.challengeeGameId
-      challenger = Meteor.users.findOne c.challengerId
-
-      notify
-        title:   "Du er blevet udfordret!"
-        content: challenger.username +
-          " har udfordret dig til dyst. Vil du godkende?"
-        cancel:  "Nej tak"
-        confirm: "Accepter dyst"
-
-      return false
+startChallenge = -> notify
+  title:   "Udfordr ven!"
+  content: '<input type="text">'
+  cancel:  "Annuller"
+  confirm: "Inviter"
 
 startGame = ({challengeeId, acceptChallengeId, challengeeEmail}) ->
   Meteor.call 'newGame', currentPlayerId(),
@@ -61,7 +17,7 @@ onlinePlayers = ->
   playerId = Session.get('playerId') or currentPlayerId()
   Meteor.users.find(
     _id: { $ne: playerId }
-    'profile.online': true
+    'online': true
   )
 
 handleUsernameError = (error) ->
@@ -72,6 +28,12 @@ handleUsernameError = (error) ->
     Session.set 'usernameError', 'Ops! Something bad happened.'
     throw error
 
+challenges = ->
+  Challenges.find $or: [
+    { challengerId: currentPlayerId() }
+  , { challengeeId: currentPlayerId() }
+  , { challengeeEmail: Meteor.user().services.facebook.email }
+  ]
 
 # helpers
 
@@ -87,13 +49,47 @@ Template.lobby.helpers
   newGameDisabled: ->
     'disabled' unless currentPlayer()?
 
-  challenge: ->
-    challenges = Challenges.find $or: [
-      { challengerId: currentPlayerId() }
-    , { challengeeId: currentPlayerId() }
-    ]
-    if challenges.count() > 0
-      checkChallenges challenges
+Template.challenges.helpers
+
+  challengesCount: ->
+    challenges().count()
+    #does meteor deal with caching?
+    # Templates.challenges.helpers.challengeInvites().length +
+    # Templates.challenges.helpers.challengeResults().length
+
+  challengeInvites: ->
+    retval = []
+    test = challenges()
+    test.fetch().forEach (c) ->
+      if c.challengeeId is currentPlayerId() or
+      c.challengeeEmail is Meteor.user().services.facebook.email
+        challengerGame = Games.findOne c.challengerGameId
+        challengeeGame = Games.findOne c.challengeeGameId
+        if challengeeGame.state is 'init' and
+        challengerGame.state is 'finished'
+          challenger = Meteor.users.findOne c.challengerId
+          retval.push({
+            username: challenger.profile.name
+            gameId: c.challengeeGameId
+          })
+    retval
+
+  challengeResults: ->
+    retval = []
+    test = challenges()
+    test.fetch().forEach (c) ->
+      if c.challengerId is currentPlayerId()
+        challengerGame = Games.findOne c.challengerGameId
+        challengeeGame = Games.findOne c.challengeeGameId
+        if challengeeGame.state is 'finished' and
+        challengerGame.state is 'finished'
+          challengee = Meteor.users.findOne c.challengeeId
+          Challenges.update c._id, $set: { notified: true }
+          retval.push({
+            username: challengee.profile.name
+            gameId: c.challengeeGameId
+          })
+    retval
 
 Template.players.helpers
   onlinePlayers: onlinePlayers
@@ -114,7 +110,6 @@ Template.lobby.rendered = ->
   $('.form-inline').bind 'keydown', (e) ->
     if e.keyCode is 13
       e.preventDefault()
-
 
 # events
 
@@ -156,27 +151,22 @@ Template.lobby.events
             $('button#new-game').prop 'disabled', false
     , 100)
 
-  'click button[data-startGame]': startGame
-
   'click a.player': (event) ->
     unless currentPlayer()?
       Session.set 'usernameError', 'You must first choose a username.'
       return
     startGame { challengeeId: event.target.id }
 
-Template.popup.events
-  'click #popup-confirm': (event) ->
-    text = $('#popup-confirm').text().replace /^\s+|\s+$/g, ""
-    switch text
-      when "Accepter dyst"
-        challenge = Challenges.findOne { challengeeGameId: currentGameId() }
-        setTimeout (-> startGame { acceptChallengeId: challenge._id }), 500
-      when "Se resultat"
-        gameId = currentChallenge().challengerGameId
-        setTimeout (-> Router.go 'game', _id: gameId, action: 'result'), 500
+Template.challenges.events
+  'click .js-invite-accept': (event) ->
+    challenge = Challenges.findOne {
+      #data() does not work
+      challengeeGameId: $(event.target).attr('data-gameId')
+    }
+    startGame { acceptChallengeId: challenge._id }
 
-  'click #popup-cancel': (event) ->
-    text = $('#popup-cancel').text().replace /^\s+|\s+$/g, ""
-    switch text
-      when "Nej tak"
-        Games.update currentGameId(), $set: { state: 'declined' }
+  'click .js-invite-decline': (event) ->
+    Games.update $(event.target).attr('data-gameId'), $set: {
+      state: 'declined'
+    }
+
