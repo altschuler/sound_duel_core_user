@@ -6,7 +6,9 @@
 @notify = (content) ->
   Session.set 'popup-content', content
   # show dialog
-  $('#popup').modal()
+  $('#popup').modal({
+    keyboard: false
+  })
 
 content = ->
   Session.get('popup-content')
