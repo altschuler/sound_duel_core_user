@@ -18,6 +18,10 @@ if Meteor.isClient
     # highscore
     @route 'highscores'
 
+    #game types
+    @route 'single', path: '/single'
+    @route 'duel', path: '/duel'
+
     # session
     @route 'session',
       path: '/session/:action'
@@ -69,11 +73,9 @@ if Meteor.isClient
   Router.onBeforeAction( (pause) ->
     if Meteor.loggingIn()
       console.log("Logging in")
-      
       pause()
     else if not Meteor.userId()
       console.log("Not logged in")
-      #@render 'login'
       Router.go 'login'
       pause()
     else
