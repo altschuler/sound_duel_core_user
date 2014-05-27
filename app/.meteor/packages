@@ -12,7 +12,7 @@ npm
 accounts-base
 accounts-password
 iron-router
-bootstrap-3
+bootstrap3-less
 email
 accounts-facebook
 accounts-ui

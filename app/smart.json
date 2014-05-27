@@ -2,6 +2,6 @@
   "packages": {
     "npm": {},
     "iron-router": {},
-    "bootstrap-3": {}
+    "bootstrap3-less": {}
   }
 }
