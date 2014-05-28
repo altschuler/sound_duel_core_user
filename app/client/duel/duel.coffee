@@ -13,6 +13,7 @@ validateEmail = (string) ->
 
 Template.duel.events
   'click .js-start-game': (event) ->
+    event.preventDefault()
     $email = $('.js-challenge-email')
     if(validateEmail $email.val())
       Meteor.call 'newGame', currentPlayerId(),

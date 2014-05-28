@@ -25,13 +25,22 @@ winnerRole = ->
     'tie'
 
 notifyFinishedGame = ->
-  if currentPlayerRole() is 'challenger'
-    challenger = (Meteor.users.findOne currentChallenge().challengerId)
-    Meteor.call 'sendEmail',
-    challenger.profile.name + '<'+challenger.emails[0].address+'>',
-    'DR Målsuppe <spil@dr.dk>',
-    'Sub',
-    'Email.send test'
+  challenge = currentChallenge()
+  if challenge.challengeeEmail
+    if currentPlayerRole() is 'challenger'
+      #send invite mail to challengee when challenger has played
+      Meteor.call 'sendEmail',
+      challenge.challengeeEmail,
+      'Invitation til spil',
+      'content'
+    else
+      #send info mail to challenger when challengee has played
+      challenger = (Meteor.users.findOne challenge.challengerId)
+      Meteor.call 'sendEmail',
+      challenger.profile.name + '<'+challenger.emails[0].address+'>',
+      'Dyst overstået',
+      'content'
+
 
 # helpers
 
@@ -119,10 +128,3 @@ Template.result.events
 
 Template.challenge.rendered = ->
   notifyFinishedGame()
-
-# Template.challenge.created = ->
-#   if currentPlayerRole() is 'challengee' and
-#   currentChallenge().challengeeEmail
-#     Challenges.update currentChallenge()._id, $set: {
-#       challengeeId: currentPlayerId()
-#     }
