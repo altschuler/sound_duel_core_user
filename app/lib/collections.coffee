@@ -16,6 +16,7 @@
 # publish
 
 if Meteor.isServer
+  #TODO: do not publish all facebook data. maybe none
   Meteor.publish 'users', ->
     Meteor.users.find()
 

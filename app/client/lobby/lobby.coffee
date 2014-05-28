@@ -32,7 +32,7 @@ challenges = ->
   Challenges.find $or: [
     { challengerId: currentPlayerId() }
   , { challengeeId: currentPlayerId() }
-  , { challengeeEmail: Meteor.user().services.facebook.email }
+  , { challengeeEmail: { $in: currentPlayerEmails() } }
   ]
 
 # helpers
@@ -54,15 +54,14 @@ Template.challenges.helpers
   challengesCount: ->
     challenges().count()
     #does meteor deal with caching?
-    # Templates.challenges.helpers.challengeInvites().length +
-    # Templates.challenges.helpers.challengeResults().length
+    #challengeInvites.length + challengeResults.length
 
   challengeInvites: ->
     retval = []
     test = challenges()
     test.fetch().forEach (c) ->
       if c.challengeeId is currentPlayerId() or
-      c.challengeeEmail is Meteor.user().services.facebook.email
+      c.challengeeEmail in currentPlayerEmails()
         challengerGame = Games.findOne c.challengerGameId
         challengeeGame = Games.findOne c.challengeeGameId
         if challengeeGame.state is 'init' and
@@ -83,7 +82,11 @@ Template.challenges.helpers
         challengeeGame = Games.findOne c.challengeeGameId
         if challengeeGame.state is 'finished' and
         challengerGame.state is 'finished'
-          challengee = Meteor.users.findOne c.challengeeId
+          #challengee = Meteor.users.findOne c.challengeeId
+          challengee = Meteor.users.findOne $or: [
+            { _id: c.challengeeId }
+          , { emails: { $elemMatch: { address: c.challengeeEmail } } }
+          ]
           Challenges.update c._id, $set: { notified: true }
           retval.push({
             username: challengee.profile.name

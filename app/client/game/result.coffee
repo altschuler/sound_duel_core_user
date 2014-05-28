@@ -28,7 +28,7 @@ notifyFinishedGame = ->
   if currentPlayerRole() is 'challenger'
     challenger = (Meteor.users.findOne currentChallenge().challengerId)
     Meteor.call 'sendEmail',
-    challenger.profile.name + '<'+challenger.services.facebook.email+'>',
+    challenger.profile.name + '<'+challenger.emails[0].address+'>',
     'DR Målsuppe <spil@dr.dk>',
     'Sub',
     'Email.send test'
@@ -51,7 +51,9 @@ Template.challenge.helpers
       opponent = Meteor.users.findOne currentChallenge().challengerId
     else if currentChallenge().challengeeEmail
       opponent = Meteor.users.findOne {
-        'services.facebook.email': currentChallenge().challengeeEmail
+        emails: { $elemMatch: {
+          address: currentChallenge().challengeeEmail
+        } }
       }
     else
       opponent = Meteor.users.findOne currentChallenge().challengeeId
@@ -118,3 +120,9 @@ Template.result.events
 Template.challenge.rendered = ->
   notifyFinishedGame()
 
+# Template.challenge.created = ->
+#   if currentPlayerRole() is 'challengee' and
+#   currentChallenge().challengeeEmail
+#     Challenges.update currentChallenge()._id, $set: {
+#       challengeeId: currentPlayerId()
+#     }
