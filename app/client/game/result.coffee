@@ -115,8 +115,17 @@ Template.challenge.helpers
     else
       "Ugh, du har tabt!"
 
-
 # events
+
+Template.socialshare.events
+  'click .js-share-facebook': (event) ->
+    event.preventDefault()
+    FB.ui({
+      method: 'share',
+      href: 'bogusurl.com',
+    }, (response) ->
+      console.log(response)
+    )
 
 Template.result.events
   'click a#restart': ->
