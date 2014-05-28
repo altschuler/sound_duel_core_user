@@ -8,76 +8,138 @@ helpers     = require './spec_helpers'
 
 describe "Challenge:", ->
 
-  browser_ = webdriverjs.remote( browser.options )
-  browsers = [ browser, browser_ ]
-
-  # hooks
-
-  before (done) ->
-    browsers[1].sessionId = browsers[0].sessionId
-    helpers.addCustomCommands(b) for b in browsers
-    browsers[1].init(done)
-
-  beforeEach ->
-    b.home() for b in browsers
-
-  afterEach ->
-    b.logout() for b in browsers
-
-  after (done) ->
-    browser_.end(done)
 
   # tests
 
   describe "Player", ->
 
-    # it "testy", (done) ->
-    #   console.log browsers[0]
-    #   console.log ''
-    #   console.log browsers[1]
-    #   browsers[0]
-    #     .newPlayer()
-    #     .once('startGame', ->
-    #       this.newGame({})
+    browser2 = {}
+    browsers = [ browser, browser2 ]
+
+    # hooks
+
+    before (done) ->
+      browser2 = webdriverjs.remote browser.options
+      browser2.sessionId = browser.sessionId
+      helpers.addCustomCommands(b) for b in [browser, browser2] #browsers
+      browser2.init(done)
+
+    beforeEach ->
+      b.home() for b in [browser, browser2]
+
+    afterEach ->
+      b.logout() for b in [browser, browser2]
+
+    after (done) ->
+      browser2.end(done)
+
+
+    # it 'testy', (done) ->
+    #   # console.log browser
+    #   # console.log ''
+    #   # console.log browser2
+    #   browser2.call done
+
+    # it 'testy2', (done) ->
+    #   # console.log browser
+    #   # console.log ''
+    #   # console.log browser2
+    #   browser.call ->
+    #     browser2.url('google.com')
+    #     done()
+
+
+    it "eventhandling", (done) ->
+      browser
+        .newPlayer({}, (err, username) ->
+          browser2.emit 'challenge', username
+        )
+        .on 'checkChallenge', ->
+          browser
+            .refresh()
+            .pause(500)
+            .getText('#popup-confirm', (err, text) ->
+              expect(err).to.be.null
+              expect(text).to.match /accepter/i
+            )
+            .answerPopup(true)
+            .pause(500)
+            .answerPopup(true)
+            .answerQuestions(all: true)
+            # .call(done)
+
+      browser2
+        .on 'challenge', (username) ->
+          browser2
+            .newPlayer({})
+            .newGame({challenge: username})
+            .answerQuestions(all: true)
+            .call(-> browser.emit 'checkChallenge')
+
+
+    # it "should be notified when challenged", (done) ->
+    #   browser
+    #     .newPlayer({}, (err, username) ->
+    #       browser.emit 'challenge', username
+    #     )
+    #     .on('checkChallenge', ->
+    #       browser
+    #         .refresh()
+    #         .pause(500)
+    #         .getText('#popup-confirm', (err, text) ->
+    #           expect(err).to.be.null
+    #           expect(text).to.match /accepter/i
+    #         )
+    #         .call done
+    #       )
+
+    #   browser2
+    #     .on('challenge', (username) ->
+    #       browser2
+    #         .newPlayer({})
+    #         .newGame({challenge: username})
+    #         .answerQuestions(all: true)
+    #         .call(-> browser2.emit 'checkChallenge')
     #     )
 
+
+    # it "should be notified when challenged is declined", (done) ->
+    #   browsers[0]
+    #     .newPlayer({}, (err, username) ->
+    #       browsers[1].emit 'challenge', username
+    #     )
+    #     .on('checkChallenge', ->
+    #       browsers[0]
+    #         .refresh()
+    #         .pause(500)
+    #         .getText('#popup-cancel', (err, text) ->
+    #           expect(err).to.be.null
+    #           expect(text).to.match /nej tak/i
+    #         )
+    #         .buttonClick('#popup-cancel', (err) ->
+    #           expect(err).to.be.null
+    #         )
+    #         .call(-> browsers[1].emit 'declined')
+    #       )
+    #       .on('done', -> browsers[0].call done)
+
     #   browsers[1]
-    #     .newPlayer()
-    #     .newGame({})
-    #     .call( -> browsers[0].emit('startGame'))
-
-
-    it "should be notified when challenged", ->
-      username = null
-
-      browsers[0]
-        .newPlayer((err, newUsername) ->
-          expect(err).to.be.null
-          username = newUsername
-        )
-        # .waitFor('#popup-confirm', 10000, (err) ->
-        #   expect(err).to.be.null
-        #   this.getText('#popup-confirm', (err, text) ->
-        #     console.log "text: #{text}"
-        #     expect(text).to.match /aksepter/i
-        #   )
-        # )
-        .on('checkChallenge', ->
-          this.getText('#popup-confirm', (err, text) ->
-            console.log "text: #{text}"
-            expect(text).to.match /aksepter/i
-          )
-        )
-        # .call done
-
-      browsers[1]
-        .newPlayer()
-        .call(-> console.log "username: #{username}")
-        .newGame((-> username), (err) ->
-          expect(err).to.be.null
-        )
-        .answerQuestions(all: true)
-        .call(-> browsers[0].emit(checkChallenge))
+    #     .on('challenge', (username) ->
+    #       browsers[1]
+    #         .newPlayer({})
+    #         .newGame({challenge: username})
+    #         .answerQuestions(all: true)
+    #         .call(-> browsers[0].emit 'checkChallenge')
+    #     )
+    #     .on('declined', ->
+    #       browsers[1]
+    #         .pause(2000)
+    #         .getText('#opponentStatus', (err,text) ->
+    #           expect(err).to.be.null
+    #           expect(text).to.match /afvist din udfordring/i
+    #         )
+    #         .call(-> browsers[0].emit 'done')
+    #       )
 
 
     # test.it "should be notified when challenged is declined", ->
