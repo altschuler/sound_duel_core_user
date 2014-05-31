@@ -54,19 +54,21 @@ if Meteor.isClient
         # Find the quiz
         quizId = @params._id
         quiz = Quizzes.findOne quizId
-        if not quiz?
+        unless quiz?
           @render 'notFound'
           pause()
+          return
 
         # Check that the quiz has started and hasn't run out
         now = new Date()
         if not (quiz.startDate < now and now < quiz.endDate)
           @render 'notAvailable'
           pause()
+          return
 
         # Check if player is already playing a quiz
         currentQuizId = Session.get('currentQuizId')
-        if currentQuizId
+        if currentQuizId?
           # player is already playing a quiz
           if currentQuizId != @params._id
             # TODO: This should render an error message that the user is already
