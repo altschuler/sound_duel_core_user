@@ -89,9 +89,11 @@ Template.assets.helpers
 #     currentGameId()
 
 Template.question.helpers
-  currentQuestion: ->
-    currentQuestion = (currentGame().currentQuestion + 1)
-    "#{currentQuestion}/#{numberOfQuestions()}"
+  currentQuestion: -> currentQuiz().name
+
+  currentQuestionNumber: -> currentGame().currentQuestion + 1
+
+  numberOfQuestions: -> numberOfQuestions()
 
   alternatives: ->
     currentQuestion().alternatives
