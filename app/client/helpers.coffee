@@ -16,7 +16,10 @@ failIfNull = (value=null, msg) ->
 # helpers
 
 @currentPlayerEmails = ->
-  Meteor.user().emails.map (c) -> c.address
+  if Meteor.user().emails
+    Meteor.user().emails.map (c) -> c.address
+  else
+    []
 
 @currentPlayerId = ->
   # Session.get 'playerId' or localStorage.getItem 'playerId'
