@@ -145,5 +145,10 @@ Template.result.events
 
 # on render
 
+Template.result.rendered = ->
+  headData {
+    description: "test"
+  }
+
 Template.challenge.rendered = ->
   notifyFinishedGame()

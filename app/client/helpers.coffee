@@ -68,10 +68,11 @@ failIfNull = (value=null, msg) ->
   outOfQuestions = currentGame().currentQuestion >= numberOfQuestions()
   outOfQuestions or currentGame().state is 'finished'
 
-@currentChallenge = -> # TODO: use or keyword
-  c =  Challenges.findOne { challengerGameId: currentGameId() }
-  c ?= Challenges.findOne { challengeeGameId: currentGameId() }
-  c
+@currentChallenge = ->
+  Challenges.findOne $or: [
+    { challengerGameId: currentGameId() }
+  , { challengeeGameId: currentGameId() }
+  ]
 
 @currentChallengeId = ->
   currentChallenge()._id
@@ -93,3 +94,26 @@ failIfNull = (value=null, msg) ->
 
 @currentAsset = ->
   $(".asset##{currentQuestion().soundId}")[0]
+
+
+###{
+  title: title
+  description: description
+  og: {
+    title: title
+    ..
+  }
+}###
+@headData = (data) ->
+  $head = $('head')
+  if data.title
+    $head.find('title').text(data.title)
+  if data.description
+    $head.find('description').text(data.description)
+  if(data.og)
+    for k in Object.keys(data.og)
+      $elem = $("meta[property='og:"+k+"']")
+      if $elem.length is 0
+        $("<meta>", { property: 'og:'+k, content: data.og[k] }).appendTo 'head'
+      else
+        $elem.attr('content',data.og[k])

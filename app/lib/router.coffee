@@ -84,18 +84,26 @@ if Meteor.isClient
     @route 'game',
       path: '/game/:_id/:action'
 
+      data: ->
+        Games.findOne @params._id
+
       onBeforeAction: (pause) ->
         unless @params.action in ['result']
           @render 'notFound'
           pause()
 
-        gameId = @params._id
-        game = null
-        Deps.nonreactive ->
-          game = Games.findOne gameId
-        if not game? #or game.state is 'inprogress'
+        if not this.data()?#or game.state is 'inprogress'
           @render 'notFound'
           pause()
+
+        # gameId = @params._id
+        # game = null
+        # Deps.nonreactive ->
+        #   game = Games.findOne gameId
+        #   console.log game
+        # if not game? #or game.state is 'inprogress'
+        #   @render 'notFound'
+        #   pause()
 
       waitOn: ->
         Meteor.subscribe 'games'
@@ -121,6 +129,7 @@ if Meteor.isClient
       pause()
     else
       loginRedirect = Session.get(loginRedirectKey)
+      #Redirect user to where he came from
       if(loginRedirect)
         console.log("Redirecting")
         Session.set(loginRedirectKey,null)
@@ -128,4 +137,4 @@ if Meteor.isClient
         pause()
       console.log("Logged in as:")
       console.log(Meteor.user())
-  , {except: 'login'})
+  , {except: 'login', 'result'})
