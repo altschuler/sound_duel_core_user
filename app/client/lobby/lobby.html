@@ -1,23 +1,24 @@
 <template name="lobby">
-  
-
-  <a id="highscores" href="{{pathFor 'highscores'}}">Highscore liste</a>
-
   <div class="text-center">
     <h1 id="game-name"><strong>Målsuppe</strong></h1>
 
-    <p id="welcome" class="lead">
-      Hej {{username}} og velkommen til VM spillet
-    </p>
 
-    <div>
-      <a class="btn btn-primary" href="{{pathFor 'single'}}">Spil singleplayer</a>
-      <a class="btn btn-primary" href="{{pathFor 'duel'}}">Spil multiplayer</a>
-    </div>
+    {{#if currentUser}}
+      <p id="welcome" class="lead">
+        Hej {{username}} og velkommen til VM spillet
+      </p>
 
-    {{> challenges}}
+      <div>
+        <a class="btn btn-primary" href="{{pathFor 'single'}}">Spil singleplayer</a>
+        <a class="btn btn-primary" href="{{pathFor 'duel'}}">Spil multiplayer</a>
+      </div>
 
-    {{> players}}
+      {{> challenges}}
+
+      {{> players}}
+    {{else}}
+      {{> loginButtons}}
+    {{/if}}
   </div>
 </template>
 

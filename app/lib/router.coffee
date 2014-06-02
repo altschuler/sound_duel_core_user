@@ -9,13 +9,6 @@ if Meteor.isClient
     notFoundTemplate: 'notFound'
 
   Router.map ->
-    # login
-    @route 'login',
-      onBeforeAction: (pause) ->
-        if Meteor.userId()
-          console.log("Visiting login while logged in")
-          this.redirect 'lobby'
-
     # lobby
     @route 'lobby', path: '/'
 
@@ -26,26 +19,7 @@ if Meteor.isClient
     @route 'single', path: '/single'
     @route 'duel', path: '/duel'
 
-    # session
-    @route 'session',
-      path: '/session/:action'
-
-      onBeforeAction: (pause) ->
-        unless @params.action in ['logout']
-          @render 'notFound'
-          pause()
-
-      action: ->
-        switch @params.action
-          when 'logout'
-            id = localStorage.getItem 'playerId'
-            Meteor.call 'logoutPlayer', id, (err, res) =>
-              if err
-                throw err
-              else
-                localStorage.removeItem 'playerId'
-
-    # game
+    # quiz
     @route 'quiz',
       path: '/quiz/:_id/'
 
@@ -80,6 +54,7 @@ if Meteor.isClient
 
         if not Session.get('currentQuestion')
           Session.set('currentQuestion', 0)
+
     # game
     @route 'game',
       path: '/game/:_id/:action'

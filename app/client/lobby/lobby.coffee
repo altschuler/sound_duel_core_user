@@ -35,7 +35,10 @@ challenges = ->
 
 Template.lobby.helpers
   username: ->
-    Meteor.user().profile.name
+    if Meteor.user().profile
+      Meteor.user().profile.name
+    else
+      Meteor.user().emails[0].address
 
   usernameError: -> Session.get 'usernameError'
 
@@ -103,58 +106,7 @@ Template.players.helpers
       "#{count} spillere der er online:"
 
 
-# rendered
-
-Template.lobby.rendered = ->
-  $('.form-inline').bind 'keydown', (e) ->
-    if e.keyCode is 13
-      e.preventDefault()
-
 # events
-
-nameInputTimeout = null
-
-Template.lobby.events
-  'keyup input#username': (event) ->
-    if event.keyCode is 13
-      $('#new-game').click()
-      return
-
-    username = "#{$('input#username').val()}".replace /^\s+|\s+$/g, ""
-    unless username
-      $('button#new-game').prop 'disabled', true
-      return
-
-    Session.set 'usernameError', ''
-
-    clearTimeout nameInputTimeout if nameInputTimeout?
-
-    nameInputTimeout = setTimeout(->
-      if currentPlayer()
-        if currentPlayer().username isnt username
-          Meteor.call 'updatePlayerUsername', currentPlayerId(), username,
-          (error, result) ->
-            if error?
-              handleUsernameError error
-            else
-              $('button#new-game').prop 'disabled', false
-        else
-          $('button#new-game').prop 'disabled', false
-      else
-        Meteor.call 'newPlayer', username, (error, result) ->
-          if error?
-            handleUsernameError error
-          else
-            localStorage.setItem 'playerId', result
-            Session.set 'playerId', result
-            $('button#new-game').prop 'disabled', false
-    , 100)
-
-  'click a.player': (event) ->
-    unless currentPlayer()?
-      Session.set 'usernameError', 'You must first choose a username.'
-      return
-    startGame { challengeeId: event.target.id }
 
 Template.challenges.events
   'click .js-invite-accept': (event) ->
@@ -168,4 +120,3 @@ Template.challenges.events
     Games.update $(event.target).attr('data-gameId'), $set: {
       state: 'declined'
     }
-
