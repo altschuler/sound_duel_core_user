@@ -15,5 +15,5 @@ iron-router
 bootstrap3-less
 email
 accounts-facebook
-accounts-ui
 service-configuration
+flash-messages
