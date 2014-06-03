@@ -117,7 +117,7 @@ Template.question.startQuestion = ->
     .text Math.floor(currentQuiz().pointsPerQuestion)
 
   $('.alternative').prop 'disabled', false
-  playAsset
+  Template.assets.playAsset()
 
 # rendered
 Template.question.rendered = ->
