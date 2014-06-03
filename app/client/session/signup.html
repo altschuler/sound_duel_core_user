@@ -1,11 +1,14 @@
 <template name='signup'>
-  <h2 id="heading"><strong>Opret bruger</strong></h2>
+  <div class="page-header">
+    <h1>Opret bruger</h1>
+  </div>
 
   <div class="session-buttons text-center">
     <form class="form-signup" role="form">
-      <input id="name" type="text" class="form-control" placeholder="Navn">
-      <input id="email" type="email" class="form-control" placeholder="Email">
-      <input id="password" type="password" class="form-control" placeholder="Passord">
+      <input id="name" type="text" class="form-control" placeholder="Navn" required>
+      <input id="email" type="email" class="form-control" placeholder="Email" required>
+      <input id="password" type="password" class="form-control" placeholder="Adgangskode" required>
+      <input id="password2" type="password" class="form-control" placeholder="Gentag adgangskode" required>
       <br />
       <button id="signup" class="btn btn-primary btn-block" type="submit">Opret</button>
     </form>

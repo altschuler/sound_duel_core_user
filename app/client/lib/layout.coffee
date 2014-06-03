@@ -12,7 +12,4 @@ UI.registerHelper 'active', (route) ->
 
 Template.currentUser.helpers
   name: ->
-    if Meteor.user().profile
-      Meteor.user().profile.name
-    else
-      Meteor.user().emails[0].address
+    Meteor.user().profile.name

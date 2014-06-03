@@ -50,8 +50,8 @@ if Meteor.isClient
         if currentQuizId?
           # player is already playing a quiz
           if currentQuizId != @params._id
-            # TODO: This should render an error message that the user is already
-            #       playing a different quiz
+            # TODO: This should render an error
+            # message that the user is already playing a different quiz
             @render 'notFound'
             pause()
         else
