@@ -91,25 +91,25 @@ if Meteor.isClient
       action: ->
         @render @params.action
 
-  loginRedirectKey = 'loginRedirect'
-  Router.onBeforeAction( (pause) ->
-    if Meteor.loggingIn()
-      console.log("Logging in")
-      pause()
-    else if not Meteor.userId()
-      console.log("Not logged in")
-      if Router.current().path isnt '/'
-        Session.set(loginRedirectKey, Router.current().path)
-      this.redirect 'login'
-      pause()
-    else
-      loginRedirect = Session.get(loginRedirectKey)
-      #Redirect user to where he came from
-      if(loginRedirect)
-        console.log("Redirecting")
-        Session.set(loginRedirectKey,null)
-        this.redirect loginRedirect
-        pause()
-      console.log("Logged in as:")
-      console.log(Meteor.user())
-  , {except: 'login', 'result'})
+  # loginRedirectKey = 'loginRedirect'
+  # Router.onBeforeAction( (pause) ->
+  #   if Meteor.loggingIn()
+  #     console.log("Logging in")
+  #     pause()
+  #   else if not Meteor.userId()
+  #     console.log("Not logged in")
+  #     if Router.current().path isnt '/'
+  #       Session.set(loginRedirectKey, Router.current().path)
+  #     this.redirect 'login'
+  #     pause()
+  #   else
+  #     loginRedirect = Session.get(loginRedirectKey)
+  #     #Redirect user to where he came from
+  #     if(loginRedirect)
+  #       console.log("Redirecting")
+  #       Session.set(loginRedirectKey,null)
+  #       this.redirect loginRedirect
+  #       pause()
+  #     console.log("Logged in as:")
+  #     console.log(Meteor.user())
+  # , {except: 'login', 'result'})
