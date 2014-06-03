@@ -7,7 +7,7 @@ Template.highscores.helpers
     Games.find(
       { score: { $gt: 0 } },
       { state: { $eq: 'finished' } }
-      { sort: { score: 1 } }
+      { sort: { score: -1 } }
     ).fetch()
 
 UI.registerHelper 'playerUsername', (playerId) ->
