@@ -28,7 +28,7 @@ Template.signup.events
 
     unless password and password is password2
       FlashMessages.sendError "Adgangskode er ugyldig eller ikke ens"
-      error = 1  
+      error = 1
 
     if error
       return
