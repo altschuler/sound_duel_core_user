@@ -31,6 +31,7 @@ challenges = ->
   , { challengeeEmail: { $in: currentPlayerEmails() } }
   ]
 
+
 # helpers
 
 Template.lobby.helpers
