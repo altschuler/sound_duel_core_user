@@ -3,11 +3,11 @@
 
   <div class="panel panel-default">
     <div class="panel-heading">
-      <h3 class="panel-title"><strong>Dig</strong></h3>
+      <h3 class="panel-title"><strong>{{player}}</strong></h3>
     </div>
     <div class="panel-body">
       {{#with result}}
-        <p id="ratio" class="lead">Du fik {{ratio}} rigtige svar!</p>
+        <p id="ratio" class="lead">{{player}} fik {{ratio}} rigtige svar!</p>
         <p id="points" class="lead">Point: {{score}}</p>
       {{/with}}
     </div>
@@ -51,8 +51,8 @@
 
 <template name="socialshare">
 
-  <a class="btn js-share-facebook" target="_blank" rel="nofollow" href="https://www.facebook.com/sharer.php?u=bogus.com" title="Del på facebook">Del på facebook</a>
-  <a class="btn js-share-twitter" target="_blank" rel="nofollow" href="https://twitter.com/home?status=bogus.com+%23sound-duel" title="Del på Twitter">Del på Twitter</a>
-  <a class="btn js-share-google" target="_blank" rel="nofollow" href="https://plus.google.com/share?url=bogus.com" title="Del på Google+">Del på Google+</a>
+  <a class="btn js-share-facebook" target="_blank" rel="nofollow" href="https://www.facebook.com/sharer.php?u={{url}}" title="Del på facebook">Del på facebook</a>
+  <a class="btn js-share-twitter" target="_blank" rel="nofollow" href="https://twitter.com/home?status={{url}}+%23sound-duel" title="Del på Twitter">Del på Twitter</a>
+  <a class="btn js-share-google" target="_blank" rel="nofollow" href="https://plus.google.com/share?url={{url}}" title="Del på Google+">Del på Google+</a>
 
 </template>

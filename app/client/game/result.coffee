@@ -45,10 +45,15 @@ notifyFinishedGame = ->
 # helpers
 
 Template.result.helpers
+  player: ->
+    game = currentGame()
+    player = Meteor.users.findOne game.playerId
+    player.profile.name
   result: ->
+    game = currentGame()
     {
-      score: currentGame().score
-      ratio: "#{currentGame().correctAnswers}/#{numberOfQuestions()}"
+      score: game.score
+      ratio: "#{game.correctAnswers}/#{numberOfQuestions()}"
     }
 
   isChallenge: -> currentChallenge()?
@@ -107,6 +112,9 @@ Template.challenge.helpers
     else
       "Ugh, du har tabt!"
 
+Template.socialshare.helpers
+  url: -> Meteor.absoluteUrl(Router.current().path)
+
 # events
 
 Template.socialshare.events
@@ -116,10 +124,10 @@ Template.socialshare.events
       # method: 'share_open_graph',
       # action_type: 'og.likes',
       # action_properties: JSON.stringify({
-      #   object:'https://developers.facebook.com/docs/',
+      #   object:window.location.href,
       # })
       method: 'share',
-      href: 'bogusurl.com',
+      href: Meteor.absoluteUrl(Router.current().path),
     }, (response) ->
       console.log(response)
     )
@@ -146,8 +154,16 @@ Template.result.events
 # on render
 
 Template.result.rendered = ->
+  game = currentGame()
+  player = Meteor.users.findOne game.playerId
+  description = player.profile.name +
+  " havde #{game.correctAnswers}/#{numberOfQuestions()} rigtige svar"+
+  " og fik " + game.score + " point!"
   headData {
-    description: "test"
+    description: description
+    og: {
+      description: description
+    }
   }
 
 Template.challenge.rendered = ->

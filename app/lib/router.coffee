@@ -165,4 +165,4 @@ if Meteor.isClient
       console.log("Logged in as:")
       console.log(Meteor.user())
 
-  , { except: ['login', 'logout', 'signup', 'result', 'highscores'] }
+  , { except: ['login', 'logout', 'signup', 'game', 'highscores'] }

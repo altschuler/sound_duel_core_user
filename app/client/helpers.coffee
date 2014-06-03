@@ -111,7 +111,7 @@ failIfNull = (value=null, msg) ->
   if data.title
     $head.find('title').text(data.title)
   if data.description
-    $head.find('description').text(data.description)
+    $head.find("meta[name='description']").text(data.description)
   if(data.og)
     for k in Object.keys(data.og)
       $elem = $("meta[property='og:"+k+"']")
