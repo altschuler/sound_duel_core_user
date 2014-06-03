@@ -119,6 +119,10 @@ Template.question.startQuestion = ->
   $('.alternative').prop 'disabled', false
   Template.assets.playAsset()
 
+# **iOS**: Ensure that sound is started
+Template.question.ensurePlaying = ->
+  Template.question.startQuestion()
+
 # rendered
 Template.question.rendered = ->
   Template.question.startQuestion()

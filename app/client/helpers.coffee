@@ -26,6 +26,8 @@ failIfNull = (value=null, msg) ->
         Session.set 'currentQuestion', 0
         Session.set 'gameId', result.gameId
         Router.go 'quiz', _id: Games.findOne(result.gameId).quizId
+        Template.question.ensurePlaying() # **iOS** : Start sound based on
+                                          #           click/touch event
       else
         console.log 'Could not create new game: %s', error.error
         console.log error
