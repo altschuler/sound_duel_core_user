@@ -31,11 +31,11 @@
       <ul class="dropdown-menu">
         <!-- <li><a href="#">Something</a></li> -->
         <!-- <li class="divider"></li> -->
-        <li><a id="logout" href="#">Log ud</a></li>
+        <li><a id="logout" href="{{pathFor 'logout'}}">Log ud</a></li>
       </ul>
     </li>
   {{else}}
-    <li><a href="{{pathFor 'lobby'}}">Ikke logget ind</a></li>
+    <li><a href="{{pathFor 'login'}}">Ikke logget ind</a></li>
   {{/if}}
 </template>
 

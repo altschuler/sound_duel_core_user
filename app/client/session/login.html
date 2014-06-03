@@ -1,5 +1,7 @@
-<template name='loginButtons'>
-  <div id="login-buttons">
+<template name='login'>
+  <h2 id="heading"><strong>Log ind</strong></h2>
+
+  <div class="session-buttons text-center">
     <div id="login-facebook" class="btn btn-primary">
       Log ind med facebook
     </div>
@@ -11,11 +13,11 @@
     </div>
     <div>
       <form class="form-signin" role="form">
-        <input id="email" type="email" class="form-control" placeholder="Brugernavn">
-        <input id="password" type="password" class="form-control" placeholder="Password">
+        <input id="email" type="email" class="form-control" placeholder="Email">
+        <input id="password" type="password" class="form-control" placeholder="Passord">
         <br />
         <button id="login-password" class="btn btn-primary btn-block" type="submit">Log ind</button>
-        eller <a id="login-create" href="#">opret bruger</a>
+        eller <a id="login-create" href="{{pathFor 'signup'}}">opret bruger</a>
       </form>
     </div>
   </div>
