@@ -1,0 +1,28 @@
+<template name="quizzes">
+  <table class="table">
+    <thead>
+      <th>Navn</th>
+      <th>Starttidspunkt</th>
+      <th>Sluttidspunkt</th>
+      <th>Status</th>
+    </thead>
+    <tbody>
+    {{#each quizzes}}
+      {{> quizRow}}
+    {{/each}}
+    </tbody>
+  </table>
+</template>
+
+<template name="quizRow">
+  <tr>
+    <td><a href="{{pathFor 'quiz'}}">{{name}}</a></td>
+    <td data-sd-startDate>{{ startDate }}</td>
+    <td data-sd-endDate>{{ endDate }}</td>
+    {{#if today}}
+    <td>Yes</td>
+    {{else}}
+    <td>No</td>
+    {{/if}}
+  </tr>
+</template>
