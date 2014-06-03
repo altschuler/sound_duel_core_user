@@ -19,6 +19,11 @@ if Meteor.isClient
     @route 'single', path: '/single'
     @route 'duel', path: '/duel'
 
+
+    # DEBUG route
+    @route 'quizzes',
+      path: '/quizzes/'
+
     # quiz
     @route 'quiz',
       path: '/quiz/:_id/'
