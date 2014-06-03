@@ -42,8 +42,8 @@ Template.signup.events
       if err?
         console.log err.error
         if err.error == 403
-          FlashMessages.sendError
-            "E-mail-adresse eller brugernavn allerede registreret"
+          FlashMessages.sendError "E-mail-adresse eller"+
+          "brugernavn allerede registreret"
         else
           FlashMessages.sendError "Kunne ikke oprette bruger"
           console.log err
