@@ -162,7 +162,4 @@ if Meteor.isClient
         @redirect loginRedirect
         pause()
 
-      console.log("Logged in as:")
-      console.log(Meteor.user())
-
   , { except: ['login', 'logout', 'signup', 'game', 'highscores'] }
