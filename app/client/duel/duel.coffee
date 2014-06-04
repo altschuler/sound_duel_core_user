@@ -3,7 +3,7 @@
 # methods
 
 validateEmail = (string) ->
-  string != ''
+  string and jQuery.inArray(string,currentPlayerEmails()) == -1
 
 # helpers
 
@@ -16,9 +16,10 @@ Template.duel.events
     event.preventDefault()
     $email = $('.js-challenge-email')
     if(validateEmail $email.val())
-      Meteor.call 'newGame', currentPlayerId(),
-      {challengeeEmail: $email.val()}, (error, result) ->
-        Router.go 'game', _id: result.gameId, action: 'play'
+      startGame({challengeeEmail: $email.val()})
+      # Meteor.call 'newGame', currentPlayerId(),
+      # {challengeeEmail: $email.val()}, (error, result) ->
+      #   Router.go 'game', _id: result.gameId, action: 'play'
 
   'keyup .js-challenge-email': (event) ->
     $this = $(event.target)

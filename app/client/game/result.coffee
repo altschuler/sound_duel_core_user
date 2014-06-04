@@ -3,19 +3,34 @@
 # methods
 
 currentPlayerRole = ->
-  if currentPlayerId() is currentChallenge().challengerId
+  game = currentGame()
+  player = Meteor.users.findOne game.playerId
+  if player._id is currentChallenge().challengerId
     'challenger'
   else
     'challengee'
+
+currentOpponent = ->
+  if currentPlayerRole() is 'challengee'
+    opponent = Meteor.users.findOne currentChallenge().challengerId
+  else if currentChallenge().challengeeEmail
+    opponent = Meteor.users.findOne(
+      { emails: {
+        $elemMatch: { address: currentChallenge().challengeeEmail }
+      } }
+    )
+    if not opponent
+      return "afventer svar"
+  else
+    opponent = Meteor.users.findOne currentChallenge().challengeeId
+  opponent.profile.name
 
 winnerRole = ->
   challenge = currentChallenge()
   return unless Games.findOne(challenge.challengeeGameId).state is 'finished'
 
-  challengeeHighscore = Highscores.findOne
-    gameId: challenge.challengeeGameId
-  challengerHighscore = Highscores.findOne
-    gameId: challenge.challengerGameId
+  challengeeHighscore = Games.findOne challenge.challengeeGameId
+  challengerHighscore = Games.findOne challenge.challengerGameId
 
   if challengeeHighscore.score > challengerHighscore.score
     'challengee'
@@ -26,21 +41,15 @@ winnerRole = ->
 
 notifyFinishedGame = ->
   challenge = currentChallenge()
-  if challenge.challengeeEmail
+  #todo: set notification status so emails will only be sent once
+  if Meteor.userId() and challenge.challengeeEmail
     if currentPlayerRole() is 'challenger'
       #send invite mail to challengee when challenger has played
-      Meteor.call 'sendEmail',
-      challenge.challengeeEmail,
-      'Invitation til spil',
-      'content'
+      notifyUserOnChallenge challenge.challengeeEmail Meteor.userId()
     else
       #send info mail to challenger when challengee has played
-      challenger = (Meteor.users.findOne challenge.challengerId)
-      Meteor.call 'sendEmail',
-      challenger.profile.name + '<'+challenger.emails[0].address+'>',
-      'Dyst overstået',
-      'content'
-
+      challenger = Meteor.users.findOne challenge.challengerId
+      notifyUserOnAnswer challenger.emails[0].address Meteor.userId()
 
 # helpers
 
@@ -59,18 +68,7 @@ Template.result.helpers
   isChallenge: -> currentChallenge()?
 
 Template.challenge.helpers
-  opponent: ->
-    if currentPlayerRole() is 'challengee'
-      opponent = Meteor.users.findOne currentChallenge().challengerId
-    else if currentChallenge().challengeeEmail
-      opponent = Meteor.users.findOne {
-        emails: { $elemMatch: {
-          address: currentChallenge().challengeeEmail
-        } }
-      }
-    else
-      opponent = Meteor.users.findOne currentChallenge().challengeeId
-    opponent.profile.name
+  opponent: -> currentOpponent()
 
   answered: ->
     game = Games.findOne currentChallenge().challengeeGameId
@@ -85,9 +83,10 @@ Template.challenge.helpers
     Games.findOne(currentChallenge().challengeeGameId).state is 'declined'
 
   result: ->
+    game = Games.findOne currentChallenge().challengeeGameId
     {
-      score: currentGame().score
-      ratio: "#{currentGame().correctAnswers}/#{numberOfQuestions()}"
+      score: game.score
+      ratio: "#{game.correctAnswers}/#{numberOfQuestions()}"
     }
 
   isWinner: ->
@@ -153,12 +152,35 @@ Template.result.events
 
 # on render
 
-Template.result.rendered = ->
+Template.result.created = ->
   game = currentGame()
   player = Meteor.users.findOne game.playerId
-  description = player.profile.name +
-  " havde #{game.correctAnswers}/#{numberOfQuestions()} rigtige svar"+
-  " og fik " + game.score + " point!"
+
+  if not currentChallenge()?
+
+    description = player.profile.name +
+    " havde #{game.correctAnswers}/#{numberOfQuestions()} rigtige svar"+
+    " og fik " + game.score + " point!"
+
+  else
+
+    winner = winnerRole()
+
+    if winner
+
+      if winner is 'tie'
+        text = ' blev uafgjort i en dyst mod '
+      else if winner is currentPlayerRole()
+        text = ' vandt en dyst mod '
+      else
+        text = ' tabte en dyst mod '
+
+      description = player.profile.name + text + currentOpponent() + "!"
+
+    else
+      description = player.profile.name +
+      " har inviteret en ven til en dyst!"
+
   headData {
     description: description
     og: {
@@ -167,4 +189,4 @@ Template.result.rendered = ->
   }
 
 Template.challenge.rendered = ->
-  notifyFinishedGame()
+  #notifyFinishedGame()
