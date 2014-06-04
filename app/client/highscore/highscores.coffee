@@ -6,7 +6,7 @@ Template.highscores.helpers
   highscores: ->
     Games.find(
       { score: { $gt: 0 } },
-      { state: { $eq: 'finished' } }
+      { state: { $eq: 'finished' } },
       { sort: { score: -1 } }
     ).fetch()
 
