@@ -26,8 +26,6 @@ failIfNull = (value=null, msg) ->
         Session.set 'currentQuestion', 0
         Session.set 'gameId', result.gameId
         Router.go 'quiz', _id: Games.findOne(result.gameId).quizId
-        Template.question.ensurePlaying() # **iOS** : Start sound based on
-                                          #           click/touch event
       else
         console.log 'Could not create new game: %s', error.error
         console.log error
@@ -94,8 +92,15 @@ failIfNull = (value=null, msg) ->
 @numberOfQuestions = ->
   Quizzes.findOne(currentGame().quizId).questionIds.length
 
-@currentAsset = ->
-  $(".asset##{currentQuestion().soundId}")[0]
+@currentAudioSrc = ->
+  randomSegment = (sound) ->
+    unless sound.segments?.length then return null
+    sound.segments[Math.floor(Math.random() * sound.segments.length)]
+
+  sound = Sounds.findOne currentQuestion().soundId
+
+  path = "/audio/#{randomSegment(sound)}"
+  path
 
 
 ###{

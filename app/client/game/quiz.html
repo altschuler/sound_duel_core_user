@@ -7,13 +7,9 @@
 <!-- This template preloads all the sound media for the quiz -->
 <template name="assets">
   <div class="assets">
-    {{#each segments}}
-      <audio id="{{id}}"
-             class="asset"
-             src="{{path}}"
-             disabled="{{disabled}}">
-      </audio>
-    {{/each}}
+    {{! Audio clip containing 0.3 seconds of silence }}
+    {{! - to workaround iOS limitations }}
+    <audio data-sd-audio-player src="/audio/silence.mp3"></audio>
   </div>
 </template>
 

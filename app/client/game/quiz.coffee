@@ -5,8 +5,8 @@
 
 answerQuestion = (answer) ->
   # pause asset
-  currentAsset().pause()
-  $(currentAsset()).unbind('timeupdate')
+  audioPlayer().pause()
+  $audioPlayer().unbind('timeupdate')
 
   # calculate points
   points = parseInt($('#asset-bar').text(), 10)
@@ -35,46 +35,39 @@ answerQuestion = (answer) ->
     Template.question.startQuestion()
 
 
-randomSegment = (sound) ->
-  unless sound.segments?.length then return null
-  sound.segments[Math.floor(Math.random() * sound.segments.length)]
 
 
 # helpers
+$audioPlayer = -> $('[data-sd-audio-player]')
+audioPlayer = -> $audioPlayer()[0]
 
 Template.assets.helpers
-  segments: ->
-    questions = currentQuiz().questionIds.map (id) -> Questions.findOne id
-    sounds = questions.map (question) -> Sounds.findOne question.soundId
 
-    # wrap the sound segments with id
-    sounds.map (sound) ->
-      id:   sound._id
-      path: "/audio/#{randomSegment(sound)}"
+  loadSound: ->
+    audioPlayer().src = currentAudioSrc()
+    audioPlayer().load()
+
+  # Play <audio> element with 0.3 seconds of silence, in order to workaround iOS
+  # limitations on HTML5 audio playback
+  playSilence: ->
+    audioPlayer().src = '/audio/silence.mp3'
+    audioPlayer().play()
+
+    # Load the real question sound after having played the silent audio clip
+    audioPlayer().addEventListener('ended', @loadSound, false)
 
   # start playback of audio element
   playAsset: (callback) ->
-    asset = currentAsset()
-
     # bind audio progress
-    @bindAssetProgress asset
-    # play asset
-    asset.play()
-
-    ## check that the audio element is playing, if not deal with it
-    # setTimeout( ->
-    #   if asset.paused
-    #     notify
-    #       title:   "Gør dig klar!"
-    #       confirm: "Spil!"
-    #   else
-    #     $('.alternative').prop 'disabled', false
-    #     callback asset if callback?
-    # , 1000)
+    @bindAssetProgress()
+    # play
+    audioPlayer().play()
 
   # binds audio element progression with progress bar
-  bindAssetProgress: (asset) ->
-    $(asset).bind 'timeupdate', ->
+  bindAssetProgress: ->
+    console.log 'bindAssetProgress() called'
+    $audioPlayer().bind 'timeupdate', ->
+      console.log 'timeupdate eventListener called'
       percent = (this.currentTime * 100) / this.duration
       Session.set 'gameProgress', percent
       value = (currentGame().pointsPerQuestion * (100 - percent)) / 100
@@ -84,9 +77,6 @@ Template.assets.helpers
         .attr('style', "width: #{100 - percent}%")
         .text Math.floor(value)
 
-# Template.quiz.helpers
-#   currentGameId: ->
-#     currentGameId()
 
 Template.question.helpers
   currentQuestion: -> currentQuiz().name
