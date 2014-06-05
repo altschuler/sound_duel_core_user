@@ -13,27 +13,7 @@
       <a class="btn btn-primary" href="{{pathFor 'duel'}}">Spil multiplayer</a>
     </div>
 
-    {{> challenges}}
-
     {{> players}}
-  </div>
-</template>
-
-<template name="challenges">
-  <div class="challenges">
-    <h3>{{challengesCount}} nye dyst-notifikationer</h3>
-    {{#each challengeInvites}}
-      <p class="span2">
-        Du er blevet udfordret af {{username}}!
-        <button class="btn js-invite-accept" data-gameId="{{gameId}}">Accepter</button>
-        <button class="btn js-invite-decline" data-gameId="{{gameId}}">Afslå</button>
-      </p>
-    {{/each}}
-    {{#each challengeResults}}
-      <p class="span2">
-        <a class="result" href="{{pathFor 'game' _id=gameId action='result'}}">Se resultat for {{username}}</a>
-      </p>
-    {{/each}}
   </div>
 </template>
 
