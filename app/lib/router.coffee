@@ -4,6 +4,7 @@ Router.configure
   layoutTemplate: 'layout'
   loadingTemplate: 'loading'
   notFoundTemplate: 'notFound'
+  waitOn: -> Meteor.subscribe 'users'
 
 
 # filters
@@ -68,7 +69,6 @@ if Meteor.isClient
           [
             Meteor.subscribe 'challenges'
             Meteor.subscribe 'games'
-            Meteor.subscribe 'users'
           ]
 
     # highscore
@@ -138,7 +138,6 @@ if Meteor.isClient
         [
           Meteor.subscribe 'games'
           Meteor.subscribe 'quizzes'
-          Meteor.subscribe 'users'
         ]
 
       data: -> Games.findOne @params._id
