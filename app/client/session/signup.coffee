@@ -11,18 +11,11 @@ Template.signup.events
     password = "#{$('input#password').val()}".replace /^\s+|\s+$/g, ""
     password2 = "#{$('input#password2').val()}".replace /^\s+|\s+$/g, ""
 
-    pattern = /// ^
-      (([^<>()[\]\\.,;:\s@\"]+
-      (\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))
-      @((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}
-      \.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+
-      [a-zA-Z]{2,}))$ ///
-
     unless name
       FlashMessages.sendError "Indtast et brugernavn"
       error = 1
 
-    unless email and email.match(pattern)
+    unless validateEmail email
       FlashMessages.sendError "Ugyldig email adresse"
       error = 1
 

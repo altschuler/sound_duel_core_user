@@ -14,6 +14,17 @@ failIfNull = (value=null, msg) ->
 
 
 # helpers
+
+@validateEmail = (email) ->
+  pattern = /// ^
+    (([^<>()[\]\\.,;:\s@\"]+
+    (\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))
+    @((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}
+    \.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+
+    [a-zA-Z]{2,}))$ ///
+
+  email.match pattern
+
 @startGame = ({challengeeId, acceptChallengeId, challengeeEmail}) ->
 
   # Create the game, and go to the quiz view
@@ -32,7 +43,7 @@ failIfNull = (value=null, msg) ->
   )
 
 @currentPlayerEmails = ->
-  if Meteor.user().emails
+  if Meteor.user().emails?
     Meteor.user().emails.map (c) -> c.address
   else
     []
