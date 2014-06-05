@@ -83,7 +83,10 @@ Template.challenge.helpers
     Games.findOne(currentChallenge().challengeeGameId).state is 'declined'
 
   result: ->
-    game = Games.findOne currentChallenge().challengeeGameId
+    if currentPlayerRole() is 'challenger'
+      game = Games.findOne currentChallenge().challengeeGameId
+    else
+      game = Games.findOne currentChallenge().challengerGameId
     {
       score: game.score
       ratio: "#{game.correctAnswers}/#{numberOfQuestions()}"
@@ -187,6 +190,3 @@ Template.result.created = ->
       description: description
     }
   }
-
-Template.challenge.rendered = ->
-  #notifyFinishedGame()
