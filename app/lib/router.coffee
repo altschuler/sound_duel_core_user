@@ -1,31 +1,26 @@
 # app/lib/router.coffee
 
-# client
+Router.configure
+  layoutTemplate: 'layout'
+  loadingTemplate: 'loading'
+  notFoundTemplate: 'notFound'
 
-if Meteor.isClient
 
-  Router.configure
-    layoutTemplate:   'layout'
-    notFoundTemplate: 'notFound'
-    loadingTemplate: 'loading'
+# filters
 
-  # login redirect filter
-
-  loginRedirectKey = 'loginRedirect'
-  Router.onBeforeAction 'loading'
-  Router.onBeforeAction (pause) ->
+Router._filters =
+  isLoggedIn: (pause) ->
+    loginRedirectKey = 'loginRedirect'
 
     if Meteor.loggingIn()
-      console.log "Logging in"
       pause()
 
-    else if not Meteor.userId()?
-      console.log "Not logged in"
-
-      if Router.current().path isnt '/'
+    else unless Meteor.userId()?
+      if Router.current().path != '/'
         Session.set loginRedirectKey, Router.current().path
 
       @redirect 'login'
+      FlashMessages.sendWarning 'Du er ikke logget ind'
       pause()
 
     else
@@ -33,12 +28,31 @@ if Meteor.isClient
 
       # redirect user to where he came from
       if loginRedirect and loginRedirect != 'logout'
-        console.log "Redirecting"
         Session.set loginRedirectKey, null
         @redirect loginRedirect
         pause()
 
-  , { except: ['login', 'logout', 'signup', 'game', 'highscores'] }
+  isLoggedOut: (pause) ->
+    if Meteor.userId()?
+      FlashMessages.sendWarning 'Du er allerede logget ind'
+      @redirect 'lobby'
+      pause()
+
+filters = Router._filters
+
+
+# client
+
+if Meteor.isClient
+
+  # before hooks
+
+  Router.onBeforeAction 'loading'
+  Router.onBeforeAction filters.isLoggedIn, only: [ 'logout', 'lobby', 'quiz' ]
+  Router.onBeforeAction filters.isLoggedOut, only: [ 'login', 'signup' ]
+
+
+  # routes
 
   Router.map ->
     # lobby
@@ -48,13 +62,11 @@ if Meteor.isClient
     @route 'highscores'
 
     #game types
-    @route 'single', path: '/single'
-    @route 'duel', path: '/duel'
-
+    @route 'single'
+    @route 'duel'
 
     # DEBUG route
-    @route 'quizzes',
-      path: '/quizzes/'
+    @route 'quizzes', path: '/quizzes/'
 
     # quiz
     @route 'quiz',
@@ -72,7 +84,7 @@ if Meteor.isClient
 
         # Check that the quiz has started and hasn't run out
         now = new Date()
-        if not (quiz.startDate < now and now < quiz.endDate)
+        unless (quiz.startDate < now and now < quiz.endDate)
           @render 'notAvailable'
           pause()
           return
@@ -89,8 +101,8 @@ if Meteor.isClient
         else
           Session.set('currentQuizId', quizId)
 
-        if not Session.get('currentQuestion')
-          Session.set('currentQuestion', 0)
+        unless Session.get 'currentQuestion'
+          Session.set 'currentQuestion', 0
 
     # game
     @route 'game',
@@ -104,18 +116,9 @@ if Meteor.isClient
           @render 'notFound'
           pause()
 
-        if not this.data()?#or game.state is 'inprogress'
+        unless @data()?
           @render 'notFound'
           pause()
-
-        # gameId = @params._id
-        # game = null
-        # Deps.nonreactive ->
-        #   game = Games.findOne gameId
-        #   console.log game
-        # if not game? #or game.state is 'inprogress'
-        #   @render 'notFound'
-        #   pause()
 
       waitOn: ->
         Meteor.subscribe 'games'
@@ -130,27 +133,11 @@ if Meteor.isClient
         @render @params.action
 
     # session
-    @route 'signup',
-      onBeforeAction: (pause) ->
-        if Meteor.userId()?
-          FlashMessages.sendWarning 'Du er allerede logget ind'
-          @redirect 'lobby'
-          pause()
+    @route 'login'
 
-    @route 'login',
-      onBeforeAction: (pause) ->
-        if Meteor.userId()?
-          FlashMessages.sendWarning 'Du er allerede logget ind'
-          @redirect 'lobby'
-          pause()
+    @route 'signup'
 
     @route 'logout',
-      onBeforeAction: (pause) ->
-        unless Meteor.userId()?
-          FlashMessages.sendError 'Du er ikke logget ind'
-          @redirect 'login'
-          pause()
-
       action: ->
         id = Meteor.userId()
 
