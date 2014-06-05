@@ -1,4 +1,4 @@
-# app/client/highscore/highscore.coffee
+# app/client/highscore/highscores.coffee
 
 # helpers
 

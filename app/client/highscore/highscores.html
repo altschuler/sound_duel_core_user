@@ -13,13 +13,13 @@
     </thead>
     <tbody>
       {{#if highscores}}
-      {{#each withPosition highscores}}
-        <tr>
-          <td>{{position}}</td>
-          <td>{{playerUsername playerId}}</td>
-          <td>{{score}}</td>
-        </tr>
-      {{/each}}
+        {{#each withPosition highscores}}
+          <tr>
+            <td>{{position}}</td>
+            <td>{{playerUsername playerId}}</td>
+            <td>{{score}}</td>
+          </tr>
+        {{/each}}
       {{else}}
         <tr>
           <td colspan="3">Ingen highscores endnu</td>
