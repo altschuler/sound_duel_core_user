@@ -48,58 +48,84 @@ if Meteor.isClient
   # before hooks
 
   Router.onBeforeAction 'loading'
-  Router.onBeforeAction filters.isLoggedIn, only: [ 'logout', 'lobby', 'quiz' ]
-  Router.onBeforeAction filters.isLoggedOut, only: [ 'login', 'signup' ]
+  Router.onBeforeAction 'dataNotFound',
+    only: [ 'game', 'quiz' ]
+  Router.onBeforeAction filters.isLoggedIn,
+    only: [ 'logout', 'lobby', 'single', 'duel', 'quiz' ]
+  Router.onBeforeAction filters.isLoggedOut,
+    only: [ 'login', 'signup' ]
 
 
   # routes
 
   Router.map ->
     # lobby
-    @route 'lobby', path: '/'
+    @route 'lobby',
+      path: '/'
+
+      waitOn: ->
+        if Meteor.user()?
+          [
+            Meteor.subscribe 'challenges'
+            Meteor.subscribe 'games'
+            Meteor.subscribe 'users'
+          ]
 
     # highscore
-    @route 'highscores'
+    @route 'highscores',
+      waitOn: -> Meteor.subscribe 'games'
 
     #game types
-    @route 'single'
-    @route 'duel'
+    @route 'single',
+      waitOn: ->
+      [
+        Meteor.subscribe 'challenges'
+        Meteor.subscribe 'games'
+      ]
 
-    # DEBUG route
-    @route 'quizzes', path: '/quizzes/'
+    @route 'duel',
+      waitOn: ->
+        [
+          Meteor.subscribe 'challenges'
+          Meteor.subscribe 'games'
+        ]
+
+    # quizzes (debug)
+    @route 'quizzes',
+      waitOn: -> Meteor.subscribe 'quizzes'
 
     # quiz
     @route 'quiz',
-      path: '/quiz/:_id/'
+      path: '/quiz/:_id'
+
+      waitOn: ->
+        [
+          Meteor.subscribe 'games'
+          Meteor.subscribe 'quizzes'
+          Meteor.subscribe 'questions'
+          Meteor.subscribe 'sounds'
+        ]
+
+      data: ->
+        Quizzes.findOne @params._id
+
+      onRun: ->
+        id = @params._id
+        Deps.nonreactive ->
+          Session.set 'currentQuizId', id
 
       onBeforeAction: (pause) ->
-
-        # Find the quiz
-        quizId = @params._id
-        quiz = Quizzes.findOne quizId
-        unless quiz?
-          @render 'notFound'
-          pause()
-          return
+        quiz = @data()
+        return unless quiz?
 
         # Check that the quiz has started and hasn't run out
         now = new Date()
         unless (quiz.startDate < now and now < quiz.endDate)
-          @render 'notAvailable'
+          @redirect 'lobby'
+          console.log 'quiz unavailable'
+          FlashMessages.sendError 'Denne quiz er ikke tilgængelig'
           pause()
           return
-
-        # Check if player is already playing a quiz
-        currentQuizId = Session.get('currentQuizId')
-        if currentQuizId?
-          # player is already playing a quiz
-          if currentQuizId != @params._id
-            # TODO: This should render an error
-            # message that the user is already playing a different quiz
-            @render 'notFound'
-            pause()
-        else
-          Session.set('currentQuizId', quizId)
 
         unless Session.get 'currentQuestion'
           Session.set 'currentQuestion', 0
@@ -108,26 +134,24 @@ if Meteor.isClient
     @route 'game',
       path: '/game/:_id/:action'
 
-      data: ->
-        Games.findOne @params._id
-
-      onBeforeAction: (pause) ->
-        unless @params.action in ['result']
-          @render 'notFound'
-          pause()
-
-        unless @data()?
-          @render 'notFound'
-          pause()
-
       waitOn: ->
-        Meteor.subscribe 'games'
-        Meteor.subscribe 'quizzes'
+        [
+          Meteor.subscribe 'games'
+          Meteor.subscribe 'quizzes'
+          Meteor.subscribe 'users'
+        ]
+
+      data: -> Games.findOne @params._id
 
       onRun: ->
         id = @params._id
         Deps.nonreactive ->
           Session.set 'gameId', id
+
+      onBeforeAction: (pause) ->
+        unless @params.action in ['result']
+          @render 'notFound'
+          pause()
 
       action: ->
         @render @params.action
