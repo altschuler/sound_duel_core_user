@@ -28,19 +28,17 @@ failIfNull = (value=null, msg) ->
 @startGame = ({challengeeId, acceptChallengeId, challengeeEmail}) ->
 
   # Create the game, and go to the quiz view
-  Meteor.call(
-    'newGame',
+  Meteor.call 'newGame',
     currentPlayerId(),
     { challengeeId, acceptChallengeId, challengeeEmail },
     (error, result) ->
-      unless error
+      unless error?
         Session.set 'currentQuestion', 0
         Session.set 'gameId', result.gameId
         Router.go 'quiz', _id: Games.findOne(result.gameId).quizId
       else
         console.log 'Could not create new game: %s', error.error
         console.log error
-  )
 
 @currentPlayerEmails = ->
   if Meteor.user().emails?

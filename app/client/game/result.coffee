@@ -117,6 +117,7 @@ Template.challenge.helpers
 Template.socialshare.helpers
   url: -> Meteor.absoluteUrl(Router.current().path)
 
+
 # events
 
 Template.socialshare.events

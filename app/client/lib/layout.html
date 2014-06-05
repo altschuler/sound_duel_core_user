@@ -33,14 +33,14 @@
       <ul class="dropdown-menu">
         <!-- <li><a href="#">Something</a></li> -->
         <!-- <li class="divider"></li> -->
-        <li data-toggle="collapse" data-target=".navbar-collapse">
+        <li>
           <a id="logout" href="{{pathFor 'logout'}}">Log ud</a>
         </li>
       </ul>
     </li>
   {{else}}
     <li>
-      <a href="{{pathFor 'login'}}">Ikke logget ind</a>
+      <a href="{{pathFor 'login'}}">Log ind</a>
     </li>
   {{/if}}
 </template>
