@@ -13,19 +13,5 @@
       <a class="btn btn-primary" href="{{pathFor 'duel'}}">Spil multiplayer</a>
     </div>
 
-    {{> players}}
-  </div>
-</template>
-
-<template name="players">
-  <div class="players">
-    <h3>{{waitingPlayers}}</h3>
-    Tryk på en spiller for at invitere til dyst!<br />
-
-    {{#each onlinePlayers}}
-      <p class="span2">
-        <a class="player" id={{_id}} href="#">{{profile.name}}</a>
-      </p>
-    {{/each}}
   </div>
 </template>

@@ -2,7 +2,6 @@
 
 # methods
 
-
 answerQuestion = (answer) ->
   # pause asset
   audioPlayer().pause()
@@ -35,9 +34,8 @@ answerQuestion = (answer) ->
     Template.question.startQuestion()
 
 
-
-
 # helpers
+
 $audioPlayer = -> $('[data-sd-audio-player]')
 audioPlayer = -> $audioPlayer()[0]
 
