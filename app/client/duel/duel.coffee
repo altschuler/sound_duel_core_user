@@ -15,9 +15,6 @@ Template.duel.events
 
     if acceptedEmail email
       startGame { challengeeEmail: email }
-      # Meteor.call 'newGame', currentPlayerId(),
-      # {challengeeEmail: $email.val()}, (error, result) ->
-      #   Router.go 'game', _id: result.gameId, action: 'play'
 
   'keyup .js-challenge-email': (event) ->
     email = "#{$('.js-challenge-email').val()}".replace /^\s+|\s+$/g, ""

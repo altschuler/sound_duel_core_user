@@ -1,4 +1,4 @@
-# app/client/helpers.coffee#
+# app/client/helpers.coffee
 
 # methods
 
@@ -26,7 +26,6 @@ failIfNull = (value=null, msg) ->
   email.match pattern
 
 @startGame = ({challengeeId, acceptChallengeId, challengeeEmail}) ->
-
   # Create the game, and go to the quiz view
   Meteor.call 'newGame',
     currentPlayerId(),
@@ -46,32 +45,17 @@ failIfNull = (value=null, msg) ->
   else
     []
 
-@currentPlayerId = ->
-  # Session.get 'playerId' or localStorage.getItem 'playerId'
-  #localStorage.getItem 'playerId'
-  Meteor.userId()
+@currentPlayerId = -> Meteor.userId()
 
-@currentPlayer = ->
-  #Meteor.users.findOne currentPlayerId()
-  Meteor.user()
+@currentPlayer = -> Meteor.user()
 
-@currentGameId = ->
-  Session.get 'gameId'
-  #failIfNull Session.get('gameId'), 'Session gameId not set'
+@currentGameId = -> Session.get 'gameId'
 
-@currentGame = ->
-  Games.findOne(currentGameId())
-  # failIfNull Games.findOne(currentGameId()),
-  #   "Current game not found (id: #{currentGameId()})"
+@currentGame = -> Games.findOne currentGameId()
 
-@currentQuizId = ->
-  Session.get 'currentQuizId'
-  #failIfNull Session.get('gameId'), 'Session gameId not set'
+@currentQuizId = -> Session.get 'currentQuizId'
 
-@currentQuiz = ->
-  Quizzes.findOne(currentQuizId())
-  # failIfNull Quizs.findOne(currentQuizId()),
-  #   "Current game not found (id: #{currentQuizId()})"
+@currentQuiz = -> Quizzes.findOne currentQuizId()
 
 @currentGameFinished = ->
   outOfQuestions = currentGame().currentQuestion >= numberOfQuestions()
@@ -83,16 +67,11 @@ failIfNull = (value=null, msg) ->
   , { challengeeGameId: currentGameId() }
   ]
 
-@currentChallengeId = ->
-  currentChallenge()._id
-
-@currentHighscore = ->
-  failIfNull Highscores.findOne({ gameId: currentGameId() }),
-    'Current game has no highscore'
+@currentChallengeId = -> currentChallenge()._id
 
 @currentQuestionId = ->
-  idx = Session.get('currentQuestion')
-  currentQuiz().questionIds[idx]
+  i = Session.get 'currentQuestion'
+  currentQuiz().questionIds[i]
 
 @currentQuestion = ->
   failIfNull Questions.findOne(currentQuestionId()),
@@ -103,13 +82,12 @@ failIfNull = (value=null, msg) ->
 
 @currentAudioSrc = ->
   randomSegment = (sound) ->
-    unless sound.segments?.length then return null
+    return null unless sound.segments?.length
     sound.segments[Math.floor(Math.random() * sound.segments.length)]
 
   sound = Sounds.findOne currentQuestion().soundId
 
-  path = "/audio/#{randomSegment(sound)}"
-  path
+  "/audio/#{randomSegment(sound)}"
 
 
 ###{
@@ -122,13 +100,17 @@ failIfNull = (value=null, msg) ->
 }###
 @headData = (data) ->
   $head = $('head')
+
   if data.title
     $head.find('title').text(data.title)
+
   if data.description
     $head.find("meta[name='description']").text(data.description)
-  if(data.og)
+
+  if data.og
     for k in Object.keys(data.og)
       $elem = $("meta[property='og:"+k+"']")
+
       if $elem.length is 0
         $("<meta>", { property: 'og:'+k, content: data.og[k] }).appendTo 'head'
       else
