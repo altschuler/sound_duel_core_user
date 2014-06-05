@@ -74,7 +74,7 @@
 </template>
 
 <template name='notifications'>
-  <div class="navbar-text dropdown">
+  <div class="navbar-notifications navbar-text dropdown">
     <a href="#" class="navbar-link dropdown-toggle" data-toggle="dropdown">Dyste
       {{#if count}}
       <span class="badge">{{count}}</span>
@@ -86,18 +86,22 @@
       {{#each notifications}}
         {{#if invite}}
           <li>
-            Du er blevet udfordret af {{username}}!
-            <button class="btn js-invite-accept" data-gameId="{{gameId}}">Accepter</button>
-            <button class="btn js-invite-decline" data-gameId="{{gameId}}">Afslå</button>
+            <span>
+            <p>Du er blevet udfordret af {{username}}!</p>
+            <button class="btn btn-default btn-sm js-invite-accept" data-gameId="{{gameId}}">Accepter</button>
+            <button class="btn btn-default btn-sm js-invite-decline" data-gameId="{{gameId}}">Afslå</button>
+            </span>
           </li>
         {{else}}
           <li>
-            <a class="result" href="{{pathFor 'game' _id=gameId action='result'}}">Se resultat for {{username}}</a>
+            <a href="{{pathFor 'game' _id=gameId action='result'}}">
+              {{username}} har besvaret din dyst! Se resultatet
+            </a>
           </li>
         {{/if}}
       {{/each}}
     {{else}}
-      <li>Ingen nye notifikationer</li>
+      <li><span>Ingen nye notifikationer</span></li>
     {{/if}}
     </ul>
   </div>
