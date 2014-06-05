@@ -33,7 +33,7 @@ failIfNull = (value=null, msg) ->
     (error, result) ->
       unless error?
         Session.set 'currentQuestion', 0
-        Session.set 'gameId', result.gameId
+        Session.set 'currentGameId', result.gameId
         Router.go 'quiz', _id: Games.findOne(result.gameId).quizId
       else
         console.log 'Could not create new game: %s', error.error
@@ -49,7 +49,7 @@ failIfNull = (value=null, msg) ->
 
 @currentPlayer = -> Meteor.user()
 
-@currentGameId = -> Session.get 'gameId'
+@currentGameId = -> Session.get 'currentGameId'
 
 @currentGame = -> Games.findOne currentGameId()
 

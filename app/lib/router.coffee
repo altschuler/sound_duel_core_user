@@ -121,7 +121,6 @@ if Meteor.isClient
         now = new Date()
         unless (quiz.startDate < now and now < quiz.endDate)
           @redirect 'lobby'
-          console.log 'quiz unavailable'
           FlashMessages.sendError 'Denne quiz er ikke tilgængelig'
           pause()
           return
@@ -144,7 +143,7 @@ if Meteor.isClient
       onRun: ->
         id = @params._id
         Deps.nonreactive ->
-          Session.set 'gameId', id
+          Session.set 'currentGameId', id
 
       onBeforeAction: (pause) ->
         unless @params.action in ['result']

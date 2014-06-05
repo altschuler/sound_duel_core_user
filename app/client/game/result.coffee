@@ -153,7 +153,7 @@ Template.socialshare.events
 
 Template.result.events
   'click a#restart': ->
-    Session.set 'gameId', ''
+    Session.set 'currentGameId', ''
     Router.go 'lobby'
 
 
