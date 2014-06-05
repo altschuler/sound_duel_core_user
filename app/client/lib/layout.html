@@ -27,16 +27,22 @@
 </template>
 
 <template name='currentUser'>
-  <li class="dropdown">
-    <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{name}} <b class="caret"></b></a>
-    <ul class="dropdown-menu">
-      <!-- <li><a href="#">Something</a></li> -->
-      <!-- <li class="divider"></li> -->
-      <li data-toggle="collapse" data-target=".navbar-collapse">
-        <a id="logout" href="{{pathFor 'logout'}}">Log ud</a>
-      </li>
-    </ul>
-  </li>
+  {{#if currentUser}}
+    <li class="dropdown">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{name}} <b class="caret"></b></a>
+      <ul class="dropdown-menu">
+        <!-- <li><a href="#">Something</a></li> -->
+        <!-- <li class="divider"></li> -->
+        <li data-toggle="collapse" data-target=".navbar-collapse">
+          <a id="logout" href="{{pathFor 'logout'}}">Log ud</a>
+        </li>
+      </ul>
+    </li>
+  {{else}}
+    <li>
+      <a href="{{pathFor 'login'}}">Ikke logget ind</a>
+    </li>
+  {{/if}}
 </template>
 
 <template name='navbar'>
@@ -57,12 +63,11 @@
       <div class="navbar-collapse collapse">
         <ul class="nav navbar-nav navbar-right">
         {{> homeLink}}
-        {{> highscoresLink}}  
+        {{> highscoresLink}}
         {{#if currentUser}}
           {{> currentUser}}
-        {{/if}}  
+        {{/if}}
         </ul>
-        
       </div>
     </div>
   </div>
@@ -71,13 +76,13 @@
 <template name='notifications'>
   <div class="navbar-text dropdown">
     <a href="#" class="navbar-link dropdown-toggle" data-toggle="dropdown">Dyste
-      {{#if count}} 
+      {{#if count}}
       <span class="badge">{{count}}</span>
       {{/if}}
     </a>
-    
+
     <ul class="dropdown-menu">
-    {{#if count}}  
+    {{#if count}}
       {{#each notifications}}
         {{#if invite}}
           <li>
@@ -95,6 +100,5 @@
       <li>Ingen nye notifikationer</li>
     {{/if}}
     </ul>
-
   </div>
 </template>
