@@ -47,8 +47,8 @@ Template.assets.helpers
     audioPlayer().src = currentAudioSrc()
     audioPlayer().load()
 
-  # Play <audio> element with 0.3 seconds of silence, in order to workaround iOS
-  # limitations on HTML5 audio playback
+  # Play <audio> element with 0.3 seconds of silence,
+  # in order to workaround iOS limitations on HTML5 audio playback
   playSilence: ->
     audioPlayer().src = '/audio/silence.mp3'
     audioPlayer().play()

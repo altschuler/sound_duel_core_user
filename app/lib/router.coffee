@@ -7,6 +7,38 @@ if Meteor.isClient
   Router.configure
     layoutTemplate:   'layout'
     notFoundTemplate: 'notFound'
+    loadingTemplate: 'loading'
+
+  # login redirect filter
+
+  loginRedirectKey = 'loginRedirect'
+  Router.onBeforeAction 'loading'
+  Router.onBeforeAction (pause) ->
+
+    if Meteor.loggingIn()
+      console.log "Logging in"
+      pause()
+
+    else if not Meteor.userId()?
+      console.log "Not logged in"
+
+      if Router.current().path isnt '/'
+        Session.set loginRedirectKey, Router.current().path
+
+      @redirect 'login'
+      pause()
+
+    else
+      loginRedirect = Session.get loginRedirectKey
+
+      # redirect user to where he came from
+      if loginRedirect and loginRedirect != 'logout'
+        console.log "Redirecting"
+        Session.set loginRedirectKey, null
+        @redirect loginRedirect
+        pause()
+
+  , { except: ['login', 'logout', 'signup', 'game', 'highscores'] }
 
   Router.map ->
     # lobby
@@ -87,6 +119,7 @@ if Meteor.isClient
 
       waitOn: ->
         Meteor.subscribe 'games'
+        Meteor.subscribe 'quizzes'
 
       onRun: ->
         id = @params._id
@@ -131,35 +164,3 @@ if Meteor.isClient
               console.log err if err?
             FlashMessages.sendSuccess 'Logget ud'
             @redirect 'login'
-
-
-
-  # login redirect filter
-
-  loginRedirectKey = 'loginRedirect'
-  Router.onBeforeAction (pause) ->
-
-    if Meteor.loggingIn()
-      console.log "Logging in"
-      pause()
-
-    else if not Meteor.userId()?
-      console.log "Not logged in"
-
-      if Router.current().path isnt '/'
-        Session.set loginRedirectKey, Router.current().path
-
-      @redirect 'login'
-      pause()
-
-    else
-      loginRedirect = Session.get loginRedirectKey
-
-      # redirect user to where he came from
-      if loginRedirect and loginRedirect != 'logout'
-        console.log "Redirecting"
-        Session.set loginRedirectKey, null
-        @redirect loginRedirect
-        pause()
-
-  , { except: ['login', 'logout', 'signup', 'game', 'highscores'] }
