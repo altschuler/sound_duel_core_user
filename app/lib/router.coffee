@@ -73,7 +73,13 @@ if Meteor.isClient
 
     # highscore
     @route 'highscores',
-      waitOn: -> Meteor.subscribe 'games'
+      waitOn: ->
+        [
+          Meteor.subscribe 'games'
+          Meteor.subscribe 'quizzes'
+          Meteor.subscribe 'highscores'
+          Meteor.subscribe 'overallhighscores'
+        ]
 
     #game types
     @route 'single',
