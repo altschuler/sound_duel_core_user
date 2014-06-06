@@ -18,3 +18,5 @@ Template.lobby.helpers
       Meteor.user().profile.name
     else
       Meteor.user().emails[0].address
+
+  game_name: -> "Marco's Crazy VM spil"
