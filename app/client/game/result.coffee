@@ -28,14 +28,15 @@ currentOpponent = ->
 
 winnerRole = ->
   challenge = currentChallenge()
-  return unless Games.findOne(challenge.challengeeGameId).state is 'finished'
+  challengeeGame = Games.findOne challenge.challengeeGameId
 
-  challengeeHighscore = Games.findOne challenge.challengeeGameId
-  challengerHighscore = Games.findOne challenge.challengerGameId
+  return unless challengeeGame.state is 'finished'
 
-  if challengeeHighscore.score > challengerHighscore.score
+  challengerGame = Games.findOne challenge.challengerGameId
+
+  if challengeeGame.score > challengerGame.score
     'challengee'
-  else if challengeeHighscore.score < challengerHighscore.score
+  else if challengeeGame.score < challengerGame.score
     'challenger'
   else
     'tie'
