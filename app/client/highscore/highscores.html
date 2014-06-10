@@ -2,36 +2,38 @@
   <div class="page-header">
     <h1>Highscore liste</h1>
   </div>
+  <div class="row lobby">
+    <div class="col-xs-12">
+      <select data-sd-quiz-selector id="highscore-quiz-selector" class="form-control">
+        {{#each quizzes}}
+          <option data-quiz-id="{{_id}}" {{selectToday startDate}}>{{displayDate startDate}} {{name}}</option>
+        {{/each}}
+      </select>
+      <table id="highscore-table" class="table table-bordered table-hover">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Brugernavn</th>
+            <th>Score</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#if highscores.count}}
+          {{#each withPosition highscores}}
+            <tr>
+              <td>{{position}}</td>
+              <td>{{playerUsername playerId}}</td>
+              <td>{{score}}</td>
+            </tr>
+          {{/each}}
+          {{else}}
+            <tr>
+              <td colspan="3">Ingen highscores endnu</td>
+            </tr>
+          {{/if}}
+        </tbody>
+      </table>
+    </div>
+  </div>
 
-  <select data-sd-quiz-selector id="highscore-quiz-selector">
-    <option data-quiz-id>Overordnet stilling</option>
-    {{#each quizzes}}
-      <option data-quiz-id="{{_id}}">{{displayDate startDate}} {{name}}</option>
-    {{/each}}
-  </select>
-
-  <table id="highscore-table" class="table table-bordered table-hover">
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Brugernavn</th>
-        <th>Score</th>
-      </tr>
-    </thead>
-    <tbody>
-      {{#if highscores.count}}
-      {{#each withPosition highscores}}
-        <tr>
-          <td>{{position}}</td>
-          <td>{{playerUsername playerId}}</td>
-          <td>{{score}}</td>
-        </tr>
-      {{/each}}
-      {{else}}
-        <tr>
-          <td colspan="3">Ingen highscores endnu</td>
-        </tr>
-      {{/if}}
-    </tbody>
-  </table>
 </template>

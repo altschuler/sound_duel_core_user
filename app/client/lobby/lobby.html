@@ -2,16 +2,47 @@
   <div class="page-header">
     <h1>{{ game_name }}</h1>
   </div>
-  <div class="text-center">
-
-    <p id="welcome" class="lead">
-      Hej {{username}} og velkommen til {{ game_name }}
-    </p>
-
-    <div>
-      <a class="btn btn-primary" href="{{pathFor 'single'}}">Spil singleplayer</a>
-      <a class="btn btn-primary" href="{{pathFor 'duel'}}">Spil multiplayer</a>
+  <div class="row lobby">
+    <div class="col-xs-12">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          {{#if currentUser}}
+            {{> lobbyLoggedIn}}
+          {{else}}
+            {{> lobbyWelcome}}
+          {{/if}}
+        </div>
+      </div>
     </div>
+  </div>
+</template>
 
+<template name="lobbyWelcome">
+  <p class="lead">Velkommen til DR Sportens FIFA VM lyd quiz</p>
+  <p class="lead">
+    Jeg har været i arkivet og fundet VM-lydbidder frem.
+    Så skru op for din højtaler og se, om du kan gætte, hvor de er fra.
+  </p>
+  <p><em>- Marco de los Reyes,<br>redaktør, DR Sporten</em></p>
+  <a class="btn btn-primary btn-block" href="{{pathFor 'login'}}">Næste</a>
+</template>
+
+<template name="lobbyLoggedIn">
+  <p>I dag skal du gætte:</p>
+  <p class="lead">
+    XXXXXXXXX
+    YYYYY
+    ZZZZZZ
+  </p>
+  <p class="lead">
+    Gæt så hurtigt du kan, hvilken kamp lyden er fra. Jo hurtigere du gætter det, jo flere point får du.
+  </p>
+  <div class="row">
+    <div class="col-xs-12 col-sm-6">
+      <button class="btn btn-primary btn-lg btn-block js-start-game">Start spil</button>
+    </div>
+    <div class="col-xs-12 col-sm-6">
+      <a class="btn btn-primary btn-lg btn-block" href="{{pathFor 'duel'}}">Udfordr ven</a>
+    </div>
   </div>
 </template>

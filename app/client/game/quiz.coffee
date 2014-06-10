@@ -8,6 +8,7 @@ answerQuestion = (answer) ->
   $audioPlayer().unbind('timeupdate')
 
   # calculate points
+  # TODO: move points calc to server
   points = parseInt($('#asset-bar').text(), 10)
   # if asset hasn't started, max points
   if isNaN points then points = currentGame().pointsPerQuestion
@@ -73,7 +74,7 @@ Template.assets.helpers
       # update progress bar width depending on audio progress
       $('#asset-bar')
         .attr('style', "width: #{100 - percent}%")
-        .text Math.floor(value)
+        .text Math.floor(value) + " points"
 
 
 Template.question.helpers

@@ -2,11 +2,19 @@
   <div class="page-header">
     <h1>Siden blev ikke fundet</h1>
   </div>
-  <p>
-    Siden, du forsøgte at tilgå, kunne ikke findes.
-    Tjek at du har indtastet den korrekte adresse og prøv igen.
-  </p>
-  <a class="btn btn-default btn-primary" href="{{pathFor 'lobby'}}">
-    Klik her for at gå til forsiden
-  </a>
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <p>
+            Siden, du forsøgte at tilgå, kunne ikke findes.
+            Tjek at du har indtastet den korrekte adresse og prøv igen.
+          </p>
+          <a class="btn btn-default btn-primary" href="{{pathFor 'lobby'}}">
+            Klik her for at gå til forsiden
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>

@@ -2,25 +2,27 @@
   <div class="page-header">
     <h1>Log ind</h1>
   </div>
-
-  <div class="session-buttons text-center">
-    <div id="login-facebook" class="btn btn-primary">
-      Log ind med facebook
-    </div>
-    <br>
-    <div class="or">
-      <span class="hline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-      <span class="or-text">eller</span>
-      <span class="hline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    </div>
-    <div>
-      <form class="form-signin" role="form">
-        <input id="email" type="email" class="form-control" placeholder="Email" required>
-        <input id="password" type="password" class="form-control" placeholder="Passord" required>
-        <br />
-        <button id="login-password" class="btn btn-primary btn-block" type="submit">Log ind</button>
-        eller <a id="login-create" href="{{pathFor 'signup'}}">opret ny bruger</a>
-      </form>
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="session-buttons text-center">
+        <div id="login-facebook" class="btn btn-block btn-primary">
+          Log ind med facebook
+        </div>
+        <div class="or">
+          <span class="hline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+          <span class="or-text">eller</span>
+          <span class="hline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        </div>
+        <div>
+          <form class="form-signin" role="form">
+            <input id="email" type="email" class="form-control" placeholder="E-mail eller brugernavn" title="E-mail eller brugernavn" required>
+            <input id="password" type="password" class="form-control" placeholder="Adgangskode" title="Adgangskode" required>
+            <br />
+            <button id="login-password" class="btn btn-primary btn-block" type="submit">Log ind</button>
+            eller <a id="login-create" href="{{pathFor 'signup'}}">opret ny bruger</a>
+          </form>
+        </div>
+      </div>
     </div>
   </div>
 </template>

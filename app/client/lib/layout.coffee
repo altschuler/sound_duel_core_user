@@ -22,7 +22,7 @@ notifications = ->
   challenges = Challenges.find $or: [
     { challengerId: currentPlayerId() }
   , { challengeeId: currentPlayerId() }
-  , { challengeeEmail: { $in: currentPlayerEmails2() } }
+  , { challengeeEmail: { $in: currentPlayerEmails() } }
   ]
   
   challenges.fetch().forEach (c) ->

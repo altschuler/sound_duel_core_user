@@ -4,7 +4,6 @@
   <div class="layout container">
     {{> flashMessages}}
     {{> yield}}
-    {{> popup}}
   </div>
 </template>
 
@@ -75,7 +74,8 @@
 
 <template name='notifications'>
   <div class="navbar-notifications navbar-text dropdown">
-    <a href="#" class="navbar-link dropdown-toggle" data-toggle="dropdown">Dyste
+    <a href="#" class="navbar-link dropdown-toggle" data-toggle="dropdown">
+      <span class="glyphicon glyphicon-bell"></span>
       {{#if count}}
       <span class="badge">{{count}}</span>
       {{/if}}

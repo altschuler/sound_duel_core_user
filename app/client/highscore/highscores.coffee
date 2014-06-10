@@ -1,5 +1,7 @@
 # app/client/highscore/highscores.coffee
 
+todayDate = new Date()
+
 # helpers
 
 Template.highscores.helpers
@@ -23,7 +25,8 @@ Template.highscores.helpers
       #   quizId: Session.get 'quizId'
       # )
     else
-      OverallHighscores.find()
+      null
+      #OverallHighscores.find()
       # Games.find(
       #   score: { $gt: 0 }
       # , { sort: [['score', 'desc']], limit: 20 })
@@ -45,6 +48,12 @@ Template.highscores.events
     quizId = $('[data-sd-quiz-selector] option:selected').data('quiz-id')
     Session.set 'quizId', quizId
     console.log(Session.get 'quizId')
+
+UI.registerHelper 'selectToday', (date) ->
+  if todayDate.setHours(0,0,0,0) == date.setHours(0,0,0,0)
+    ' selected="selected"'
+  else
+    ''
 
 UI.registerHelper 'displayDate', (date) ->
   months = ['januar', 'februar', 'marts', 'april', 'maj', 'juni', 'juli',

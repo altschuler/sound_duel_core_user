@@ -52,7 +52,7 @@ if Meteor.isClient
   Router.onBeforeAction 'dataNotFound',
     only: [ 'game', 'quiz' ]
   Router.onBeforeAction filters.isLoggedIn,
-    only: [ 'logout', 'lobby', 'single', 'duel', 'quiz' ]
+    only: [ 'logout', 'duel', 'quiz' ]
   Router.onBeforeAction filters.isLoggedOut,
     only: [ 'login', 'signup' ]
 
@@ -82,13 +82,6 @@ if Meteor.isClient
         ]
 
     #game types
-    @route 'single',
-      waitOn: ->
-      [
-        Meteor.subscribe 'challenges'
-        Meteor.subscribe 'games'
-      ]
-
     @route 'duel',
       waitOn: ->
         [

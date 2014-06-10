@@ -1,7 +1,24 @@
 <template name="duel">
-
-  {{> rules}}
-  <input type="email" class="js-challenge-email" placeholder="E-mail-adresse">
-  <input type="submit" class="btn js-start-game" value="Start dyst" disabled="disabled" />
-
+  <div class="page-header">
+    <h1>Udfordr en ven</h1>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <p class="text-center">
+            Indtast e-mail-adressen på din ven og start dysten
+          </p>
+          <div class="row">
+            <div class="col-xs-12 col-sm-10">
+              <input type="email" class="js-challenge-email form-control" placeholder="E-mail-adresse" required>
+            </div>
+            <div class="col-xs-12 col-sm-2">
+              <button class="btn btn-primary btn-block js-start-game" disabled="disabled">Start dyst</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
