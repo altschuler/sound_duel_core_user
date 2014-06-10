@@ -4,7 +4,13 @@
 
 # permission
 
-# TODO
+Quizzes.allow
+  insert: (userId, doc) -> false
+
+  update: (userId, doc, fields, modifier) ->
+    true
+
+  remove: (userId, doc) -> false
 
 # publish
 

@@ -1,17 +1,13 @@
 # app/client/lib/collections/users.coffee
 
 # permission
-# TODO
+
 Meteor.users.allow
-  insert: (userId, doc) ->
-    true
+  insert: (userId, doc) -> false
 
-  update: (userId, doc, fields, modifier) ->
-    true
+  update: (userId, doc, fields, modifier) -> false
 
-  remove: (userId, doc) ->
-    false
-
+  remove: (userId, doc) -> false
 
 # publish
 
