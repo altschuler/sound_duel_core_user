@@ -58,9 +58,9 @@ notifyFinishedGame = ->
 
 Template.result.helpers
   player: ->
-    game = currentGame()
-    player = Meteor.users.findOne game.playerId
+    player = Meteor.users.findOne currentGame().playerId
     player.profile.name
+
   result: ->
     game = currentGame()
     {

@@ -4,7 +4,7 @@
 Template.signup.events
   'click #signup': (evt) ->
     evt.preventDefault()
-    error = 0
+    error = false
 
     name = "#{$('input#name').val()}".replace /^\s+|\s+$/g, ""
     email = "#{$('input#email').val()}".replace /^\s+|\s+$/g, ""
@@ -13,18 +13,17 @@ Template.signup.events
 
     unless name
       FlashMessages.sendError "Indtast et brugernavn"
-      error = 1
+      error = true
 
     unless validateEmail email
       FlashMessages.sendError "Ugyldig email adresse"
-      error = 1
+      error = true
 
     unless password and password is password2
       FlashMessages.sendError "Adgangskode er ugyldig eller ikke ens"
-      error = 1
+      error = true
 
-    if error
-      return
+    return if error
 
     Accounts.createUser
       username: email
@@ -33,7 +32,6 @@ Template.signup.events
       profile: { name: name }
     , (err) ->
       if err?
-        console.log err.error
         if err.error == 403
           FlashMessages.sendError "E-mail-adresse eller"+
           "brugernavn allerede registreret"
@@ -41,6 +39,5 @@ Template.signup.events
           FlashMessages.sendError "Kunne ikke oprette bruger"
           console.log err
       else
-        Meteor.users.update
         Router.go 'lobby'
         FlashMessages.sendSuccess "Bruger oprettet"

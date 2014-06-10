@@ -24,7 +24,7 @@ notifications = ->
   , { challengeeId: currentPlayerId() }
   , { challengeeEmail: { $in: currentPlayerEmails() } }
   ]
-  
+
   challenges.fetch().forEach (c) ->
 
     challengerGame = Games.findOne c.challengerGameId
@@ -69,6 +69,7 @@ Template.navbar.helpers
   externallink: -> 'http://www.dr.dk/sporten/fifavm2014'
 
 Template.currentUser.helpers
+
   name: ->
     Meteor.user().profile.name
 
@@ -78,6 +79,7 @@ Template.notifications.helpers
 
   notifications: -> notifications()
 
+
 # events
 
 Template.notifications.events
@@ -85,14 +87,9 @@ Template.notifications.events
   'click .js-invite-accept': (event) ->
     #data() does not work
     gameId = $(event.target).attr('data-gameId')
-    challenge = Challenges.findOne {
-      challengeeGameId: gameId
-    }
+    challenge = Challenges.findOne { challengeeGameId: gameId }
     startGame { acceptChallengeId: challenge._id }
 
   'click .js-invite-decline': (event) ->
     gameId = $(event.target).attr('data-gameId')
-    #update game state
-    Games.update gameId, $set: {
-      state: 'declined'
-    }
+    Games.update gameId, $set: { state: 'declined' }
