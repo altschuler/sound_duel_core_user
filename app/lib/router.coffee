@@ -4,7 +4,11 @@ Router.configure
   layoutTemplate: 'layout'
   loadingTemplate: 'loading'
   notFoundTemplate: 'notFound'
-  waitOn: -> Meteor.subscribe 'users'
+  waitOn: ->
+    [
+      Meteor.subscribe 'currentUser'
+      Meteor.subscribe 'users'
+    ]
 
 
 # filters
@@ -79,9 +83,10 @@ if Meteor.isClient
           Meteor.subscribe 'quizzes'
           Meteor.subscribe 'highscores'
           Meteor.subscribe 'overallhighscores'
+          Meteor.subscribe 'challenges'
         ]
 
-    #game types
+    # game types
     @route 'duel',
       waitOn: ->
         [
@@ -100,6 +105,7 @@ if Meteor.isClient
       waitOn: ->
         [
           Meteor.subscribe 'games'
+          Meteor.subscribe 'challenges'
           Meteor.subscribe 'quizzes'
           Meteor.subscribe 'questions'
           Meteor.subscribe 'sounds'
@@ -135,6 +141,7 @@ if Meteor.isClient
       waitOn: ->
         [
           Meteor.subscribe 'games'
+          Meteor.subscribe 'challenges'
           Meteor.subscribe 'quizzes'
         ]
 

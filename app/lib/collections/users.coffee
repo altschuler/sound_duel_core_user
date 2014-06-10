@@ -12,6 +12,15 @@ Meteor.users.allow
 # publish
 
 if Meteor.isServer
-  #TODO: do not publish all facebook data. maybe none
+  Meteor.publish 'currentUser', ->
+    Meteor.users.find _id: this.userId
+
   Meteor.publish 'users', ->
-    Meteor.users.find()
+    Meteor.users.find {},
+      fields:
+        profile: 1
+        username: 1
+        emails: 1
+
+  # Meteor.publish 'challengee', (challengeId) ->
+  #   Challenges.findOne
