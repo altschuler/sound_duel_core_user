@@ -38,5 +38,5 @@ Games.allow
 # publish
 
 if Meteor.isServer
-  Meteor.publish 'games', ->
-    Games.find() # TODO
+  Meteor.publish 'currentGame', (id) ->
+    Games.find id

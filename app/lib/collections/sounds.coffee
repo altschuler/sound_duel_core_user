@@ -14,5 +14,13 @@ Sounds.allow
 # publish
 
 if Meteor.isServer
-  Meteor.publish 'sounds', ->
-    Sounds.find() # TODO
+  Meteor.publish 'currentQuizSounds', (gameId) ->
+    game = Games.findOne gameId
+    return [] unless game?
+
+    quiz = Quizzes.findOne game.quizId
+    return [] unless quiz?
+
+    questions = Questions.find _id: { $in: quiz.questionIds }
+
+    Sounds.find _id: { $in: questions.map (q) -> q.soundId }

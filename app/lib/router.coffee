@@ -14,6 +14,7 @@ Router.configure
 # filters
 
 Router._filters =
+  ganalytics: (pause) -> GAnalytics.pageview()
   isLoggedIn: (pause) ->
     loginRedirectKey = 'loginRedirect'
 
@@ -60,6 +61,10 @@ if Meteor.isClient
   Router.onBeforeAction filters.isLoggedOut,
     only: [ 'login', 'signup' ]
 
+  # after hooks
+
+  Router.onAfterAction filters.ganalytics, except: 'game'
+
 
   # routes
 
@@ -79,7 +84,6 @@ if Meteor.isClient
     @route 'highscores',
       waitOn: ->
         [
-          Meteor.subscribe 'games'
           Meteor.subscribe 'quizzes'
           Meteor.subscribe 'highscores'
           Meteor.subscribe 'overallhighscores'
@@ -92,11 +96,12 @@ if Meteor.isClient
         [
           Meteor.subscribe 'challenges'
           Meteor.subscribe 'games'
+        , Meteor.subscribe 'highscores'
         ]
 
-    # quizzes (debug)
+    # quizzes # TODO: testing
     @route 'quizzes',
-      waitOn: -> Meteor.subscribe 'quizzes'
+      waitOn: -> Meteor.subscribe 'allQuizzes'
 
     # quiz
     @route 'quiz',
@@ -141,9 +146,11 @@ if Meteor.isClient
 
       waitOn: ->
         [
-          Meteor.subscribe 'games'
-          Meteor.subscribe 'challenges'
-          Meteor.subscribe 'quizzes'
+          Meteor.subscribe 'currentGame', @params._id
+        , Meteor.subscribe 'currentQuiz', @params._id
+        , Meteor.subscribe 'currentQuizQuestions', @params._id
+        , Meteor.subscribe 'currentQuizSounds', @params._id
+        , Meteor.subscribe 'currentQuizHighscores', @params._id
         ]
 
       data: -> Games.findOne @params._id

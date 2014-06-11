@@ -7,8 +7,7 @@
 Quizzes.allow
   insert: (userId, doc) -> false
 
-  update: (userId, doc, fields, modifier) ->
-    true
+  update: (userId, doc, fields, modifier) -> true # TODO: testing
 
   remove: (userId, doc) -> false
 
@@ -16,4 +15,15 @@ Quizzes.allow
 
 if Meteor.isServer
   Meteor.publish 'quizzes', ->
-    Quizzes.find() # TODO
+    today = new Date()
+    Quizzes.find startDate: { $lt: today }
+
+  Meteor.publish 'currentQuiz', (gameId) ->
+    game = Games.findOne gameId
+    return [] unless game?
+
+    Quizzes.find game.quizId
+
+  # TODO: testing
+  Meteor.publish 'allQuizzes', ->
+    Quizzes.find()
