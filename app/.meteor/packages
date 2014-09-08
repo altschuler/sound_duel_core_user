@@ -2,20 +2,19 @@
 #
 # 'meteor add' and 'meteor remove' will edit this file for you,
 # but you can also edit it by hand.
-
-standard-app-packages
-insecure
-coffeescript
-less
 #i18next-meteor
-npm
+
 accounts-base
 accounts-password
-iron-router
-bootstrap3-less
 email
 accounts-facebook
 service-configuration
-flash-messages
 handlebars-server
 spiderable
+
+arunoda:npm@0.2.6
+cmather:iron-router@0.8.2
+bootstrap3-less
+mrt:flash-messages@0.2.4
+datariot:ganalytics@0.2.0
+simison:bootstrap3-less
