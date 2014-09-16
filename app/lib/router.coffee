@@ -123,13 +123,14 @@ if Meteor.isClient
         quiz = @data()
         return unless quiz?
 
+        # TODO: we're not doing date-based quizzes anymore, delete this?
         # Check that the quiz has started and hasn't run out
-        now = new Date()
-        unless (quiz.startDate < now and now < quiz.endDate)
-          @redirect 'lobby'
-          FlashMessages.sendError 'Denne quiz er ikke tilgængelig'
-          pause()
-          return
+        # now = new Date()
+        # unless (quiz.startDate < now and now < quiz.endDate)
+        #   @redirect 'lobby'
+        #   FlashMessages.sendError 'Denne quiz er ikke tilgængelig'
+        #   pause()
+        #   return
 
         unless Session.get 'currentQuestion'
           Session.set 'currentQuestion', 0
