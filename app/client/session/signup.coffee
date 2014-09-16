@@ -6,10 +6,10 @@ Template.signup.events
     evt.preventDefault()
     error = false
 
-    name = "#{$('input#name').val()}".replace /^\s+|\s+$/g, ""
-    email = "#{$('input#email').val()}".replace /^\s+|\s+$/g, ""
-    password = "#{$('input#password').val()}".replace /^\s+|\s+$/g, ""
-    password2 = "#{$('input#password2').val()}".replace /^\s+|\s+$/g, ""
+    name = $('input#name').val().trim()
+    email = $('input#email').val().trim()
+    password = $('input#password').val().trim()
+    password2 = $('input#password2').val().trim()
 
     unless name
       FlashMessages.sendError "Indtast et brugernavn"
