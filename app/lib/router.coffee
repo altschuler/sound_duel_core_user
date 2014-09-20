@@ -63,7 +63,7 @@ if Meteor.isClient
 
   # after hooks
 
-  Router.onAfterAction filters.ganalytics, except: 'game'
+  #Router.onAfterAction filters.ganalytics, except: 'game'
 
 
   # routes
@@ -101,7 +101,7 @@ if Meteor.isClient
 
     # quizzes # TODO: testing
     @route 'quizzes',
-      waitOn: -> Meteor.subscribe 'allQuizzes'
+      waitOn: -> Meteor.subscribe 'quizzes'
 
     # quiz
     @route 'quiz',
@@ -146,11 +146,17 @@ if Meteor.isClient
 
       waitOn: ->
         [
-          Meteor.subscribe 'currentGame', @params._id
-        , Meteor.subscribe 'currentQuiz', @params._id
-        , Meteor.subscribe 'currentQuizQuestions', @params._id
-        , Meteor.subscribe 'currentQuizSounds', @params._id
-        , Meteor.subscribe 'currentQuizHighscores', @params._id
+          Meteor.subscribe 'games'
+          Meteor.subscribe 'challenges'
+          Meteor.subscribe 'quizzes'
+          Meteor.subscribe 'questions'
+          Meteor.subscribe 'sounds'
+
+          # Meteor.subscribe 'currentGame', @params._id
+          # Meteor.subscribe 'currentQuiz', @params._id
+          # Meteor.subscribe 'currentQuizQuestions', @params._id
+          # Meteor.subscribe 'currentQuizSounds', @params._id
+          # Meteor.subscribe 'currentQuizHighscores', @params._id
         ]
 
       data: -> Games.findOne @params._id

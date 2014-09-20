@@ -17,6 +17,9 @@ Questions.allow
 # publish
 
 if Meteor.isServer
+  Meteor.publish 'questions', ->
+    Questions.find()
+
   Meteor.publish 'currentQuizQuestions', (gameId) ->
     game = Games.findOne gameId
     return [] unless game?

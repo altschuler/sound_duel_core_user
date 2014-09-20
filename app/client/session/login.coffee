@@ -17,8 +17,8 @@ Template.login.events
   'click #login-password': (evt) ->
     evt.preventDefault()
 
-    username = "#{$('input#email').val()}".replace /^\s+|\s+$/g, ""
-    password = "#{$('input#password').val()}".replace /^\s+|\s+$/g, ""
+    username = $('input#email').val().trim()
+    password = $('input#password').val().trim()
 
     Meteor.loginWithPassword username, password, (err) ->
       if err?

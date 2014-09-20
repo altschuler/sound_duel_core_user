@@ -15,8 +15,7 @@ Quizzes.allow
 
 if Meteor.isServer
   Meteor.publish 'quizzes', ->
-    today = new Date()
-    Quizzes.find startDate: { $lt: today }
+    Quizzes.find()
 
   Meteor.publish 'currentQuiz', (gameId) ->
     game = Games.findOne gameId

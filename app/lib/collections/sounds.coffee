@@ -14,6 +14,9 @@ Sounds.allow
 # publish
 
 if Meteor.isServer
+  Meteor.publish 'sounds', ->
+    Sounds.find()
+
   Meteor.publish 'currentQuizSounds', (gameId) ->
     game = Games.findOne gameId
     return [] unless game?
