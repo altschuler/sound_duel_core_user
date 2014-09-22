@@ -86,6 +86,7 @@ if Meteor.isClient
         [
           Meteor.subscribe 'quizzes'
           Meteor.subscribe 'highscores'
+          Meteor.subscribe 'games'
           Meteor.subscribe 'overallhighscores'
           Meteor.subscribe 'challenges'
         ]
