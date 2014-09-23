@@ -4,14 +4,13 @@
 
 Template.highscores.helpers
   highscores: ->
-    Games.find
-      score: { $gt: 0 }
-    ,
+    highscoreGameIds = Games.find(score: { $gt: 0 },
       sort: [[ 'score', 'desc' ]]
       limit: 20
       fields: { _id: 1 }
-    .map (game) ->
-      Highscores.findOne gameId: game._id
+    ).map (g) -> g._id
+
+    Highscores.find gameId: { $in: highscoreGameIds }
 
 UI.registerHelper 'username', (userId) ->
   user = Meteor.users.findOne userId

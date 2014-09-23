@@ -62,7 +62,6 @@ notifications = ->
           gameId: c.challengerGameId
         })
 
-  console.log notifics
   notifics
 
 Template.navbar.helpers
