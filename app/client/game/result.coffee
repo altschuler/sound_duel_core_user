@@ -119,8 +119,8 @@ Template.challenge.helpers
       "Ugh, du har tabt!"
 
 Template.socialshare.helpers
-  url: -> Meteor.absoluteUrl(Router.current().path)
-
+  # substr to get rid of the leading slash
+  url: -> Meteor.absoluteUrl(Router.current().path.substr(1))
 
 # events
 
@@ -134,7 +134,7 @@ Template.socialshare.events
       #   object:window.location.href,
       # })
       method: 'share',
-      href: Meteor.absoluteUrl(Router.current().path),
+      href: Meteor.absoluteUrl(Router.current().path.substr(1)),
     }, (response) ->
       console.log(response)
     )
