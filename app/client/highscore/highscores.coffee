@@ -10,7 +10,8 @@ Template.highscores.helpers
       fields: { _id: 1 }
     ).map (g) -> g._id
 
-    Highscores.find gameId: { $in: highscoreGameIds }
+    Highscores.find(gameId: { $in: highscoreGameIds },
+      sort: [[ 'score', 'desc' ]])
 
 UI.registerHelper 'username', (userId) ->
   user = Meteor.users.findOne userId
