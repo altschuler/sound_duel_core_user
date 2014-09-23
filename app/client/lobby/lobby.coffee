@@ -3,7 +3,7 @@
 # helpers
 
 Template.lobby.helpers
-  game_name: -> "Marco's Crazy VM spil"
+  game_name: -> "Fuld funktionalitets quiz"
 
 Template.lobbyLoggedIn.helpers
   username: ->

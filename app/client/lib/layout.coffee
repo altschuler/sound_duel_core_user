@@ -10,12 +10,6 @@ UI.registerHelper 'active', (route) ->
   else
     ''
 
-currentPlayerEmails2 = ->
-  if Meteor.user() and Meteor.user().emails
-    Meteor.user().emails.map (c) -> c.address
-  else
-    []
-
 notifications = ->
 
   notifics = []
