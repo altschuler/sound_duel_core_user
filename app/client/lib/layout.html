@@ -87,7 +87,7 @@
         {{#if invite}}
           <li>
             <span>
-            <p>Du er blevet udfordret af {{username}}!</p>
+            <p>Du er blevet udfordret af {{name}}!</p>
             <button class="btn btn-default btn-sm js-invite-accept" data-gameId="{{gameId}}">Accepter</button>
             <button class="btn btn-default btn-sm js-invite-decline" data-gameId="{{gameId}}">Afslå</button>
             </span>
@@ -95,7 +95,7 @@
         {{else}}
           <li>
             <a href="{{pathFor 'game' _id=gameId action='result'}}">
-              {{username}} har besvaret din dyst! Se resultatet
+              {{name}} har besvaret din dyst! Se resultatet
             </a>
           </li>
         {{/if}}

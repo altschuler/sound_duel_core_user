@@ -18,7 +18,7 @@ currentPlayerEmails2 = ->
 
 notifications = ->
 
-  retval = []
+  notifics = []
   challenges = Challenges.find $or: [
     { challengerId: currentPlayerId() }
   , { challengeeId: currentPlayerId() }
@@ -39,9 +39,9 @@ notifications = ->
 
         challenger = Meteor.users.findOne c.challengerId
 
-        retval.push({
+        notifics.push({
           invite: 1
-          username: challenger.profile.name
+          name: challenger.profile.name
           gameId: c.challengeeGameId
         })
 
@@ -56,13 +56,14 @@ notifications = ->
         , { emails: { $elemMatch: { address: c.challengeeEmail } } }
         ]
 
-        retval.push({
+        notifics.push({
           invite: 0
-          username: challengee.profile.name
+          name: challengee.profile.name
           gameId: c.challengerGameId
         })
 
-  retval
+  console.log notifics
+  notifics
 
 Template.navbar.helpers
 
