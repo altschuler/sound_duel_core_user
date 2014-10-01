@@ -60,7 +60,7 @@ notifications = ->
 
 Template.navbar.helpers
 
-  externallink: -> 'http://www.dr.dk/sporten/fifavm2014'
+  externallink: -> 'http://www.dr.dk/p1'
 
 Template.currentUser.helpers
 
