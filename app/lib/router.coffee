@@ -80,6 +80,9 @@ if Meteor.isClient
             Meteor.subscribe 'games'
           ]
 
+    # data
+    @route 'data'
+
     # highscore
     @route 'highscores',
       waitOn: ->
@@ -194,3 +197,20 @@ if Meteor.isClient
               console.log err if err?
             FlashMessages.sendSuccess 'Logget ud'
             @redirect 'login'
+
+else if Meteor.isServer
+  Router.map ->
+    # data dump
+    @route 'dump',
+      path: '/dump'
+      where: 'server'
+      action: ->
+        games = Games.find({state:'finished'}).map (game) ->
+          gameId: game.gameId
+          answers: _.map game.answers, (a) ->
+            _.pick(a, 'questionId', 'answer')
+
+        questions = Questions.find({}, fields:{_id: 1, alternatives: 1}).fetch()
+
+        @response.setHeader 'Content-Type', 'application/json; charset=utf-8'
+        @response.end JSON.stringify(games: games, questions: questions)
