@@ -46,9 +46,6 @@ startAnimation = ->
 
 # methods
 answerQuestion = (idx) ->
-  # save last answer
-  Session.set 'lastAnswer', idx
-
   # pause asset
   audioPlayer().pause()
   $audioPlayer().unbind('timeupdate')
@@ -174,6 +171,13 @@ Template.question.events
   # answer question with predefined alternative
   'click .alternative-predefined': (event) ->
     $('.alternative').prop 'disabled', true
+
+    # save last answer
+    answer = _.find(currentQuestion().alternatives,
+        (a) -> a.name == event.target.id)
+
+    Session.set 'lastAnswer', answer.text
+
     Meteor.call 'stopQuestion',
       currentGameId(), event.target.id, (err, result) ->
         if err?
