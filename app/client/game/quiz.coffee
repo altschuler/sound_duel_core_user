@@ -98,6 +98,9 @@ Template.question.helpers
     else
       'progress-bar-success'
 
+  enabledAnswers: -> # TODO:
+    predefined: yes
+    freeText: yes
 
 Template.question.startQuestion = ->
   # Reset progress bar
@@ -116,10 +119,14 @@ Template.question.ensurePlaying = ->
 Template.question.rendered = ->
   Template.question.startQuestion()
 
-
 # events
 Template.question.events
-  # answer question with clicked alternative
-  'click .alternative': (event) ->
+  # answer question with predefined alternative
+  'click .alternative-predefined': (event) ->
     $('.alternative').prop 'disabled', true
     answerQuestion event.target.id
+
+  # answer question with free text input
+  'click .alternative-free-text': (event) ->
+    answer = $('.free-text > input').val()
+    alert "Free text not yet implemented\nAnswer was '#{answer}'" # TODO:

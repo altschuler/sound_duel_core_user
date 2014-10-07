@@ -33,15 +33,30 @@
       <div class="sound-duel-countdown">
         3
       </div>
+
       <div id="alternative-container">
-        {{#each alternatives}}
-          <div class="row">
-            <button id="{{name}}" class="alternative btn btn-block btn-lg btn-primary">
-              {{name}}) {{text}}
+
+        {{#if enabledAnswers.predefined}}
+          {{#each alternatives}}
+            <div class="row">
+              <button id="{{name}}" class="alternative alternative-predefined btn btn-block btn-lg btn-primary">
+                {{name}}) {{text}}
+              </button>
+            </div>
+          {{/each}}
+        {{/if}}
+
+        {{#if enabledAnswers.freeText}}
+        <div class="row free-text">
+            <input type="text" value="" placeholder="Skriv et svar"/>
+            <button class="alternative alternative-free-text btn btn-lg btn-primary">
+                Svar (ENTER)
             </button>
-          </div>
-        {{/each}}
+        </div>
+        {{/if}}
+
       </div>
+
 
     </div>
   </div>
