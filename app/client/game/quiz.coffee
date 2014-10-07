@@ -22,6 +22,7 @@ startAnimation = ->
   texts = ['3', '2', '1', 'Start']
 
   $('.countdown').html texts[i]
+  $('.countdown').removeClass('smaller')
   return if Session.get('currentQuestion') > 0
 
   # Change text on every animation iteration
