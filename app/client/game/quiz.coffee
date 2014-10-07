@@ -1,42 +1,66 @@
 # app/client/game/play.coffee
 
-# methods
+# constants
+QuestionState =
+  PLAY: "QuestionState.PLAY"
+  SHARE: "QuestionState.SHARE"
+  INITIAL: "QuestionState.INITIAL"
+  COUNTDOWN: "QuestionState.COUNTDOWN"
 
-answerQuestion = (answer) ->
+  # Skip animation if spacebar is pressed
+  # $('body').keyup (e) ->
+  #   if e.keyCode == 32
+  #     # user has pressed space
+  #     Template.question.showQuestion()
+
+startAnimation = ->
+  Session.set 'gameProgress', 100
+  Session.set 'questionState', QuestionState.COUNTDOWN
+
+  # Setup variables
+  i = 0
+  texts = ['3', '2', '1', 'Start']
+
+  $('.countdown').html texts[i]
+  return if Session.get('currentQuestion') > 0
+
+  # Change text on every animation iteration
+  $(".countdown").bind("webkitAnimationIteration oAnimationIteration
+    MSAnimationIteration animationiteration", ->
+    i += 1
+    $(this).text(texts[i])
+
+    if texts[i].length > 2
+      $(this).addClass('smaller')
+    else
+      $(this).removeClass('smaller')
+  )
+
+  # When the animation has ended show the questions and play the sound
+  $(".countdown").bind("webkitAnimationEnd oAnimationEnd MSAnimationEnd
+    animationend", ->
+    Template.question.showQuestion()
+    i = 0
+  )
+
+# methods
+answerQuestion = (idx) ->
+  # save last answer
+  Session.set 'lastAnswer', idx
+
   # pause asset
   audioPlayer().pause()
   $audioPlayer().unbind('timeupdate')
-
-  # calculate points
-  # TODO: move points calc to server
-  points = parseInt($('#asset-bar').text(), 10)
-  # if asset hasn't started, max points
-  if isNaN points then points = currentGame().pointsPerQuestion
-
-  # update current game object
-  Games.update currentGameId(),
-    $addToSet:
-      answers:
-        questionId: currentQuestion()._id
-        answer: answer
-        points: points
-    $inc:
-      currentQuestion: 1
-
-  question_counter = Session.get('currentQuestion')
-
   # If we answered the last question
-  if question_counter + 1 == currentQuiz().questionIds.length
+  if idx >= currentQuiz().questionIds.length
     Meteor.call 'endGame', currentGameId(), (error, result) ->
       Router.go 'game', _id: currentGameId(), action: 'result'
   else
     # otherwise go to the next question
-    Session.set('currentQuestion', question_counter + 1)
-    Template.question.startQuestion()
-
+    Session.set 'currentQuestion', idx
+    Session.set 'questionState', QuestionState.SHARE
 
 # helpers
-
 $audioPlayer = -> $('[data-sd-audio-player]')
 audioPlayer = -> $audioPlayer()[0]
 
@@ -64,18 +88,20 @@ Template.assets.helpers
 
   # binds audio element progression with progress bar
   bindAssetProgress: ->
-    console.log 'bindAssetProgress() called'
     $audioPlayer().bind 'timeupdate', ->
-      console.log 'timeupdate eventListener called'
       percent = (this.currentTime * 100) / this.duration
       Session.set 'gameProgress', percent
-      value = (currentGame().pointsPerQuestion * (100 - percent)) / 100
+      value = (currentQuiz().pointsPerQuestion * (100 - percent)) / 100
+
+      if percent == 0
+        text = ""
+      else
+        text = Math.floor(value) + " point"
 
       # update progress bar width depending on audio progress
       $('#asset-bar')
         .attr('style', "width: #{100 - percent}%")
-        .text Math.floor(value) + " points"
-
+        .text text
 
 Template.question.helpers
   currentQuestion: -> currentQuiz().name
@@ -84,15 +110,14 @@ Template.question.helpers
 
   numberOfQuestions: -> numberOfQuestions()
 
-  alternatives: ->
-    currentQuestion().alternatives
+  alternatives: -> _.shuffle currentQuestion().alternatives
 
   progressBarColor: ->
     percent = Session.get 'gameProgress'
     if percent is 100
       ''
     else if percent > 66
-      'percent-bar-danger'
+      'progress-bar-danger'
     else if percent > 33
       'progress-bar-warning'
     else
@@ -102,14 +127,38 @@ Template.question.helpers
     predefined: yes
     freeText: yes
 
-Template.question.startQuestion = ->
-  # Reset progress bar
-  $('#asset-bar')
-    .attr('style', "width: 100%")
-    .text Math.floor(currentQuiz().pointsPerQuestion)
+  # TODO: get actual answer, not id, remember answer types
+  countdownClass: ->
+    'hidden' unless Template.question.state().countdown
 
-  $('.alternative').prop 'disabled', false
-  Template.assets.playAsset()
+  lastAnswer: -> Session.get 'lastAnswer'
+
+  state: ->
+    playing: Session.get('questionState') is QuestionState.PLAY
+    sharing: Session.get('questionState') is QuestionState.SHARE
+    initial: Session.get('questionState') is QuestionState.INITIAL
+    countdown: Session.get('questionState') is QuestionState.COUNTDOWN
+
+Template.question.startNextQuestion = ->
+  # inc current question
+  Session.set 'currentQuestion', (Session.get('currentQuestion') + 1)
+  Session.set 'questionState', QuestionState.PLAY
+
+  Template.question.showQuestion()
+
+Template.question.showQuestion = ->
+  Meteor.call 'startQuestion', currentGameId(), (err) ->
+    if err?
+      console.log err
+    else
+      Session.set 'questionState', QuestionState.PLAY
+
+      # Enable answer buttons
+      $('.alternative').prop 'disabled', false
+
+      # Play sound
+      Template.assets.loadSound()
+      Template.assets.playAsset()
 
 # **iOS**: Ensure that sound is started
 Template.question.ensurePlaying = ->
@@ -117,16 +166,31 @@ Template.question.ensurePlaying = ->
 
 # rendered
 Template.question.rendered = ->
-  Template.question.startQuestion()
+  Session.set 'questionState', QuestionState.INITIAL
 
 # events
 Template.question.events
   # answer question with predefined alternative
   'click .alternative-predefined': (event) ->
     $('.alternative').prop 'disabled', true
-    answerQuestion event.target.id
+    Meteor.call 'stopQuestion',
+      currentGameId(), event.target.id, (err, result) ->
+        if err?
+          console.log err
+        else
+          answerQuestion result
+
+  # answer question with free text input
+  'click button.start-quiz': (event) ->
+    Template.assets.playSilence()
+
+    startAnimation()
 
   # answer question with free text input
   'click .alternative-free-text': (event) ->
     answer = $('.free-text > input').val()
-    alert "Free text not yet implemented\nAnswer was '#{answer}'" # TODO:
+    # TODO:
+    alert "Free text not yet implemented\nAnswer was '#{answer}'"
+
+  'click .next-question': (event) ->
+    startAnimation()
