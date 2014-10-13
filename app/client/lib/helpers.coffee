@@ -34,7 +34,7 @@ failIfNull = (value=null, msg) ->
       unless error?
         Session.set 'currentQuestion', 0
         Session.set 'currentGameId', result.gameId
-        Router.go 'quiz', _id: Games.findOne(result.gameId).quizId
+        Router.go 'game', action: 'play', _id: result.gameId
       else
         console.log 'Could not create new game: %s', error.error
         console.log error
@@ -53,7 +53,7 @@ failIfNull = (value=null, msg) ->
 
 @currentGame = -> Games.findOne currentGameId()
 
-@currentQuizId = -> Session.get 'currentQuizId'
+@currentQuizId = -> currentGame().quizId
 
 @currentQuiz = -> Quizzes.findOne currentQuizId()
 
