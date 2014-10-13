@@ -171,7 +171,7 @@ else if Meteor.isServer
         games = Games.find({state:'finished'}).map (game) ->
           gameId: game.gameId
           answers: _.map game.answers, (a) ->
-            _.pick(a, 'questionId', 'answer')
+            _.pick(a, 'questionId', 'answer', 'isFree')
 
         questions = Questions.find({}, fields:{_id: 1, alternatives: 1}).fetch()
 
