@@ -122,8 +122,8 @@ Template.question.helpers
       'progress-bar-success'
 
   enabledAnswers: -> # TODO:
-    predefined: yes
-    freeText: yes
+    predefined: currentQuestion().alternatives.length > 0
+    freeText: currentQuestion().hasFreeText
 
   # TODO: get actual answer, not id, remember answer types
   countdownClass: ->
@@ -166,6 +166,14 @@ Template.question.ensurePlaying = ->
 Template.question.rendered = ->
   Session.set 'questionState', QuestionState.INITIAL
 
+stopQuestion = (answer, isFree) ->
+  Meteor.call 'stopQuestion',
+    currentGameId(), answer, isFree, (err, result) ->
+      if err?
+        console.log err
+      else
+        answerQuestion result
+
 # events
 Template.question.events
   # answer question with predefined alternative
@@ -178,12 +186,7 @@ Template.question.events
 
     Session.set 'lastAnswer', answer.text
 
-    Meteor.call 'stopQuestion',
-      currentGameId(), event.target.id, (err, result) ->
-        if err?
-          console.log err
-        else
-          answerQuestion result
+    stopQuestion event.target.id, false
 
   # answer question with free text input
   'click button.start-quiz': (event) ->
@@ -194,8 +197,10 @@ Template.question.events
   # answer question with free text input
   'click .alternative-free-text': (event) ->
     answer = $('.free-text > input').val()
-    # TODO:
-    alert "Free text not yet implemented\nAnswer was '#{answer}'"
+
+    Session.set 'lastAnswer', answer
+
+    stopQuestion answer, true
 
   'click .next-question': (event) ->
     startAnimation()

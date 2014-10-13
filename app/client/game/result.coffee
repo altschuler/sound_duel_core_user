@@ -64,9 +64,10 @@ Template.result.helpers
 
   result: ->
     game = currentGame()
+    nonFreeQuestions = _.filter(game.answers, (a) -> !a.isFree).length
     {
       score: game.score
-      ratio: "#{game.correctAnswers}/#{numberOfQuestions()}"
+      ratio: "#{game.correctAnswers}/#{nonFreeQuestions}"
     }
 
   isChallenge: -> currentChallenge()?
