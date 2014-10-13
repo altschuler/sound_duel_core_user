@@ -1,0 +1,42 @@
+<template name="quiz">
+  <div class="page-header">
+    <h1>{{ game_name }}</h1>
+  </div>
+  <div class="row lobby">
+    <div class="col-xs-12">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          {{#if currentUser}}
+            {{> quizLoggedIn}}
+          {{else}}
+            {{> quizWelcome}}
+          {{/if}}
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<template name="quizWelcome">
+  <p class="lead">Shared</p>
+  <p class="lead">
+    Jeg har været i arkivet og fundet VM-lydbidder frem.
+    Så skru op for din højtaler og se, om du kan gætte, hvor de er fra.
+  </p>
+  <p><em>- Marco de los Reyes,<br>redaktør, DR Sporten</em></p>
+  <a class="btn btn-primary btn-block" href="{{pathFor 'login'}}">Næste</a>
+</template>
+
+<template name="quizLoggedIn">
+  <p class="lead">
+    Se om du kan gøre det bedre...
+  </p>
+  <div class="row">
+    <div class="col-xs-12 col-sm-6">
+      <button class="btn btn-primary btn-lg btn-block js-start-game">Start spil</button>
+    </div>
+    <div class="col-xs-12 col-sm-6">
+      <a class="btn btn-primary btn-lg btn-block" href="{{pathFor 'duel'}}">Udfordr ven</a>
+    </div>
+  </div>
+</template>

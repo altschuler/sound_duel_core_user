@@ -103,6 +103,31 @@ if Meteor.isClient
         , Meteor.subscribe 'highscores'
         ]
 
+    # game
+    @route 'quiz',
+      path: '/quiz/:_id'
+
+      onBeforeAction: (pause) ->
+        unless Quizzes.findOne @params._id
+          @render 'notFound'
+          pause()
+
+      onRun: ->
+        id = @params._id
+        Deps.nonreactive ->
+          Session.set 'sharedQuizId', id
+
+      waitOn: ->
+        [
+          Meteor.subscribe 'games'
+          Meteor.subscribe 'challenges'
+          Meteor.subscribe 'quizzes'
+          Meteor.subscribe 'questions'
+          Meteor.subscribe 'sounds'
+        ]
+
+      data: -> Quizzes.findOne @params._id
+
     # quizzes # TODO: testing
     @route 'quizzes',
       waitOn: -> Meteor.subscribe 'quizzes'
