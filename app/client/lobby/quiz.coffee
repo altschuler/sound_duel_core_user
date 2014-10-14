@@ -3,7 +3,7 @@
 # helpers
 
 Template.quiz.helpers
-  game_name: -> "Delt quiz"
+  game_name: -> "Fuld funktionalitets quiz"
 
 Template.quizLoggedIn.helpers
   username: ->
