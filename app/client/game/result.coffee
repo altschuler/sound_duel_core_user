@@ -134,6 +134,7 @@ Template.socialshare.helpers
 
   gameFinished: Template.result.gameFinished
 
+
 # events
 
 Template.socialshare.events
@@ -163,11 +164,6 @@ Template.socialshare.events
     ",top=" + topPosition +
     ",toolbar=no,menubar=no,scrollbars=no,location=no,directories=no"
     window.open($(event.target).attr('href'),'sharer', windowFeatures)
-
-Template.result.events
-  'click a#restart': ->
-    Session.set 'currentGameId', ''
-    Router.go 'lobby'
 
 
 # on render
