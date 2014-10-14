@@ -25,11 +25,11 @@ failIfNull = (value=null, msg) ->
 
   email.match pattern
 
-@startGame = ({challengeeId, acceptChallengeId, challengeeEmail}) ->
+@startGame = ({challengeeId, acceptChallengeId, challengeeEmail, quizId}) ->
   # Create the game, and go to the quiz view
   Meteor.call 'newGame',
     currentPlayerId(),
-    { challengeeId, acceptChallengeId, challengeeEmail },
+    { challengeeId, acceptChallengeId, challengeeEmail, quizId },
     (error, result) ->
       unless error?
         Session.set 'currentQuestion', 0
