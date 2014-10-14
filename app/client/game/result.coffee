@@ -147,7 +147,7 @@ Template.socialshare.events
       #   object:window.location.href,
       # })
       method: 'share',
-      href: Meteor.absoluteUrl(Router.current().path.substr(1)),
+      href: Template.socialshare.url()
     }, (response) ->
       console.log(response)
     )
