@@ -15,6 +15,7 @@ Router.configure
 
 Router._filters =
   ganalytics: (pause) -> GAnalytics.pageview()
+
   isLoggedIn: (pause) ->
     loginRedirectKey = 'loginRedirect'
 
@@ -154,9 +155,18 @@ if Meteor.isClient
           Session.set 'currentGameId', id
 
       onBeforeAction: (pause) ->
-        unless @params.action in ['play', 'result']
-          @render 'notFound'
-          pause()
+        switch @params.action
+          when 'play'
+            unless Meteor.userId()
+              @redirect 'login'
+              FlashMessages.sendWarning 'Du er ikke logget ind'
+              pause()
+
+          when 'result' then break
+
+          else
+            @render 'notFound'
+            pause()
 
       action: ->
         @render @params.action
