@@ -167,6 +167,7 @@ Template.result.events
 
 Template.result.created = ->
   game = currentGame()
+  Router.go('lobby') unless game?
   player = Meteor.users.findOne game.playerId
 
   unless currentChallenge()?
