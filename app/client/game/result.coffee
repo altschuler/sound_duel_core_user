@@ -58,6 +58,8 @@ notifyFinishedGame = ->
 # helpers
 
 Template.result.helpers
+  share: -> what: "game"
+
   player: ->
     player = Meteor.users.findOne currentGame().playerId
     player.profile.name
@@ -123,7 +125,12 @@ Template.challenge.helpers
 
 Template.socialshare.helpers
   # substr to get rid of the leading slash
-  url: -> Meteor.absoluteUrl(Router.current().path.substr(1))
+  url: ->
+    switch @what
+      when "game"
+        Meteor.absoluteUrl(Router.current().path.substr(1))
+      when "quiz"
+        "#{Meteor.absoluteUrl()}quiz/#{currentQuizId()}"
 
   gameFinished: Template.result.gameFinished
 

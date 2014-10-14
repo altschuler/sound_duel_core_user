@@ -63,7 +63,6 @@ $audioPlayer = -> $('[data-sd-audio-player]')
 audioPlayer = -> $audioPlayer()[0]
 
 Template.assets.helpers
-
   loadSound: ->
     audioPlayer().src = currentAudioSrc()
     audioPlayer().load()
@@ -102,6 +101,8 @@ Template.assets.helpers
         .text text
 
 Template.question.helpers
+  share: -> what: "quiz"
+
   currentQuestion: -> currentQuiz().name
 
   currentQuestionNumber: -> currentGame().currentQuestion + 1
