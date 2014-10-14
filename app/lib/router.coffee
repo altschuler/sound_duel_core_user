@@ -57,7 +57,7 @@ if Meteor.isClient
   Router.onBeforeAction 'dataNotFound',
     only: [ 'game', 'quiz' ]
   Router.onBeforeAction filters.isLoggedIn,
-    only: [ 'logout', 'duel', 'quiz' ]
+    only: [ 'logout', 'duel', 'quiz', 'lobby' ]
   Router.onBeforeAction filters.isLoggedOut,
     only: [ 'login', 'signup' ]
 
@@ -106,11 +106,6 @@ if Meteor.isClient
     # game
     @route 'quiz',
       path: '/quiz/:_id'
-
-      onBeforeAction: (pause) ->
-        unless Quizzes.findOne @params._id
-          @render 'notFound'
-          pause()
 
       onRun: ->
         id = @params._id
