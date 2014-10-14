@@ -62,6 +62,8 @@ Template.result.helpers
     player = Meteor.users.findOne currentGame().playerId
     player.profile.name
 
+  gameFinished: -> currentGame().state == 'finished'
+
   result: ->
     game = currentGame()
     nonFreeQuestions = _.filter(game.answers, (a) -> !a.isFree).length
@@ -122,6 +124,8 @@ Template.challenge.helpers
 Template.socialshare.helpers
   # substr to get rid of the leading slash
   url: -> Meteor.absoluteUrl(Router.current().path.substr(1))
+
+  gameFinished: Template.result.gameFinished
 
 # events
 

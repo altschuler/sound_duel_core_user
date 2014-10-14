@@ -6,10 +6,14 @@
       <h3 class="panel-title"><strong>{{player}}</strong></h3>
     </div>
     <div class="panel-body">
-      {{#with result}}
-        <p id="ratio" class="lead">{{player}} fik {{ratio}} rigtige svar!</p>
-        <p id="points" class="lead">Point: {{score}}</p>
-      {{/with}}
+      {{#if gameFinished}}
+        {{#with result}}
+          <p id="ratio" class="lead">{{player}} fik {{ratio}} rigtige svar!</p>
+          <p id="points" class="lead">Point: {{score}}</p>
+        {{/with}}
+      {{else}}
+        Spillet er ikke færdigt.
+      {{/if}}
     </div>
   </div>
 
@@ -50,8 +54,9 @@
 </template>
 
 <template name="socialshare">
-  <a class="btn btn-default js-share-facebook" target="_blank" rel="nofollow" href="https://www.facebook.com/sharer.php?u={{url}}" title="Del på facebook">Del på facebook</a>
-  <a class="btn btn-default js-share-twitter" target="_blank" rel="nofollow" href="https://twitter.com/home?status={{url}}+%23VMDR" title="Del på Twitter">Del på Twitter</a>
-  <a class="btn btn-default js-share-google" target="_blank" rel="nofollow" href="https://plus.google.com/share?url={{url}}" title="Del på Google+">Del på Google+</a>
-
+  {{#if gameFinished}}
+    <a class="btn btn-default js-share-facebook" target="_blank" rel="nofollow" href="https://www.facebook.com/sharer.php?u={{url}}" title="Del på facebook">Del på facebook</a>
+    <a class="btn btn-default js-share-twitter" target="_blank" rel="nofollow" href="https://twitter.com/home?status={{url}}+%23VMDR" title="Del på Twitter">Del på Twitter</a>
+    <a class="btn btn-default js-share-google" target="_blank" rel="nofollow" href="https://plus.google.com/share?url={{url}}" title="Del på Google+">Del på Google+</a>
+  {{/if}}
 </template>
