@@ -62,15 +62,24 @@ answerQuestion = (idx) ->
 $audioPlayer = -> $('[data-sd-audio-player]')
 audioPlayer = -> $audioPlayer()[0]
 
+setAudioSource = (fileName) ->
+  $audioPlayer()
+    .find("source[type='audio/mpeg']")
+    .attr('src', fileName + ".mp3")
+
+  $audioPlayer()
+    .find("source[type='audio/ogg']")
+    .attr('src', fileName + ".ogg")
+
 Template.assets.helpers
   loadSound: ->
-    audioPlayer().src = currentAudioSrc()
+    setAudioSource currentAudioSrc()
     audioPlayer().load()
 
   # Play <audio> element with 0.3 seconds of silence,
   # in order to workaround iOS limitations on HTML5 audio playback
   playSilence: ->
-    audioPlayer().src = '/audio/silence.mp3'
+    setAudioSource '/audio/silence'
     audioPlayer().play()
 
     # Load the real question sound after having played the silent audio clip

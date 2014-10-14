@@ -9,7 +9,10 @@
   <div class="assets">
     {{! Audio clip containing 0.3 seconds of silence }}
     {{! - to workaround iOS limitations }}
-    <audio data-sd-audio-player src="/audio/silence.mp3"></audio>
+    <audio data-sd-audio-player>
+      <source src="/audio/silence.ogg" type="audio/ogg">
+      <source src="/audio/silence.mp3" type="audio/mpeg">
+    </audio>
   </div>
 </template>
 
